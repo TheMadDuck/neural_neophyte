@@ -34,13 +34,15 @@ def isLegalMove(field, playerNumber, position):
         global SIGNAL
         SIGNAL = "unvalidPosition"
         return False
-    print(field.shape)
+    #print(field.shape)
     if field[0][position] != 0:
         print("column is full, please choose again!")
         global SIGNAL
         SIGNAL = "columnIsFull"
         #return None
         return False
+    global SIGNAL
+    SIGNAL = "moveIsLegal"
     return True
 
 def setStone(field, color, position):
