@@ -1,3 +1,6 @@
+'''
+a template for a game. In this case the famous game 'four in a line' or in this case 'four in a row'. you have to asure that the functions.........   and the  SIGNAL's ........... are provided.
+'''
 import numpy as np
 import copy
 
@@ -7,6 +10,11 @@ def getSignal():
     global SIGNAL
     return SIGNAL
 
+def getLegalInputs():
+    global SIGNAL
+    SIGNAL = "legalInputs_initialized"
+    return [0,1,2,3,4,5,6]
+
 def initField():
     field= np.zeros((7, 7), dtype=int) # game field is 6 high and 7 wide, but we need a bottom row. so the stones dont fall through the game
     field[field.shape[0]-1][:] = 3         # bottom row
@@ -14,17 +22,23 @@ def initField():
     SIGNAL = "field_initialized"
     return field
 
-def isLegalMove(field, color, position):
+def isLegalMove(field, playerNumber, position):
     
-    if (color != 1) and (color != 2):
-        print (str(color) + " is a unvalid color")
+    if (playerNumber != 1) and (playerNumber != 2):
+        print (str(playerNumber) + " is a unvalid player")
+        global SIGNAL
+        SIGNAL = "unvalidPlayer"
         return False
     if position < 0 or position > field.shape[1]-1:
         print (str(position) + " is a unvalid position")
+        global SIGNAL
+        SIGNAL = "unvalidPosition"
         return False
     print(field.shape)
     if field[0][position] != 0:
         print("column is full, please choose again!")
+        global SIGNAL
+        SIGNAL = "columnIsFull"
         #return None
         return False
     return True
@@ -34,6 +48,9 @@ def setStone(field, color, position):
         if field[i][position] != 0:
             field[i-1][position] = color
             break
+
+    global SIGNAL
+    SIGNAL = "stoneIsSet"
     return field
 
 def gameStopped(field, roundNumber):
@@ -41,6 +58,8 @@ def gameStopped(field, roundNumber):
     print (roundNumber)
     if roundNumber == (field.size - field.shape[1]):
         print("you played a draw")
+        global SIGNAL
+        SIGNAL = "gameIsOver"
         return 1
 
 def hasAWinner(field, color, position):
@@ -63,6 +82,8 @@ def hasAWinner(field, color, position):
             break
 
     if inALine >= 4:
+        global SIGNAL
+        SIGNAL = "weHaveAWinner"
         return color
     #TODO testen
     #row check:
@@ -73,6 +94,8 @@ def hasAWinner(field, color, position):
         else:
             inALine = 0
         if inALine >= 4:
+            global SIGNAL
+            SIGNAL = "weHaveAWinner"
             return color
     #TODO    
     #diagonal checks:
@@ -87,6 +110,8 @@ def hasAWinner(field, color, position):
             else:
                 inALineUp = 0
             if inALineUp >= 4:
+                global SIGNAL
+                SIGNAL = "weHaveAWinner"
                 return color
         topLeftStart += 1
 
@@ -96,6 +121,8 @@ def hasAWinner(field, color, position):
             else:
                 inALineDown = 0
             if inALineDown >= 4:
+                global SIGNAL
+                SIGNAL = "weHaveAWinner"
                 return color
         bottomLeftStart -= 1
         
@@ -142,9 +169,13 @@ def savePositions(field, color, position, saveList):
     touple = (fieldCopy, position)
     if color == 1:
         saveList[0].append(touple) #TODO Testen!!!)
+        global SIGNAL
+        SIGNAL = "positionSaved"
         return saveList
     else:
         saveList[1].append(touple)
+        global SIGNAL
+        SIGNAL = "positionSaved"
         return saveList
 
 def playGame():
@@ -168,6 +199,9 @@ def playGame():
             break
     #TODO show savePositions
     print (saveList)
+
+def gameLoop():
+    return
 
 def main():
     playGame()
