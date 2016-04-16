@@ -16,8 +16,10 @@ import fourInARow as subPr
 def naiveAI(legalMoves):
     return rd.choice(legalMoves)
 
+
 #########################################
 # virtual game flow:
+
 
 legalInputs = subPr.getLegalInputs()
 if subPr.getSignal() != "legalInputs_initialized":
@@ -30,6 +32,7 @@ if subPr.getSignal() != "saveList_initialized":
 field = subPr.initField()
 if subPr.getSignal() != "field_initialized":
     print("ERROR: Field could not get initialized")
+
 
 #game = subPr.gameLoop()
 roundNumber = 0
@@ -62,6 +65,14 @@ while((subPr.getSignal() != "weHaveAWinner") or (subPr.getSignal() != "gameIsOve
         break
     
     subPr.gameStopped(field, roundNumber)
+
+
+# change name (AI_environment.py)
+#TODO add documentation!!!
+#TODO four in a row still does not provide informations about the winner. 
+#TODO integrate the NN. 
+#TODO enjoy life
+
 
 '''
 # more possible signals:

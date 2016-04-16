@@ -27,7 +27,7 @@ Install the listed requirements. (I recommend an anaconda installation to get mo
 Clone the repository with #git clone https://github.com/TheMadDuck/neural_neophyte.git <yourWorkingDirectory>. 
 (If you do not have git installed: Download the code with the 'Download ZIP'-Button. And extract it in your working directory. But try to use git. It makes your life easy (sort of..))
 
-Run the neural_neuphyte.py file with #python neural_neuphyte.py .
+Run the neural_neophyte.py file with #python neural_neophyte.py .
 
 --------------------------------------------------
 
@@ -39,6 +39,6 @@ Known isues:
 --------------------------------------------------
 
 Troubleshooting:
-- the AIenvironment.py returns that SIGNAL is assigned before global declaration. Try to run the script a second time. 
+- the AI_environment.py returns that SIGNAL is assigned before global declaration. Try to run the script a second time. 
  
 Good Luck and Have Fun.
