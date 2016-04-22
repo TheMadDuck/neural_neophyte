@@ -56,8 +56,6 @@ def setStone(field, color, position):
     return field
 
 def gameStopped(field, roundNumber):
-    print (field.size - field.shape[1])
-    print (roundNumber)
     if roundNumber == (field.size - field.shape[1]):
         print("you played a draw")
         global SIGNAL
@@ -156,29 +154,59 @@ def savePositions(field, color, position, saveList):
         return saveList
 '''
 
-def initSaveList():
-    playerOne = []  #dürfen nur einmal initialisiert werden!
-    playerTwo = []
-    saveList = np.empty(2, dtype=np.object)
-    saveList[:] = playerOne, playerTwo
-    global SIGNAL
-    SIGNAL = "saveList_initialized"
-    return saveList
+def initSaveList(transponiert):
+    if transponiert: # data in form ((X,y), (X,y),(...)) 
+        playerOne = []  #dürfen nur einmal initialisiert werden!
+        playerTwo = []
+        saveList = np.empty(2, dtype=np.object)
+        saveList[:] = playerOne, playerTwo
+        global SIGNAL
+        SIGNAL = "saveList_initialized"
+        return saveList
+    else: # data in form ((X,X,X...), (y,y,y...))
+        playerOne = [[],[]]
+        playerTwo = [[],[]]
+        saveList = np.empty(2, dtype=np.object)
+        saveList[:] = playerOne, playerTwo
+        global SIGNAL
+        SIGNAL = "saveList_initialized"
+        return saveList
 
-def savePositions(field, color, position, saveList):
+
+
+
+def savePositions(field, color, position, saveList, transponiert):
 
     fieldCopy = copy.deepcopy(field)
-    touple = (fieldCopy, position)
-    if color == 1:
-        saveList[0].append(touple) #TODO Testen!!!)
-        global SIGNAL
-        SIGNAL = "positionSaved"
-        return saveList
-    else:
-        saveList[1].append(touple)
-        global SIGNAL
-        SIGNAL = "positionSaved"
-        return saveList
+    if transponiert: # data in form ((X, y), (X,y),(...))
+        touple = (fieldCopy, position)
+        if color == 1:
+            saveList[0].append(touple) #TODO Testen!!!)
+            global SIGNAL
+            SIGNAL = "positionSaved"
+            return saveList
+        else:
+            saveList[1].append(touple)
+            global SIGNAL
+            SIGNAL = "positionSaved"
+            return saveList
+    else: # data in form ((X,X,X...), (y,y,y...))
+        if color == 1:
+            flatField = fieldCopy.flatten()     # Achtung: flattne macht deepcopy. für ne einfache reference benutze ravel()... <- testen
+            saveList[0][0].append(flatField)
+            saveList[0][1].append(position)
+            global SIGNAL
+            SIGNAL = "positionSaved"
+            return saveList
+        else:
+            flatField = fieldCopy.flatten()     # Achtung: flattne macht deepcopy. für ne einfache reference benutze ravel()... <- testen
+            saveList[1][0].append(flatField)
+            saveList[1][1].append(position)
+            global SIGNAL
+            SIGNAL = "positionSaved"
+            return saveList
+
+        
 
 def playGame():
     saveList = initSaveList()

@@ -172,7 +172,7 @@ class LogisticRegression(object):
             raise NotImplementedError()
 
 
-def load_data(dataset):
+def load_data(dataset, dataDirect):
     ''' Loads the dataset
 
     :type dataset: string
@@ -183,40 +183,47 @@ def load_data(dataset):
     # LOAD DATA #
     #############
 
-    # Download the MNIST dataset if it is not present
-    data_dir, data_file = os.path.split(dataset)
-    if data_dir == "" and not os.path.isfile(dataset):
-        print("ERROR, data does not exist")
-    """
-    # Check if dataset is in the data directory.
-        new_path = os.path.join(
-            os.path.split(__file__)[0],
-            "..",
-            "data",
-            dataset
-        )
-        if os.path.isfile(new_path) or data_file == 'mnist.pkl.gz':
-            dataset = new_path
-    """
+    if (dataDirect):
+        train_set = dataset[0]
+        test_set = dataset[1]
+        valid_set = dataset[2]
 
-    if (not os.path.isfile(dataset)) and data_file == 'mnist.pkl.gz':
-        print("ERROR 2, data does not exist")
-    """
-        from six.moves import urllib
-        origin = (
-            'http://www.iro.umontreal.ca/~lisa/deep/data/mnist/mnist.pkl.gz'
-        )
-        print('Downloading data from %s' % origin)
-        urllib.request.urlretrieve(origin, dataset)
-    """
-    print('... loading data')
+    else:
+        # Download the MNIST dataset if it is not present
+        data_dir, data_file = os.path.split(dataset)
+        if data_dir == "" and not os.path.isfile(dataset):
+            print("ERROR, data does not exist")
+        """
+        # Check if dataset is in the data directory.
+            new_path = os.path.join(
+                os.path.split(__file__)[0],
+                "..",
+                "data",
+                dataset
+            )
+            if os.path.isfile(new_path) or data_file == 'mnist.pkl.gz':
+                dataset = new_path
+        """
 
-    # Load the dataset
-    with gzip.open(dataset, 'rb') as f:
-        try:
-            train_set, valid_set, test_set = pickle.load(f, encoding='latin1')
-        except:
-            train_set, valid_set, test_set = pickle.load(f)
+        if (not os.path.isfile(dataset)) and data_file == 'mnist.pkl.gz':
+            print("ERROR 2, data does not exist")
+        """
+            from six.moves import urllib
+            origin = (
+                'http://www.iro.umontreal.ca/~lisa/deep/data/mnist/mnist.pkl.gz'
+            )
+            print('Downloading data from %s' % origin)
+            urllib.request.urlretrieve(origin, dataset)
+        """
+        print('... loading data')
+
+        # Load the dataset
+
+        with gzip.open(dataset, 'rb') as f:
+            try:
+                train_set, valid_set, test_set = pickle.load(f, encoding='latin1')
+            except:
+                train_set, valid_set, test_set = pickle.load(f)
     # train_set, valid_set, test_set format: tuple(input, target)
     # input is a numpy.ndarray of 2 dimensions (a matrix)
     # where each row corresponds to an example. target is a
@@ -240,6 +247,8 @@ def load_data(dataset):
         shared_y = theano.shared(numpy.asarray(data_y,
                                                dtype=theano.config.floatX),
                                  borrow=borrow)
+        print("xxxxxxxxxxxx")
+        print(shared_x)
         # When storing data on the GPU it has to be stored as floats
         # therefore we will store the labels as ``floatX`` as well
         # (``shared_y`` does exactly that). But during our computations
@@ -281,11 +290,13 @@ def sgd_optimization(learning_rate=0.13, n_epochs=1000,
                  http://www.iro.umontreal.ca/~lisa/deep/data/mnist/mnist.pkl.gz
 
     """
-    datasets = load_data(dataset)
+    datasets = load_data(dataset, True)
 
     train_set_x, train_set_y = datasets[0]
     valid_set_x, valid_set_y = datasets[1]
     test_set_x, test_set_y = datasets[2]
+
+
 
     # compute number of minibatches for training, validation and testing
     n_train_batches = train_set_x.get_value(borrow=True).shape[0] // batch_size

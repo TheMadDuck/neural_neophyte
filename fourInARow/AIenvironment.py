@@ -32,7 +32,7 @@ def gameFlow():
     if subPr.getSignal() != "legalInputs_initialized":
         print("ERROR: legal Inputs could not get initialized")
 
-    saveList = subPr.initSaveList()
+    saveList = subPr.initSaveList(False)
     if subPr.getSignal() != "saveList_initialized":
         print("ERROR: SaveList could not get initialized")
 
@@ -57,7 +57,7 @@ def gameFlow():
             subPr.isLegalMove(field, playerNumber, position)
         if subPr.getSignal() != "moveIsLegal":
             print("ERROR: The AI-Environment could not make a legal move")
-        saveList = subPr.savePositions(field, playerNumber, position, saveList)    
+        saveList = subPr.savePositions(field, playerNumber, position, saveList, False)    
         if subPr.getSignal() != "positionSaved":
             print("ERROR: Position could not get saved")
 
@@ -65,7 +65,7 @@ def gameFlow():
         if subPr.getSignal() != "stoneIsSet":
             print("ERROR: Stone is not saved")
         
-        print(field)
+        #print(field)         show field in a game vs. a human !!!
         winner = subPr.hasAWinner(field, playerNumber, position)
         if (subPr.getSignal() == "weHaveAWinner"):
             print("we have a winner!!!")
@@ -76,9 +76,9 @@ def gameFlow():
         
         subPr.gameStopped(field, roundNumber)
 
-    print("################################")
-    print("spielverlauf vom Sieger (zum lernen):")
-    print(saveList[winner-1])
+#    print("################################")
+#    print("spielverlauf vom Sieger (zum lernen):")
+#    print(saveList[winner-1])
     return saveList[winner-1]
 
 # change name (AI_environment.py)
@@ -92,32 +92,41 @@ def getTrainTestValidate(numberTrain, numberTest, numberValidate, KIone, KItwo):
     """
     get the winning moves of many games (KIone vs. KItwo)
     """
-    winnerPoolTrain = []
+    winnerPoolTrain =[[],[]]
     for i in range(numberTrain):
-        winnerPoolTrain.append(gameFlow())
+        field, position = gameFlow()
+        winnerPoolTrain[0].extend(field)
+        winnerPoolTrain[1].extend(position)
 
-    winnerPoolTest = []
+    winnerPoolTest =[[],[]]
     for i in range(numberTest):
-        winnerPoolTest.append(gameFlow())
+        field, position = gameFlow()
+        winnerPoolTest[0].extend(field)
+        winnerPoolTest[1].extend(position)
 
-    winnerPoolValidate = [] 
+    winnerPoolValidate =[[],[]]
     for i in range(numberValidate):
-        winnerPoolValidate.append(gameFlow())
+        field, position = gameFlow()
+        winnerPoolValidate[0].extend(field)
+        winnerPoolValidate[1].extend(position)
 
 
     dataset = np.array((winnerPoolTrain, winnerPoolTest, winnerPoolValidate))   ## gucken wie dataset auszusehen hat, villeicht auch ([],(),[[]]....
 
     #TODO wirklich pickln?
 #    newFile= open("gameTTV.p", "w+")
-    pickle.dump(dataset, open("gameTTV.p", "rb"))
+#    pickle.dump(dataset, open("gameTTV.p", "rb"))
     return dataset
-
-
-getTrainTestValidate(10,10,10,"hans", "peter")
 
 ############################################
 
-classifier.sgd_optimization(learning_rate=0.13, n_epochs=1000, dataset=winnerSave.pkl, batch_size=600)
+
+#TODO
+gameTTV = getTrainTestValidate(100,100,100,"hans", "peter")
+
+############################################
+#TODO
+classifier.sgd_optimization(learning_rate=0.13, n_epochs=1000, dataset=gameTTV, batch_size=600)
 
 
 
