@@ -36,7 +36,7 @@ def isLegalMove(field, playerNumber, position):
         return False
     #print(field.shape)
     if field[0][position] != 0:
-        print("column is full, please choose again!")
+        #print("column is full, please choose again!")
         global SIGNAL
         SIGNAL = "columnIsFull"
         #return None

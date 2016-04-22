@@ -6,6 +6,8 @@ The AI environment. This file provides the game functionality for the neural net
 import numpy as np
 import random as rd
 import pickle
+import os.path
+
 
 ########################################
 #load classifier:
@@ -18,16 +20,34 @@ import logistic_sgd as classifier
 import fourInARow as subPr
 
 
+
+
+#########################################
+
+def loadBestModel():
+    if(os.path.isfile("best_model.pkl")):
+        print("best model is there")
+        classifier.loadBestModel()
+        return True
+    else:
+        return False
+
+
+
 #########################################
 # naive AI:
-def naiveAI(legalMoves):
-    return rd.choice(legalMoves)
+def AI_Move(field, legalMoves, bestModelExist):
+    if(bestModelExist):
+        return classifier.predict(field)
+    else:
+        return rd.choice(legalMoves)
 
 
 #########################################
 # virtual game flow:
 
 def gameFlow():
+    bestModelExist = loadBestModel()
     legalInputs = subPr.getLegalInputs()
     if subPr.getSignal() != "legalInputs_initialized":
         print("ERROR: legal Inputs could not get initialized")
@@ -50,10 +70,10 @@ def gameFlow():
         else:
             playerNumber = 2
 
-        position = naiveAI(legalInputs) # get new position from extern
+        position = AI_Move(field, legalInputs, bestModelExist) # get new position from extern
         subPr.isLegalMove(field, playerNumber, position)
         while (subPr.getSignal() == "unvalidPlayer") or (subPr.getSignal() == "unvalidPosition" or subPr.getSignal() == "columnIsFull"):
-            position = naiveAI(legalInputs) # get new position from extern
+            position = AI_Move(field, legalInputs, bestModelExist) # get new position from extern
             subPr.isLegalMove(field, playerNumber, position)
         if subPr.getSignal() != "moveIsLegal":
             print("ERROR: The AI-Environment could not make a legal move")
@@ -68,13 +88,15 @@ def gameFlow():
         #print(field)         show field in a game vs. a human !!!
         winner = subPr.hasAWinner(field, playerNumber, position)
         if (subPr.getSignal() == "weHaveAWinner"):
-            print("we have a winner!!!")
+            #print("we have a winner!!!")
             if winner == 0:
                 print("ERROR: we could not determine who won!")
-            print("the winner is: " + str(winner))
+           # print("the winner is: " + str(winner))
             break
         
         subPr.gameStopped(field, roundNumber)
+        if (subPr.getSignal() == "gameIsOver"):
+            break
 
 #    print("################################")
 #    print("spielverlauf vom Sieger (zum lernen):")
@@ -95,7 +117,7 @@ def getTrainTestValidate(numberTrain, numberTest, numberValidate, KIone, KItwo):
     winnerPoolTrain =[[],[]]
     for i in range(numberTrain):
         field, position = gameFlow()
-        winnerPoolTrain[0].extend(field)
+        winnerPoolTrain[0].extend(field)   #TODO append und etend checken! in der fourInARow - Class gibts auch noch so kandidaten!!
         winnerPoolTrain[1].extend(position)
 
     winnerPoolTest =[[],[]]
@@ -122,8 +144,16 @@ def getTrainTestValidate(numberTrain, numberTest, numberValidate, KIone, KItwo):
 
 
 #TODO
-gameTTV = getTrainTestValidate(100,100,100,"hans", "peter")
+gameTTV = getTrainTestValidate(10000,100,100,"hans", "peter")
+"""
+print("gameTTV[0][0] : ")
+print (len(gameTTV[0][0]))
+print("gameTTV[0][1] : ")
+print (len(gameTTV[0][1]))
 
+print("gameTTV[0][0][23]")
+print(gameTTV[0][0][23])
+"""
 ############################################
 #TODO
 classifier.sgd_optimization(learning_rate=0.13, n_epochs=1000, dataset=gameTTV, batch_size=600)

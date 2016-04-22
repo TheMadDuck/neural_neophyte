@@ -48,6 +48,9 @@ import numpy
 import theano
 import theano.tensor as T
 
+# global classifier model, to prevent pickl IOs
+best_classifier = 0
+
 
 class LogisticRegression(object):
     """Multi-class Logistic Regression Class
@@ -317,8 +320,8 @@ def sgd_optimization(learning_rate=0.13, n_epochs=1000,
     y = T.ivector('y')  # labels, presented as 1D vector of [int] labels
 
     # construct the logistic regression class
-    # Each MNIST image has size 28*28
-    classifier = LogisticRegression(input=x, n_in=28 * 28, n_out=10)
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! important to change !!!!!!!!!!! dn
+    classifier = LogisticRegression(input=x, n_in=7 * 7, n_out=7)
 
     # the cost we minimize during training is the negative log likelihood of
     # the model in symbolic format
@@ -464,29 +467,36 @@ def sgd_optimization(learning_rate=0.13, n_epochs=1000,
            ' ran for %.1fs' % ((end_time - start_time))), file=sys.stderr)
 
 
-def predict():
+
+
+
+
+
+def loadBestModel():
+    """
+    (global) loads the best classifier. To prevent to much pickle IOs
+    """
+    #load the saved model
+    global best_classifier
+    best_classifier = pickle.load(open('best_model.pkl'))
+
+
+def predict(X): 
     """
     An example of how to load a trained model and use it
     to predict labels.
     """
 
-    # load the saved model
-    classifier = pickle.load(open('best_model.pkl'))
-
     # compile a predictor function
     predict_model = theano.function(
-        inputs=[classifier.input],
-        outputs=classifier.y_pred)
+        inputs=[best_classifier.input],
+        outputs=best_classifier.y_pred)
 
-    # We can test it on some examples from test test
-    dataset='mnist.pkl.gz'
-    datasets = load_data(dataset)
-    test_set_x, test_set_y = datasets[2]
-    test_set_x = test_set_x.get_value()
+    # feed it with data
+    y = predict_model(X)
+    return y
 
-    predicted_values = predict_model(test_set_x[:10])
-    print("Predicted values for the first 10 examples in test set:")
-    print(predicted_values)
+
 
 """
 if __name__ == '__main__':
