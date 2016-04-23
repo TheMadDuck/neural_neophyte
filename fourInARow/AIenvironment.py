@@ -7,7 +7,7 @@ import numpy as np
 import random as rd
 import pickle
 import os.path
-
+import copy
 
 ########################################
 #load classifier:
@@ -38,7 +38,11 @@ def loadBestModel():
 # naive AI:
 def AI_Move(field, legalMoves, bestModelExist):
     if(bestModelExist):
-        return classifier.predict(field)
+        #TODO WICHTIG:  field glätten und in flatfield speichern
+
+        #fieldCopy = copy.deepcopy(field)
+        flatField = field.flatten()        
+        return classifier.predict(flatField)[0]
     else:
         return rd.choice(legalMoves)
 
@@ -46,8 +50,7 @@ def AI_Move(field, legalMoves, bestModelExist):
 #########################################
 # virtual game flow:
 
-def gameFlow():
-    bestModelExist = loadBestModel()
+def gameFlow(bestModelExist):
     legalInputs = subPr.getLegalInputs()
     if subPr.getSignal() != "legalInputs_initialized":
         print("ERROR: legal Inputs could not get initialized")
@@ -114,21 +117,25 @@ def getTrainTestValidate(numberTrain, numberTest, numberValidate, KIone, KItwo):
     """
     get the winning moves of many games (KIone vs. KItwo)
     """
+    bestModelExist = loadBestModel()
+
     winnerPoolTrain =[[],[]]
     for i in range(numberTrain):
-        field, position = gameFlow()
+        if (i % 100 == 0):
+            print ("trainset number: " + str(i))
+        field, position = gameFlow(bestModelExist)
         winnerPoolTrain[0].extend(field)   #TODO append und etend checken! in der fourInARow - Class gibts auch noch so kandidaten!!
         winnerPoolTrain[1].extend(position)
 
     winnerPoolTest =[[],[]]
     for i in range(numberTest):
-        field, position = gameFlow()
+        field, position = gameFlow(bestModelExist)
         winnerPoolTest[0].extend(field)
         winnerPoolTest[1].extend(position)
 
     winnerPoolValidate =[[],[]]
     for i in range(numberValidate):
-        field, position = gameFlow()
+        field, position = gameFlow(bestModelExist)
         winnerPoolValidate[0].extend(field)
         winnerPoolValidate[1].extend(position)
 

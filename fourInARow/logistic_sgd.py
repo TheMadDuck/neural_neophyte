@@ -49,8 +49,8 @@ import theano
 import theano.tensor as T
 
 # global classifier model, to prevent pickl IOs
-best_classifier = 0
-
+best_classifier = None
+predict_model = None
 
 class LogisticRegression(object):
     """Multi-class Logistic Regression Class
@@ -321,7 +321,7 @@ def sgd_optimization(learning_rate=0.13, n_epochs=1000,
 
     # construct the logistic regression class
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! important to change !!!!!!!!!!! dn
-    classifier = LogisticRegression(input=x, n_in=7 * 7, n_out=7)
+    classifier = LogisticRegression(input=x, n_in= 7*7, n_out=7)
 
     # the cost we minimize during training is the negative log likelihood of
     # the model in symbolic format
@@ -477,8 +477,13 @@ def loadBestModel():
     (global) loads the best classifier. To prevent to much pickle IOs
     """
     #load the saved model
+    print("load BEst model")
     global best_classifier
-    best_classifier = pickle.load(open('best_model.pkl'))
+    global predict_model
+    best_classifier = pickle.load(open('best_model.pkl', 'rb'))
+    predict_model = theano.function(
+        inputs=[best_classifier.input],
+        outputs=best_classifier.y_pred)
 
 
 def predict(X): 
@@ -486,14 +491,18 @@ def predict(X):
     An example of how to load a trained model and use it
     to predict labels.
     """
-
+    
+    #global best_classifier # TODO mal testen ohne global, könnte gehen weil nicht drauf geschrieben wird...
     # compile a predictor function
+    """
     predict_model = theano.function(
         inputs=[best_classifier.input],
         outputs=best_classifier.y_pred)
+    """
 
     # feed it with data
-    y = predict_model(X)
+    newX = [X]
+    y = predict_model(newX)
     return y
 
 
