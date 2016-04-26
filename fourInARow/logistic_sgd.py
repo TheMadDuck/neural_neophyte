@@ -321,7 +321,7 @@ def sgd_optimization(learning_rate=0.13, n_epochs=1000,
 
     # construct the logistic regression class
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! important to change !!!!!!!!!!! dn
-    classifier = LogisticRegression(input=x, n_in= 7*7, n_out=7)
+    classifier = LogisticRegression(input=x, n_in= 7*7 + 1, n_out=7)   #7*7 for field size, +1 for who is playing.
 
     # the cost we minimize during training is the negative log likelihood of
     # the model in symbolic format

@@ -154,6 +154,8 @@ def savePositions(field, color, position, saveList):
         return saveList
 '''
 
+
+'''
 def initSaveList(transponiert):
     if transponiert: # data in form ((X,y), (X,y),(...)) 
         playerOne = []  #dürfen nur einmal initialisiert werden!
@@ -205,7 +207,7 @@ def savePositions(field, color, position, saveList, transponiert):
             global SIGNAL
             SIGNAL = "positionSaved"
             return saveList
-
+'''
         
 
 def playGame():
