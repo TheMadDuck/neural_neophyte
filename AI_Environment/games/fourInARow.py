@@ -10,6 +10,9 @@ def getSignal():
     global SIGNAL
     return SIGNAL
 
+def getName():
+    return "four_in_a_row"
+
 def getLegalInputs():
     global SIGNAL
     SIGNAL = "legalInputs_initialized"

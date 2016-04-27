@@ -17,15 +17,28 @@ import logistic_sgd as classifier
 #########################################
 #load game:
 
-import fourInARow as subPr
+import games.fourInARow as subPr
 
+
+#########################################
+#create folder for best_models
+def folderHandler():
+    if (not os.path.isdir("./best_models")):
+        os.makedirs("./best_models") # maybe in a try catch block
+        print("best models is created")
+
+    gameName = subPr.getName()
+    if (not os.path.isdir("./best_models/" + str(gameName))):
+        os.makedirs("./best_models/" + str(gameName))
+        print(str(gameName) + "-folder is created")
+    
 
 
 
 #########################################
 
 def loadBestModel():
-    if(os.path.isfile("best_model.pkl")):
+    if(os.path.isfile("./best_model.pkl")):  #./ testen?
         print("best model is there")
         classifier.loadBestModel()
         return True
@@ -41,10 +54,13 @@ def AI_Move(field, playerNumber, legalMoves, bestModelExist):
         #TODO WICHTIG:  field glätten und in flatfield speichern
 
         #fieldCopy = copy.deepcopy(field)
+
+        #print("A I")
         flatField = field.flatten()        
         flatField = np.append(flatField, playerNumber)
         return classifier.predict(flatField)[0]
     else:
+        #print("random")
         return rd.choice(legalMoves)
 #########################################
 
@@ -104,7 +120,7 @@ def savePositions(field, color, position, saveList, transponiert):
 #########################################
 # virtual game flow:
 
-def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):
+def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht eher sowas wie gameFlow(player1, player2) human:0 ai models:1-x [allerdings sollten die models extern geladen werden...)
     legalInputs = subPr.getLegalInputs()
     if subPr.getSignal() != "legalInputs_initialized":
         print("ERROR: legal Inputs could not get initialized")
@@ -114,7 +130,6 @@ def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):
     field = subPr.initField()
     if subPr.getSignal() != "field_initialized":
         print("ERROR: Field could not get initialized")
-
 
     #game = subPr.gameLoop()
     roundNumber = 0
@@ -133,6 +148,7 @@ def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):
         else:
             position = AI_Move(field, playerNumber, legalInputs, bestModelExist) # get new position from extern
         subPr.isLegalMove(field, playerNumber, position)
+        #print(position)
         while (subPr.getSignal() == "unvalidPlayer") or (subPr.getSignal() == "unvalidPosition" or subPr.getSignal() == "columnIsFull"):
             if (againstHuman): # do we play against a human?
                 if (humanPlayerNumber == playerNumber): # is the human player 1 or player 2?
@@ -186,6 +202,9 @@ def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):
 #TODO four in a row still does not provide informations about the winner. 
 #TODO integrate the NN. 
 #TODO human vs Ai mode basteln. (hier oder extern?)
+#TODO always keep the X-best Models [X = 5 or ?], so AI-Move can choose from a set of models. <- git exclude one folder with models???!!!!!!!!
+#     mayby rank those with an elo number?! 
+#TODO Elo tunier. (count when an older modelling beat an younger?) higher elo -> higher probability to play! Which model plays against which model in train phase? train phase trough turnier?
 #TODO enjoy life
 
 
@@ -226,8 +245,6 @@ def getTrainTestValidate(numberTrain, numberTest, numberValidate, KIone, KItwo):
 ############################################
 
 
-#TODO
-#gameTTV = getTrainTestValidate(4000,100,100,"hans", "peter")
 """
 print("gameTTV[0][0] : ")
 print (len(gameTTV[0][0]))
@@ -237,9 +254,6 @@ print (len(gameTTV[0][1]))
 print("gameTTV[0][0][23]")
 print(gameTTV[0][0][23])
 """
-############################################
-#TODO
-#classifier.sgd_optimization(learning_rate=0.13, n_epochs=1000, dataset=gameTTV, batch_size=600)
 
 def main():
     print("Play a Game  (press 1)")
@@ -261,6 +275,7 @@ def main():
 
 main()
 
+#folderHandler()
 
 
 
