@@ -11,7 +11,7 @@ import copy
 
 ########################################
 #load classifier:
-import logistic_sgd as classifier
+import learn_algorithms.theano_based.logistic_sgd as classifier
 
 
 #########################################
@@ -31,6 +31,8 @@ def folderHandler():
     if (not os.path.isdir("./best_models/" + str(gameName))):
         os.makedirs("./best_models/" + str(gameName))
         print(str(gameName) + "-folder is created")
+
+    #TODO: add all files(filenames) in this directory to an (global) array called 'models'. 'amount of models' is also important
     
 
 
@@ -38,9 +40,12 @@ def folderHandler():
 #########################################
 
 def loadBestModel():
-    if(os.path.isfile("./best_model.pkl")):  #./ testen?
+#    if(os.path.isfile("./best_model.pkl")):  #./ testen?
+    gameName = subPr.getName()
+    filePath = "./best_models/" + str(gameName) + "/best_model.pkl"
+    if(os.path.isfile(filePath)): #Testen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         print("best model is there")
-        classifier.loadBestModel()
+        classifier.loadBestModel(filePath)
         return True
     else:
         return False
@@ -184,7 +189,8 @@ def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht
             #print("we have a winner!!!")
             if winner == 0:
                 print("ERROR: we could not determine who won!")
-           # print("the winner is: " + str(winner))
+            if (againstHuman):
+                print("the winner is: " + str(winner))
             break
         
         subPr.gameStopped(field, roundNumber)
@@ -199,8 +205,7 @@ def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht
 
 # change name (AI_environment.py)
 #TODO add documentation!!!
-#TODO four in a row still does not provide informations about the winner. 
-#TODO integrate the NN. 
+#TODO integrate the MLP. 
 #TODO human vs Ai mode basteln. (hier oder extern?)
 #TODO always keep the X-best Models [X = 5 or ?], so AI-Move can choose from a set of models. <- git exclude one folder with models???!!!!!!!!
 #     mayby rank those with an elo number?! 
@@ -269,8 +274,11 @@ def main():
         gameFlow(loadBestModel(), True, humanPlayerNumber)
         
     if mode == 2:
+        folderHandler()
         gameTTV = getTrainTestValidate(4000,100,100,"hans", "peter")
-        classifier.sgd_optimization(learning_rate=0.13, n_epochs=1000, dataset=gameTTV, batch_size=600)
+        gameName = subPr.getName()
+        bestModelPath = "./best_models/" + str(gameName) + "/best_model.pkl"
+        classifier.sgd_optimization(learning_rate=0.13, n_epochs=1000, dataset=gameTTV, batch_size=600, bestModelPath=bestModelPath)
 
 
 main()

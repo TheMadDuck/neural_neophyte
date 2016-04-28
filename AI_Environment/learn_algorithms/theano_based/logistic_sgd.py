@@ -274,7 +274,8 @@ def sgd_optimization(learning_rate=0.13, n_epochs=1000,
                            #dataset='mnist.pkl.gz',
                            # dataset='/home/noll/programming/python/theano/datasets/mnist/mnist.pkl.gz',
                            dataset="test", 
-                           batch_size=600):
+                           batch_size=600,
+                           bestModelPath=""):
     """
     Demonstrate stochastic gradient descent optimization of a log-linear
     model
@@ -445,7 +446,7 @@ def sgd_optimization(learning_rate=0.13, n_epochs=1000,
                     )
 
                     # save the best model
-                    with open('best_model.pkl', 'wb') as f:
+                    with open(bestModelPath, 'wb') as f:
                         pickle.dump(classifier, f)
 
             if patience <= iter:
@@ -472,7 +473,7 @@ def sgd_optimization(learning_rate=0.13, n_epochs=1000,
 
 
 
-def loadBestModel():
+def loadBestModel(filePath):
     """
     (global) loads the best classifier. To prevent to much pickle IOs
     """
@@ -480,7 +481,8 @@ def loadBestModel():
     print("load BEst model")
     global best_classifier
     global predict_model
-    best_classifier = pickle.load(open('best_model.pkl', 'rb'))
+    #best_classifier = pickle.load(open('best_model.pkl', 'rb'))
+    best_classifier = pickle.load(open(filePath, 'rb'))
     predict_model = theano.function(
         inputs=[best_classifier.input],
         outputs=best_classifier.y_pred)
