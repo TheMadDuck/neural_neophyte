@@ -19,6 +19,9 @@ import learn_algorithms.theano_based.logistic_sgd as classifier
 
 import games.fourInARow as subPr
 
+#########################################
+
+#best_models = None
 
 #########################################
 #create folder for best_models
@@ -32,8 +35,15 @@ def folderHandler():
         os.makedirs("./best_models/" + str(gameName))
         print(str(gameName) + "-folder is created")
 
-    #TODO: add all files(filenames) in this directory to an (global) array called 'models'. 'amount of models' is also important
+    classifier_models = []
+    for file in os.listdir("./best_models/" + str(gameName)):
+        if file.endswith(".pkl"):
+            classifier_models.append("./best_models/" + str(gameName) + "/" + str(file))
     
+    print (classifier_models)
+    return classifier_models
+
+    #TODO: add all files(filenames) in this directory to an (global) array called 'models'. 'amount of models' is also important
 
 
 
@@ -41,15 +51,26 @@ def folderHandler():
 
 def loadBestModel():
 #    if(os.path.isfile("./best_model.pkl")):  #./ testen?
-    gameName = subPr.getName()
-    filePath = "./best_models/" + str(gameName) + "/best_model.pkl"
+#    gameName = subPr.getName()
+#    filePath = "./best_models/" + str(gameName) + "/best_model.pkl"
+
+    filePath = folderHandler()
+    if (filePath):
+        print("best model is there")
+        classifier.loadBestModel(filePath[0])
+        return True
+    else:
+        return False
+
+    """
+    #filePath = classifier_models[0]
     if(os.path.isfile(filePath)): #Testen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         print("best model is there")
         classifier.loadBestModel(filePath)
         return True
     else:
         return False
-
+    """
 
 
 #########################################
@@ -182,7 +203,8 @@ def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht
         subPr.setStone(field, playerNumber, position)
         if subPr.getSignal() != "stoneIsSet":
             print("ERROR: Stone is not saved")
-        if(againstHuman): 
+        if(againstHuman):
+            print(" ")
             print(field)        # show field in a game vs. a human !!!
         winner = subPr.hasAWinner(field, playerNumber, position)
         if (subPr.getSignal() == "weHaveAWinner"):
@@ -190,7 +212,9 @@ def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht
             if winner == 0:
                 print("ERROR: we could not determine who won!")
             if (againstHuman):
+                print(" ")
                 print("the winner is: " + str(winner))
+                print(" ")
             break
         
         subPr.gameStopped(field, roundNumber)
@@ -217,6 +241,7 @@ def getTrainTestValidate(numberTrain, numberTest, numberValidate, KIone, KItwo):
     """
     get the winning moves of many games (KIone vs. KItwo)
     """
+    classifier_models = folderHandler()
     bestModelExist = loadBestModel()
 
     winnerPoolTrain =[[],[]]
@@ -271,10 +296,11 @@ def main():
         humanPlayerNumber = int(input("press 1 or 2: "))
         while (humanPlayerNumber != 1 and humanPlayerNumber != 2):
             humanPlayerNumber = int(input("press 1 or 2: "))
+        
+        classifier_models = folderHandler()
         gameFlow(loadBestModel(), True, humanPlayerNumber)
         
     if mode == 2:
-        folderHandler()
         gameTTV = getTrainTestValidate(4000,100,100,"hans", "peter")
         gameName = subPr.getName()
         bestModelPath = "./best_models/" + str(gameName) + "/best_model.pkl"
