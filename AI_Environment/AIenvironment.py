@@ -54,13 +54,14 @@ def loadBestModel():
 #    gameName = subPr.getName()
 #    filePath = "./best_models/" + str(gameName) + "/best_model.pkl"
 
-    filePath = folderHandler()
-    if (filePath):
+    filePaths = folderHandler()
+    if (filePaths):
         print("best model is there")
-        classifier.loadBestModel(filePath[0])
-        return True
+        for i in filePaths:
+            classifier.loadBestModel(i)
+        return len(filePaths)
     else:
-        return False
+        return 0
 
     """
     #filePath = classifier_models[0]
@@ -75,7 +76,11 @@ def loadBestModel():
 
 #########################################
 # naive AI:
-def AI_Move(field, playerNumber, legalMoves, bestModelExist):
+def AI_Move(field, playerNumber, legalMoves, bestModelExist, randomMoveProba):
+    # sometimes you want a random move:
+    if (rd.random() < randomMoveProba): 
+        bestModelExist = 0
+
     if(bestModelExist):
         #TODO WICHTIG:  field glätten und in flatfield speichern
 
@@ -84,7 +89,7 @@ def AI_Move(field, playerNumber, legalMoves, bestModelExist):
         #print("A I")
         flatField = field.flatten()        
         flatField = np.append(flatField, playerNumber)
-        return classifier.predict(flatField)[0]
+        return classifier.predict(flatField, bestModelExist-1)[0]
     else:
         #print("random")
         return rd.choice(legalMoves)
@@ -147,6 +152,8 @@ def savePositions(field, color, position, saveList, transponiert):
 # virtual game flow:
 
 def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht eher sowas wie gameFlow(player1, player2) human:0 ai models:1-x [allerdings sollten die models extern geladen werden...)
+
+    amountRandom = 0.2  # vieleicht ausserhalb definieren?
     legalInputs = subPr.getLegalInputs()
     if subPr.getSignal() != "legalInputs_initialized":
         print("ERROR: legal Inputs could not get initialized")
@@ -170,9 +177,9 @@ def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht
             if (humanPlayerNumber == playerNumber): # is the human player 1 or player 2?
                 position = Human_Move(legalInputs)
             else:
-                position = AI_Move(field, playerNumber, legalInputs, bestModelExist) # get new position from extern
+                position = AI_Move(field, playerNumber, legalInputs, bestModelExist, amountRandom) # get new position from extern
         else:
-            position = AI_Move(field, playerNumber, legalInputs, bestModelExist) # get new position from extern
+            position = AI_Move(field, playerNumber, legalInputs, bestModelExist, amountRandom) # get new position from extern
         subPr.isLegalMove(field, playerNumber, position)
         #print(position)
         while (subPr.getSignal() == "unvalidPlayer") or (subPr.getSignal() == "unvalidPosition" or subPr.getSignal() == "columnIsFull"):
@@ -182,10 +189,10 @@ def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht
                     position = Human_Move(legalInputs)
                 else:
                     print("ERROR: The AI-Environment could not make a legal move. will try random move..")
-                    position = AI_Move(field, playerNumber, legalInputs, False) # get new position from extern
+                    position = AI_Move(field, playerNumber, legalInputs, False, amountRandom) # get new position from extern
             else:
                 print("ERROR: The AI-Environment could not make a legal move. will try random move..")
-                position = AI_Move(field, playerNumber, legalInputs, False) # get new position from extern
+                position = AI_Move(field, playerNumber, legalInputs, False, amountRandom) # get new position from extern
             subPr.isLegalMove(field, playerNumber, position)
 
 
@@ -237,30 +244,30 @@ def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht
 #TODO enjoy life
 
 
-def getTrainTestValidate(numberTrain, numberTest, numberValidate, KIone, KItwo):
+def getTrainTestValidate(numberTrain, numberTest, numberValidate, KI_Number):
     """
     get the winning moves of many games (KIone vs. KItwo)
     """
-    classifier_models = folderHandler()
-    bestModelExist = loadBestModel()
+    #classifier_models = folderHandler()
+    #bestModelExist = loadBestModel()
 
     winnerPoolTrain =[[],[]]
     for i in range(numberTrain):
         if (i % 100 == 0):
             print ("trainset number: " + str(i))
-        field, position = gameFlow(bestModelExist, False, 0)
+        field, position = gameFlow(KI_Number, False, 0)
         winnerPoolTrain[0].extend(field)   #TODO append und etend checken! in der fourInARow - Class gibts auch noch so kandidaten!!
         winnerPoolTrain[1].extend(position)
 
     winnerPoolTest =[[],[]]
     for i in range(numberTest):
-        field, position = gameFlow(bestModelExist, False, 0)
+        field, position = gameFlow(KI_Number, False, 0)
         winnerPoolTest[0].extend(field)
         winnerPoolTest[1].extend(position)
 
     winnerPoolValidate =[[],[]]
     for i in range(numberValidate):
-        field, position = gameFlow(bestModelExist, False, 0)
+        field, position = gameFlow(KI_Number, False, 0)
         winnerPoolValidate[0].extend(field)
         winnerPoolValidate[1].extend(position)
 
@@ -291,19 +298,21 @@ def main():
     mode = int(input(""))
     while (mode != 1 and mode != 2):
         mode = int(input("press 1 or 2 !!"))
+    numberModels = loadBestModel()
     if mode == 1:
         print ("do you want to be player 1 or player 2?")
         humanPlayerNumber = int(input("press 1 or 2: "))
         while (humanPlayerNumber != 1 and humanPlayerNumber != 2):
             humanPlayerNumber = int(input("press 1 or 2: "))
         
-        classifier_models = folderHandler()
-        gameFlow(loadBestModel(), True, humanPlayerNumber)
+#        classifier_models = folderHandler()
+        gameFlow(numberModels, True, humanPlayerNumber)  #nur gegen bestes Model !
         
     if mode == 2:
-        gameTTV = getTrainTestValidate(4000,100,100,"hans", "peter")
+        gameTTV = getTrainTestValidate(4000,100,100, numberModels) #nur gegen bestes model?
         gameName = subPr.getName()
-        bestModelPath = "./best_models/" + str(gameName) + "/best_model.pkl"
+        #bestModelPath = "./best_models/" + str(gameName) + "/best_model.pkl"
+        bestModelPath = "./best_models/" + str(gameName) + "/best_model_" + str(numberModels) + ".pkl"
         classifier.sgd_optimization(learning_rate=0.13, n_epochs=1000, dataset=gameTTV, batch_size=600, bestModelPath=bestModelPath)
 
 

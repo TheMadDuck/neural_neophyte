@@ -50,7 +50,7 @@ import theano.tensor as T
 
 # global classifier model, to prevent pickl IOs
 best_classifier = None
-predict_model = None
+predict_models = []
 
 class LogisticRegression(object):
     """Multi-class Logistic Regression Class
@@ -480,15 +480,15 @@ def loadBestModel(filePath):
     #load the saved model
     print("load BEst model")
     global best_classifier
-    global predict_model
+    global predict_models
     #best_classifier = pickle.load(open('best_model.pkl', 'rb'))
     best_classifier = pickle.load(open(filePath, 'rb'))
-    predict_model = theano.function(
+    predict_models.append(theano.function(
         inputs=[best_classifier.input],
-        outputs=best_classifier.y_pred)
+        outputs=best_classifier.y_pred))
 
 
-def predict(X): 
+def predict(X, classifier_number): 
     """
     An example of how to load a trained model and use it
     to predict labels.
@@ -504,7 +504,7 @@ def predict(X):
 
     # feed it with data
     newX = [X]
-    y = predict_model(newX)
+    y = predict_models[classifier_number](newX)
     return y
 
 
