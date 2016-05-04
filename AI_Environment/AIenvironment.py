@@ -12,6 +12,7 @@ import copy
 ########################################
 #load classifier:
 import learn_algorithms.theano_based.logistic_sgd as classifier
+#import learn_algorithms.theano_based.mlp as classifier
 
 
 #########################################
@@ -119,7 +120,7 @@ def initSaveList(transponiert):
         saveList[:] = playerOne, playerTwo
         return saveList
 
-def savePositions(field, color, position, saveList, transponiert):
+def savePositions(field, color, roundNumber, position, saveList, transponiert):
 
     fieldCopy = copy.deepcopy(field)
     if transponiert: # data in form ((X, y), (X,y),(...))
@@ -134,12 +135,14 @@ def savePositions(field, color, position, saveList, transponiert):
         if color == 1:
             flatField = fieldCopy.flatten()     # Achtung: flattne macht deepcopy. für ne einfache reference benutze ravel()... <- testen
             flatField = np.append(flatField, 1) # Achtung: habe ein feature für den jeweiligen player angehängt. 1 (bzw.2) ok ???
+            flatField = np.append(flatField, roundNumber) 
             saveList[0][0].append(flatField)
             saveList[0][1].append(position)
             return saveList
         else:
             flatField = fieldCopy.flatten()     # Achtung: flattne macht deepcopy. für ne einfache reference benutze ravel()... <- testen
             flatField = np.append(flatField, 2)
+            flatField = np.append(flatField, roundNumber) 
             saveList[1][0].append(flatField)
             saveList[1][1].append(position)
             return saveList
@@ -204,7 +207,7 @@ def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht
             else:
                 print("yeehaaaaaaaaa")
             '''            
-        saveList = savePositions(field, playerNumber, position, saveList, False)   #TODO : information wer gerade am zug ist abspeichern und providen. entweder jedes mal field invertieren oder ein feature mehr reintun.!!! 
+        saveList = savePositions(field, playerNumber, roundNumber, position, saveList, False)   #TODO : information wer gerade am zug ist abspeichern und providen. entweder jedes mal field invertieren oder ein feature mehr reintun.!!! 
         #TODO komplette savelist logic in die classe hier?!
 
         subPr.setStone(field, playerNumber, position)
@@ -313,7 +316,7 @@ def main():
         gameName = subPr.getName()
         #bestModelPath = "./best_models/" + str(gameName) + "/best_model.pkl"
         bestModelPath = "./best_models/" + str(gameName) + "/best_model_" + str(numberModels) + ".pkl"
-        classifier.sgd_optimization(learning_rate=0.13, n_epochs=1000, dataset=gameTTV, batch_size=600, bestModelPath=bestModelPath)
+        classifier.fit(learning_rate=0.13, n_epochs=1000, dataset=gameTTV, batch_size=600, bestModelPath=bestModelPath)
 
 
 main()

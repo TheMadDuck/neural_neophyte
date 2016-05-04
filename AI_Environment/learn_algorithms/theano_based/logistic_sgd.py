@@ -270,7 +270,7 @@ def load_data(dataset, dataDirect):
     return rval
 
 
-def sgd_optimization(learning_rate=0.13, n_epochs=1000,
+def fit(learning_rate=0.13, n_epochs=1000,
                            #dataset='mnist.pkl.gz',
                            # dataset='/home/noll/programming/python/theano/datasets/mnist/mnist.pkl.gz',
                            dataset="test", 
@@ -322,7 +322,7 @@ def sgd_optimization(learning_rate=0.13, n_epochs=1000,
 
     # construct the logistic regression class
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! important to change !!!!!!!!!!! dn
-    classifier = LogisticRegression(input=x, n_in= 7*7 + 1, n_out=7)   #7*7 for field size, +1 for who is playing.
+    classifier = LogisticRegression(input=x, n_in= 7*7 + 1 + 1, n_out=7)   #7*7 for field size, +1 for who is playing, +1 for round_number.
 
     # the cost we minimize during training is the negative log likelihood of
     # the model in symbolic format
