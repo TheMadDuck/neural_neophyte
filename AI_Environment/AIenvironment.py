@@ -9,75 +9,21 @@ import pickle
 import os.path
 import copy
 
-########################################
-#load classifier:
-import learn_algorithms.theano_based.logistic_sgd as classifier
-#import learn_algorithms.theano_based.mlp as classifier
+classifier = None
+subPr = None
 
-
-#########################################
-#load game:
-
-import games.fourInARow as subPr
-
-#########################################
+def setImports(extClassifier, extSubPr):
+    global classifier           
+    classifier = extClassifier
+    global subPr
+    subPr = extSubPr
 
 #best_models = None
-
-#########################################
-#create folder for best_models
-def folderHandler():
-    if (not os.path.isdir("./best_models")):
-        os.makedirs("./best_models") # maybe in a try catch block
-        print("best models is created")
-
-    gameName = subPr.getName()
-    if (not os.path.isdir("./best_models/" + str(gameName))):
-        os.makedirs("./best_models/" + str(gameName))
-        print(str(gameName) + "-folder is created")
-
-    classifier_models = []
-    for file in os.listdir("./best_models/" + str(gameName)):
-        if file.endswith(".pkl"):
-            classifier_models.append("./best_models/" + str(gameName) + "/" + str(file))
-    
-    print (classifier_models)
-    return classifier_models
-
-    #TODO: add all files(filenames) in this directory to an (global) array called 'models'. 'amount of models' is also important
-
-
-
-#########################################
-
-def loadBestModel():
-#    if(os.path.isfile("./best_model.pkl")):  #./ testen?
-#    gameName = subPr.getName()
-#    filePath = "./best_models/" + str(gameName) + "/best_model.pkl"
-
-    filePaths = folderHandler()
-    if (filePaths):
-        print("best model is there")
-        for i in filePaths:
-            classifier.loadBestModel(i)
-        return len(filePaths)
-    else:
-        return 0
-
-    """
-    #filePath = classifier_models[0]
-    if(os.path.isfile(filePath)): #Testen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        print("best model is there")
-        classifier.loadBestModel(filePath)
-        return True
-    else:
-        return False
-    """
 
 
 #########################################
 # naive AI:
-def AI_Move(field, playerNumber, legalMoves, bestModelExist, randomMoveProba):
+def AI_Move(field, playerNumber, roundNumber, legalMoves, bestModelExist, randomMoveProba):
     # sometimes you want a random move:
     if (rd.random() < randomMoveProba): 
         bestModelExist = 0
@@ -90,6 +36,7 @@ def AI_Move(field, playerNumber, legalMoves, bestModelExist, randomMoveProba):
         #print("A I")
         flatField = field.flatten()        
         flatField = np.append(flatField, playerNumber)
+        flatField = np.append(flatField, roundNumber)
         return classifier.predict(flatField, bestModelExist-1)[0]
     else:
         #print("random")
@@ -154,7 +101,7 @@ def savePositions(field, color, roundNumber, position, saveList, transponiert):
 #########################################
 # virtual game flow:
 
-def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht eher sowas wie gameFlow(player1, player2) human:0 ai models:1-x [allerdings sollten die models extern geladen werden...)
+def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht eher sowas wie gameFlow(player1, player2) human:0 ai models:1-x [allerdings sollten die models extern geladen werden...)   ACHTUNG ! ! ! noch spielt jedes model immer gegen sich selbst (bestmodel vs bestmodel) das sollte nicht sein !!
 
     amountRandom = 0.2  # vieleicht ausserhalb definieren?
     legalInputs = subPr.getLegalInputs()
@@ -180,9 +127,9 @@ def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht
             if (humanPlayerNumber == playerNumber): # is the human player 1 or player 2?
                 position = Human_Move(legalInputs)
             else:
-                position = AI_Move(field, playerNumber, legalInputs, bestModelExist, amountRandom) # get new position from extern
+                position = AI_Move(field, playerNumber, roundNumber, legalInputs, bestModelExist, amountRandom) # get new position from extern
         else:
-            position = AI_Move(field, playerNumber, legalInputs, bestModelExist, amountRandom) # get new position from extern
+            position = AI_Move(field, playerNumber, roundNumber, legalInputs, bestModelExist, amountRandom) # get new position from extern
         subPr.isLegalMove(field, playerNumber, position)
         #print(position)
         while (subPr.getSignal() == "unvalidPlayer") or (subPr.getSignal() == "unvalidPosition" or subPr.getSignal() == "columnIsFull"):
@@ -192,10 +139,10 @@ def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht
                     position = Human_Move(legalInputs)
                 else:
                     print("ERROR: The AI-Environment could not make a legal move. will try random move..")
-                    position = AI_Move(field, playerNumber, legalInputs, False, amountRandom) # get new position from extern
+                    position = AI_Move(field, playerNumber, roundNumber, legalInputs, False, amountRandom) # get new position from extern
             else:
                 print("ERROR: The AI-Environment could not make a legal move. will try random move..")
-                position = AI_Move(field, playerNumber, legalInputs, False, amountRandom) # get new position from extern
+                position = AI_Move(field, playerNumber, roundNumber, legalInputs, False, amountRandom) # get new position from extern
             subPr.isLegalMove(field, playerNumber, position)
 
 
@@ -284,44 +231,6 @@ def getTrainTestValidate(numberTrain, numberTest, numberValidate, KI_Number):
 
 ############################################
 
-
-"""
-print("gameTTV[0][0] : ")
-print (len(gameTTV[0][0]))
-print("gameTTV[0][1] : ")
-print (len(gameTTV[0][1]))
-
-print("gameTTV[0][0][23]")
-print(gameTTV[0][0][23])
-"""
-
-def main():
-    print("Play a Game  (press 1)")
-    print("Train the AI (press 2)")
-    mode = int(input(""))
-    while (mode != 1 and mode != 2):
-        mode = int(input("press 1 or 2 !!"))
-    numberModels = loadBestModel()
-    if mode == 1:
-        print ("do you want to be player 1 or player 2?")
-        humanPlayerNumber = int(input("press 1 or 2: "))
-        while (humanPlayerNumber != 1 and humanPlayerNumber != 2):
-            humanPlayerNumber = int(input("press 1 or 2: "))
-        
-#        classifier_models = folderHandler()
-        gameFlow(numberModels, True, humanPlayerNumber)  #nur gegen bestes Model !
-        
-    if mode == 2:
-        gameTTV = getTrainTestValidate(4000,100,100, numberModels) #nur gegen bestes model?
-        gameName = subPr.getName()
-        #bestModelPath = "./best_models/" + str(gameName) + "/best_model.pkl"
-        bestModelPath = "./best_models/" + str(gameName) + "/best_model_" + str(numberModels) + ".pkl"
-        classifier.fit(learning_rate=0.13, n_epochs=1000, dataset=gameTTV, batch_size=600, bestModelPath=bestModelPath)
-
-
-main()
-
-#folderHandler()
 
 
 

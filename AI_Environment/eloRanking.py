@@ -1,6 +1,8 @@
 import numpy as np
 import math as mt
 
+import AIenvironment as AIEnv
+
 def naiveElo(leftValue, rightValue, decition):
     distance = abs(leftValue - rightValue)
     normedDistance = (distance/5 + 0.1)
@@ -10,7 +12,12 @@ def naiveElo(leftValue, rightValue, decition):
     rightValue -= normedDistance
     return (leftValue, rightValue)
 
-bMap = {"synn": 1, "maij": 1}
 
-updatedElos = naiveElo(1.0, 2.0, 1)
-print(updatedElos)
+def turnier(amountGames, bestModelExist):
+    for game in range(amountGames):
+        AIEnv.gameFlow(bestModelExist, False, 0)
+    return 0
+#bMap = {"synn": 1, "maij": 1}
+
+#updatedElos = naiveElo(1.0, 2.0, 1)
+#print(updatedElos)
