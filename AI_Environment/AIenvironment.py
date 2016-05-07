@@ -101,7 +101,7 @@ def savePositions(field, color, roundNumber, position, saveList, transponiert):
 #########################################
 # virtual game flow:
 
-def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht eher sowas wie gameFlow(player1, player2) human:0 ai models:1-x [allerdings sollten die models extern geladen werden...)   ACHTUNG ! ! ! noch spielt jedes model immer gegen sich selbst (bestmodel vs bestmodel) das sollte nicht sein !!
+def gameFlow(player):   #TODO vieleicht eher sowas wie gameFlow(player1, player2) human:-1 random:0 ai models:1-x [allerdings sollten die models extern geladen werden...)   ACHTUNG ! ! ! noch spielt jedes model immer gegen sich selbst (bestmodel vs bestmodel) das sollte nicht sein !!
 
     amountRandom = 0.2  # vieleicht ausserhalb definieren?
     legalInputs = subPr.getLegalInputs()
@@ -122,24 +122,28 @@ def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht
             playerNumber = 1
         else:
             playerNumber = 2
+        if (player[playerNumber-1] == -1):
+            position = Human_Move(legalInputs)
+        else:
+            position = AI_Move(field, playerNumber, roundNumber, legalInputs, player[playerNumber-1], amountRandom) # get new position from extern
+        subPr.isLegalMove(field, playerNumber, position)
 
-        if (againstHuman): # do we play against a human?
-            if (humanPlayerNumber == playerNumber): # is the human player 1 or player 2?
-                position = Human_Move(legalInputs)
-            else:
-                position = AI_Move(field, playerNumber, roundNumber, legalInputs, bestModelExist, amountRandom) # get new position from extern
+
+        """
+#        if (againstHuman): # do we play against a human?
+        if (humanPlayerNumber == playerNumber): # is the human player 1 or player 2?
+            position = Human_Move(legalInputs)
         else:
             position = AI_Move(field, playerNumber, roundNumber, legalInputs, bestModelExist, amountRandom) # get new position from extern
-        subPr.isLegalMove(field, playerNumber, position)
+        else:
+            position = AI_Move(field, playerNumber, roundNumber, legalInputs, bestModelExist, amountRandom) # get new position from extern
+        """
+
         #print(position)
         while (subPr.getSignal() == "unvalidPlayer") or (subPr.getSignal() == "unvalidPosition" or subPr.getSignal() == "columnIsFull"):
-            if (againstHuman): # do we play against a human?
-                if (humanPlayerNumber == playerNumber): # is the human player 1 or player 2?
-                    print("this move is not legal, please try again!!")
-                    position = Human_Move(legalInputs)
-                else:
-                    print("ERROR: The AI-Environment could not make a legal move. will try random move..")
-                    position = AI_Move(field, playerNumber, roundNumber, legalInputs, False, amountRandom) # get new position from extern
+            if (player[playerNumber-1] == -1): # is the human player 1 or player 2?
+                print("this move is not legal, please try again!!")
+                position = Human_Move(legalInputs)
             else:
                 print("ERROR: The AI-Environment could not make a legal move. will try random move..")
                 position = AI_Move(field, playerNumber, roundNumber, legalInputs, False, amountRandom) # get new position from extern
@@ -160,7 +164,7 @@ def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht
         subPr.setStone(field, playerNumber, position)
         if subPr.getSignal() != "stoneIsSet":
             print("ERROR: Stone is not saved")
-        if(againstHuman):
+        if(player[0] == -1 or player[1] == -1): #TODO für jede phase einzeln testen
             print(" ")
             print(field)        # show field in a game vs. a human !!!
         winner = subPr.hasAWinner(field, playerNumber, position)
@@ -168,7 +172,7 @@ def gameFlow(bestModelExist, againstHuman, humanPlayerNumber):   #TODO vieleicht
             #print("we have a winner!!!")
             if winner == 0:
                 print("ERROR: we could not determine who won!")
-            if (againstHuman):
+            if(player[0] == -1 or player[1] == -1):
                 print(" ")
                 print("the winner is: " + str(winner))
                 print(" ")
@@ -205,19 +209,19 @@ def getTrainTestValidate(numberTrain, numberTest, numberValidate, KI_Number):
     for i in range(numberTrain):
         if (i % 100 == 0):
             print ("trainset number: " + str(i))
-        field, position = gameFlow(KI_Number, False, 0)
+        field, position = gameFlow([KI_Number, KI_Number])
         winnerPoolTrain[0].extend(field)   #TODO append und etend checken! in der fourInARow - Class gibts auch noch so kandidaten!!
         winnerPoolTrain[1].extend(position)
 
     winnerPoolTest =[[],[]]
     for i in range(numberTest):
-        field, position = gameFlow(KI_Number, False, 0)
+        field, position = gameFlow([KI_Number, KI_Number])
         winnerPoolTest[0].extend(field)
         winnerPoolTest[1].extend(position)
 
     winnerPoolValidate =[[],[]]
     for i in range(numberValidate):
-        field, position = gameFlow(KI_Number, False, 0)
+        field, position = gameFlow([KI_Number, KI_Number])
         winnerPoolValidate[0].extend(field)
         winnerPoolValidate[1].extend(position)
 

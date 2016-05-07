@@ -15,7 +15,7 @@ def naiveElo(leftValue, rightValue, decition):
 
 def turnier(amountGames, bestModelExist):
     for game in range(amountGames):
-        AIEnv.gameFlow(bestModelExist, False, 0)
+        AIEnv.gameFlow([bestModelExist, bestModelExist])
     return 0
 #bMap = {"synn": 1, "maij": 1}
 

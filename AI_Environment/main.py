@@ -29,6 +29,7 @@ def main():
     while (mode != 1 and mode != 2 and mode != 3):
         mode = int(input("press 1, 2 or 3 !!"))
     numberModels = modelHandler.loadBestModel(classifier, subPr.getName())
+    
     if mode == 1:
         print ("do you want to be player 1 or player 2?")
         humanPlayerNumber = int(input("press 1 or 2: "))
@@ -36,7 +37,12 @@ def main():
             humanPlayerNumber = int(input("press 1 or 2: "))
         
 #        classifier_models = folderHandler()
-        AIEnv.gameFlow(numberModels, True, humanPlayerNumber)  #nur gegen bestes Model !
+        if (humanPlayerNumber == 1):
+            AIEnv.gameFlow([-1, numberModels])
+#            player = [0, numberModels]
+        else:
+            AIEnv.gameFlow([numberModels, -1])
+            #player = [numberModels, 0]
         
     if mode == 2:
         gameTTV = AIEnv.getTrainTestValidate(4000,100,100, numberModels) #nur gegen bestes model?
@@ -44,6 +50,7 @@ def main():
         #bestModelPath = "./best_models/" + str(gameName) + "/best_model.pkl"
         bestModelPath = "./best_models/" + str(gameName) + "/best_model_" + str(numberModels) + ".pkl"
         classifier.fit(learning_rate=0.13, n_epochs=1000, dataset=gameTTV, batch_size=600, bestModelPath=bestModelPath)
+    
     if mode == 3:
         print("how many games should be played?")
         amountGames = int (input(""))
