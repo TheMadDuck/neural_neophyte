@@ -2,5 +2,5 @@
 #from fourInARow import AIenvironment
 
 
-import AI_Environment.AIenvironment
-print ("not yet implemented. you might want to try out the AIenvironment.py file")
+#import AI_Environment.AIenvironment
+print ("\nnot yet implemented. run the main.py file in the AIenvironment-folder !! \n")

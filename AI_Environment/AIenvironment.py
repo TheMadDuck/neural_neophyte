@@ -9,6 +9,11 @@ import pickle
 import os.path
 import copy
 
+#########################################
+#import own random distrib
+import nRandomDistrib.nRand as nRand
+
+#########################################
 classifier = None
 subPr = None
 
@@ -102,7 +107,7 @@ def savePositions(field, color, roundNumber, position, saveList, transponiert):
 # virtual game flow:
 
 def gameFlow(player):   #TODO vieleicht eher sowas wie gameFlow(player1, player2) human:-1 random:0 ai models:1-x [allerdings sollten die models extern geladen werden...)   ACHTUNG ! ! ! noch spielt jedes model immer gegen sich selbst (bestmodel vs bestmodel) das sollte nicht sein !!
-
+    #TODO field mit in die gameflow()-init. um mit nem nicht-leeren feld anzufangen.
     amountRandom = 0.15  # vieleicht ausserhalb definieren?
     legalInputs = subPr.getLegalInputs()
     if subPr.getSignal() != "legalInputs_initialized":
@@ -145,7 +150,7 @@ def gameFlow(player):   #TODO vieleicht eher sowas wie gameFlow(player1, player2
                 print("this move is not legal, please try again!!")
                 position = Human_Move(legalInputs)
             else:
-                print("ERROR: The AI-Environment could not make a legal move. will try random move..")
+                #print("ERROR: The AI-Environment could not make a legal move. will try random move..")
                 position = AI_Move(field, playerNumber, roundNumber, legalInputs, False, amountRandom) # get new position from extern
             subPr.isLegalMove(field, playerNumber, position)
 
@@ -195,6 +200,7 @@ def gameFlow(player):   #TODO vieleicht eher sowas wie gameFlow(player1, player2
 #TODO always keep the X-best Models [X = 5 or ?], so AI-Move can choose from a set of models. <- git exclude one folder with models???!!!!!!!!
 #     mayby rank those with an elo number?! 
 #TODO Elo tunier. (count when an older modelling beat an younger?) higher elo -> higher probability to play! Which model plays against which model in train phase? train phase trough turnier?
+#TODO rewrite entire code in c
 #TODO enjoy life
 
 
@@ -209,24 +215,24 @@ def getTrainTestValidate(numberTrain, numberTest, numberValidate, KI_Number):
     for i in range(numberTrain):
         if (i % 100 == 0):
             print ("trainset number: " + str(i))
-        KI_One = rd.randint(0, KI_Number) # besser vieleicht:  abs(normalverteilt(-KI_Number, + KI_Number))
-        KI_Two = rd.randint(0, KI_Number)
+        KI_One = nRand.nRand(KI_Number)
+        KI_Two = nRand.nRand(KI_Number)
         field, position = gameFlow([KI_One, KI_Two])
         winnerPoolTrain[0].extend(field)   #TODO append und etend checken! in der fourInARow - Class gibts auch noch so kandidaten!!
         winnerPoolTrain[1].extend(position)
 
     winnerPoolTest =[[],[]]
     for i in range(numberTest):
-        KI_One = rd.randint(0, KI_Number) # besser vieleicht:  abs(normalverteilt(-KI_Number, + KI_Number))
-        KI_Two = rd.randint(0, KI_Number)
+        KI_One = nRand.nRand(KI_Number)
+        KI_Two = nRand.nRand(KI_Number)
         field, position = gameFlow([KI_One, KI_Two])
         winnerPoolTest[0].extend(field)
         winnerPoolTest[1].extend(position)
 
     winnerPoolValidate =[[],[]]
     for i in range(numberValidate):
-        KI_One = rd.randint(0, KI_Number) # besser vieleicht:  abs(normalverteilt(-KI_Number, + KI_Number))
-        KI_Two = rd.randint(0, KI_Number)
+        KI_One = nRand.nRand(KI_Number)
+        KI_Two = nRand.nRand(KI_Number)
         field, position = gameFlow([KI_One, KI_Two])
         winnerPoolValidate[0].extend(field)
         winnerPoolValidate[1].extend(position)

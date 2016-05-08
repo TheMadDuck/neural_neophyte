@@ -24,6 +24,8 @@ array0[0].append(42)
 print(array0)
 '''
 '''
+    #if numberModels == 0:
+    #    numberModels = 1
 array0 = np.empty(4, dtype=np.object)
 array0[:] = [],[],[],[]
 print(array0)
@@ -35,10 +37,21 @@ print(array0)
 
 print ("----------")
 
-def arand(border):
-    a = rd.randint(-border, + border)
-    b = abs(a)
-    return b
 
-for i in range(10):
-    print(arand(10))
+def nRand(border): #returns a integer beween 0 and border(booth inclusive). 0 is the least probable
+    norm = np.random.normal(border, border/3, 1)
+    norm = norm.astype(int)
+    norm = abs(norm)
+    sizeNorm = norm.size
+    for i in range(sizeNorm):
+        if norm[i] >= border:# > testen???
+            norm[i] = rd.randint(0, border-1)
+    return norm[0]
+   
+#print(bRand(10))
+
+verteilung = np.zeros(10)
+for i in range(10000):
+    verteilung[nRand(10)] += 1
+print(verteilung)
+

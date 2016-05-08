@@ -13,9 +13,19 @@ def folderHandler(gameName):
         print(str(gameName) + "-folder is created")
 
     classifier_models = []
+
+    """
+    # ACHTUNG: reihenfolge wird so wohl nicht eingehalten:
     for file in os.listdir("./best_models/" + str(gameName)):
         if file.endswith(".pkl"):
             classifier_models.append("./best_models/" + str(gameName) + "/" + str(file))
+    """
+
+    path = "./best_models/" + str(gameName) + "/"
+    number_models = len([name for name in os.listdir(path) if os.path.isfile(os.path.join(path,name)) and name.endswith('.pkl')])
+
+    for i in range(number_models):
+        classifier_models.append("./best_models/" + str(gameName) + "/best_model_" + str(i) + ".pkl")
     
     print (classifier_models)
     return classifier_models
