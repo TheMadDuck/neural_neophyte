@@ -1,5 +1,5 @@
 import numpy as np
-
+import random as rd
 
 def incr(a, b):
     a[0].append(b)
@@ -33,4 +33,12 @@ array0[0].append(3)
 print(array0)
 '''
 
+print ("----------")
 
+def arand(border):
+    a = rd.randint(-border, + border)
+    b = abs(a)
+    return b
+
+for i in range(10):
+    print(arand(10))

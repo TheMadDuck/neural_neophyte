@@ -23,12 +23,12 @@ def setImports(extClassifier, extSubPr):
 
 #########################################
 # naive AI:
-def AI_Move(field, playerNumber, roundNumber, legalMoves, bestModelExist, randomMoveProba):
+def AI_Move(field, playerNumber, roundNumber, legalMoves, classifierModel, randomMoveProba):
     # sometimes you want a random move:
     if (rd.random() < randomMoveProba): 
-        bestModelExist = 0
+        classifierModel = 0
 
-    if(bestModelExist):
+    if(classifierModel):
         #TODO WICHTIG:  field glätten und in flatfield speichern
 
         #fieldCopy = copy.deepcopy(field)
@@ -37,7 +37,7 @@ def AI_Move(field, playerNumber, roundNumber, legalMoves, bestModelExist, random
         flatField = field.flatten()        
         flatField = np.append(flatField, playerNumber)
         flatField = np.append(flatField, roundNumber)
-        return classifier.predict(flatField, bestModelExist-1)[0]
+        return classifier.predict(flatField, classifierModel-1)[0]
     else:
         #print("random")
         return rd.choice(legalMoves)
@@ -103,7 +103,7 @@ def savePositions(field, color, roundNumber, position, saveList, transponiert):
 
 def gameFlow(player):   #TODO vieleicht eher sowas wie gameFlow(player1, player2) human:-1 random:0 ai models:1-x [allerdings sollten die models extern geladen werden...)   ACHTUNG ! ! ! noch spielt jedes model immer gegen sich selbst (bestmodel vs bestmodel) das sollte nicht sein !!
 
-    amountRandom = 0.2  # vieleicht ausserhalb definieren?
+    amountRandom = 0.15  # vieleicht ausserhalb definieren?
     legalInputs = subPr.getLegalInputs()
     if subPr.getSignal() != "legalInputs_initialized":
         print("ERROR: legal Inputs could not get initialized")
@@ -209,19 +209,25 @@ def getTrainTestValidate(numberTrain, numberTest, numberValidate, KI_Number):
     for i in range(numberTrain):
         if (i % 100 == 0):
             print ("trainset number: " + str(i))
-        field, position = gameFlow([KI_Number, KI_Number])
+        KI_One = rd.randint(0, KI_Number) # besser vieleicht:  abs(normalverteilt(-KI_Number, + KI_Number))
+        KI_Two = rd.randint(0, KI_Number)
+        field, position = gameFlow([KI_One, KI_Two])
         winnerPoolTrain[0].extend(field)   #TODO append und etend checken! in der fourInARow - Class gibts auch noch so kandidaten!!
         winnerPoolTrain[1].extend(position)
 
     winnerPoolTest =[[],[]]
     for i in range(numberTest):
-        field, position = gameFlow([KI_Number, KI_Number])
+        KI_One = rd.randint(0, KI_Number) # besser vieleicht:  abs(normalverteilt(-KI_Number, + KI_Number))
+        KI_Two = rd.randint(0, KI_Number)
+        field, position = gameFlow([KI_One, KI_Two])
         winnerPoolTest[0].extend(field)
         winnerPoolTest[1].extend(position)
 
     winnerPoolValidate =[[],[]]
     for i in range(numberValidate):
-        field, position = gameFlow([KI_Number, KI_Number])
+        KI_One = rd.randint(0, KI_Number) # besser vieleicht:  abs(normalverteilt(-KI_Number, + KI_Number))
+        KI_Two = rd.randint(0, KI_Number)
+        field, position = gameFlow([KI_One, KI_Two])
         winnerPoolValidate[0].extend(field)
         winnerPoolValidate[1].extend(position)
 

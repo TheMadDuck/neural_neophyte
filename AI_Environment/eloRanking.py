@@ -1,5 +1,6 @@
 import numpy as np
 import math as mt
+import random as rd
 
 import AIenvironment as AIEnv
 
@@ -13,9 +14,11 @@ def naiveElo(leftValue, rightValue, decition):
     return (leftValue, rightValue)
 
 
-def turnier(amountGames, bestModelExist):
+def turnier(amountGames, amountModels):
     for game in range(amountGames):
-        AIEnv.gameFlow([bestModelExist, bestModelExist])
+        KI_One = rd.randint(0, amountModels) # besser vieleicht:  abs(normalverteilt(-KI_Number, + KI_Number))
+        KI_Two = rd.randint(0, amountModels)
+        AIEnv.gameFlow([KI_One, KI_Two])
     return 0
 #bMap = {"synn": 1, "maij": 1}
 
