@@ -15,6 +15,8 @@ import nRandomDistrib.nRand as nRand
 def naiveElo(leftValue, rightValue, decition):
     distance = abs(leftValue - rightValue)
     normedDistance = (distance/5 + 0.1)
+    if(decition == 0): #played a draw #TODO: bei draw müssen die punkte anders verteilt werden. Was ist mit grossen punkte unterschieden?
+        return (leftValue, rightValue)
     if(decition == 1):
         normedDistance = - normedDistance
     leftValue += normedDistance
@@ -65,6 +67,7 @@ def saveEloFile(eloRanking, gameName):
         pickle.dump(eloRanking, open(eloFileName, 'wb'))
     return 0
 
+
 ################################################
 def sortModels(eloRanking, gameName):
     newEloRanking = sorted(range(len(eloRanking)), key=lambda k: eloRanking[k])
@@ -79,6 +82,7 @@ def sortModels(eloRanking, gameName):
 
     return newEloRanking
 
+
 #################################################
 def turnier(amountGames, amountModels, gameName):
 
@@ -90,8 +94,8 @@ def turnier(amountGames, amountModels, gameName):
     for game in range(amountGames):
         KI_One = nRand.nRand(amountModels)  #TODO checken: wenn amountModels > 1, wird dann je ein random model benutzt? kommt das random model überhaupt in das eloRanking model??
         KI_Two = nRand.nRand(amountModels)
-#        AIEnv.gameFlow([KI_One, KI_Two])
-        newRanking = naiveElo(eloRanking[KI_One], eloRanking[KI_Two], AIEnv.gameFlow([KI_One, KI_Two]))
+        AIEnv.gameFlow([KI_One, KI_Two])
+        newRanking = naiveElo(eloRanking[KI_One], eloRanking[KI_Two], AIEnv.getWinner())
         eloRanking[KI_One] = newRanking[0]
         eloRanking[KI_Two] = newRanking[1]
 

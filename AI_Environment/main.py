@@ -1,5 +1,5 @@
 import AIenvironment as AIEnv
-
+import gameFlowClass as gFC
 ########################################
 #to load the models
 import modelHandler
@@ -17,12 +17,16 @@ import learn_algorithms.theano_based.logistic_sgd as classifier
 #load game:
 import games.fourInARow as subPr
 
+#########################################
+import trainTestValidate as ttv
 
 #########################################
 #########################################
 
 def main():
     AIEnv.setImports(classifier, subPr)
+    game = gFC.gameFlowClass()
+    game.setImports(classifier, subPr)
     print("Play a Game  (press 1)")
     print("Train the AI (press 2)")
     print("Sort existing classifiers and rank them (press 3)")
@@ -45,7 +49,7 @@ def main():
             AIEnv.gameFlow([numberModels, -1])
         
     if mode == 2:
-        gameTTV = AIEnv.getTrainTestValidate(4000,100,100, numberModels) #nur gegen bestes model?
+        gameTTV = ttv.getTrainTestValidate(4000,100,100, numberModels) #nur gegen bestes model?
         bestModelPath = "./best_models/" + str(gameName) + "/best_model_" + str(numberModels) + ".pkl"
         classifier.fit(learning_rate=0.13, n_epochs=1000, dataset=gameTTV, batch_size=600, bestModelPath=bestModelPath)
     

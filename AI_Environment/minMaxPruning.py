@@ -1,5 +1,7 @@
 #import numpy as np
+import AIenvironment
 
+"""
 def minmax(position, depth):
     if position = won:
         return 1
@@ -22,3 +24,10 @@ def minmax(position, depth):
 
 
 # oder so... :P
+"""
+
+def mcts(field, tree, legalMoves, playerOne, playerTwo, randomMoveProba):
+    
+    path = AIenvironment.gameFlow([playerOne, playerTwo], field, False)
+    return 0
+

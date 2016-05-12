@@ -7,15 +7,24 @@ import numpy as np
 import random as rd
 import pickle
 import os.path
-import copy
+
 
 #########################################
-#import own random distrib
-import nRandomDistrib.nRand as nRand
+#import minMax heuristics
+import minMaxPruning
+
+
+#########################################
+import saveListHandler
 
 #########################################
 classifier = None
 subPr = None
+
+
+########################################
+# TODO: winner is global variable. maybe i should rebuild this file as a class ?!
+winner = None
 
 def setImports(extClassifier, extSubPr):
     global classifier           
@@ -27,8 +36,8 @@ def setImports(extClassifier, extSubPr):
 
 
 #########################################
-# naive AI:
-def AI_Move(field, playerNumber, roundNumber, legalMoves, classifierModel, randomMoveProba):
+# the AI:
+def AI_Move(field, playerNumber, roundNumber, legalMoves, classifierModel, randomMoveProba, saveTheGame):
     # sometimes you want a random move:
     if (rd.random() < randomMoveProba): 
         classifierModel = 0
@@ -42,63 +51,23 @@ def AI_Move(field, playerNumber, roundNumber, legalMoves, classifierModel, rando
         flatField = field.flatten()        
         flatField = np.append(flatField, playerNumber)
         flatField = np.append(flatField, roundNumber)
+        '''
+        if (saveTheGame == True):
+            print("test: saveGame = True")
+            minMaxPruning.mcts(field, None, None, classifierModel, classifierModel, 0.2)
+        else:
+            print("test: saveGame =  False!")
+        '''
         return classifier.predict(flatField, classifierModel-1)[0]
     else:
         #print("random")
         return rd.choice(legalMoves)
-#########################################
 
+#########################################
 #similar the human move:
 def Human_Move(legalMoves):
     move = int(input("wich move do you want to make? [" + str(legalMoves) + " ]"))
     return move
-
-
-#########################################
-# save the game in a saveList
-
-#init saveList
-def initSaveList(transponiert):
-    if transponiert: # data in form ((X,y), (X,y),(...)) 
-        playerOne = []  #dürfen nur einmal initialisiert werden!
-        playerTwo = []
-        saveList = np.empty(2, dtype=np.object)
-        saveList[:] = playerOne, playerTwo
-        return saveList
-    else: # data in form ((X,X,X...), (y,y,y...))
-        playerOne = [[],[]]
-        playerTwo = [[],[]]
-        saveList = np.empty(2, dtype=np.object)
-        saveList[:] = playerOne, playerTwo
-        return saveList
-
-def savePositions(field, color, roundNumber, position, saveList, transponiert):
-
-    fieldCopy = copy.deepcopy(field)
-    if transponiert: # data in form ((X, y), (X,y),(...))
-        touple = (fieldCopy, position)
-        if color == 1:
-            saveList[0].append(touple) #TODO Testen!!!)
-            return saveList
-        else:
-            saveList[1].append(touple)
-            return saveList
-    else: # data in form ((X,X,X...), (y,y,y...))
-        if color == 1:
-            flatField = fieldCopy.flatten()     # Achtung: flattne macht deepcopy. für ne einfache reference benutze ravel()... <- testen
-            flatField = np.append(flatField, 1) # Achtung: habe ein feature für den jeweiligen player angehängt. 1 (bzw.2) ok ???
-            flatField = np.append(flatField, roundNumber) 
-            saveList[0][0].append(flatField)
-            saveList[0][1].append(position)
-            return saveList
-        else:
-            flatField = fieldCopy.flatten()     # Achtung: flattne macht deepcopy. für ne einfache reference benutze ravel()... <- testen
-            flatField = np.append(flatField, 2)
-            flatField = np.append(flatField, roundNumber) 
-            saveList[1][0].append(flatField)
-            saveList[1][1].append(position)
-            return saveList
-
 
 
 
@@ -106,20 +75,24 @@ def savePositions(field, color, roundNumber, position, saveList, transponiert):
 #########################################
 # virtual game flow:
 
-def gameFlow(player):   #TODO vieleicht eher sowas wie gameFlow(player1, player2) human:-1 random:0 ai models:1-x [allerdings sollten die models extern geladen werden...)   ACHTUNG ! ! ! noch spielt jedes model immer gegen sich selbst (bestmodel vs bestmodel) das sollte nicht sein !!
-    #TODO field mit in die gameflow()-init. um mit nem nicht-leeren feld anzufangen.
+#def gameFlow(player):   #TODO vieleicht eher sowas wie gameFlow(player1, player2) human:-1 random:0 ai models:1-x [allerdings sollten die models extern geladen werden...)   ACHTUNG ! ! ! noch spielt jedes model immer gegen sich selbst (bestmodel vs bestmodel) das sollte nicht sein !!
+    #TODO field mit in die gameflow()-init. um mit nem nicht-leeren feld anzufangen. + bool um zu sagen ob spiel gesaved wird oder nicht.
+def gameFlow(player, field = None, saveTheGame = True):
     amountRandom = 0.15  # vieleicht ausserhalb definieren?
     legalInputs = subPr.getLegalInputs()
     if subPr.getSignal() != "legalInputs_initialized":
         print("ERROR: legal Inputs could not get initialized")
 
-    saveList = initSaveList(False)
+    if (saveTheGame):
+        saveList = saveListHandler.initSaveList(False)
+    else:
+        gamePath = [] # TODO: überlegen ob wenn wir zb monte-carlo benutzten wir nur den pfad benötigen
 
-    field = subPr.initField()
-    if subPr.getSignal() != "field_initialized":
-        print("ERROR: Field could not get initialized")
+    if (field == None): #testen
+        field = subPr.initField()
+        if subPr.getSignal() != "field_initialized":
+            print("ERROR: Field could not get initialized")
 
-    #game = subPr.gameLoop()
     roundNumber = 0
     while((subPr.getSignal() != "weHaveAWinner") or (subPr.getSignal() != "gameIsOver")):
         roundNumber += 1
@@ -130,41 +103,25 @@ def gameFlow(player):   #TODO vieleicht eher sowas wie gameFlow(player1, player2
         if (player[playerNumber-1] == -1):
             position = Human_Move(legalInputs)
         else:
-            position = AI_Move(field, playerNumber, roundNumber, legalInputs, player[playerNumber-1], amountRandom) # get new position from extern
+            position = AI_Move(field, playerNumber, roundNumber, legalInputs, player[playerNumber-1], amountRandom, saveTheGame) # get new position from extern
         subPr.isLegalMove(field, playerNumber, position)
 
 
-        """
-#        if (againstHuman): # do we play against a human?
-        if (humanPlayerNumber == playerNumber): # is the human player 1 or player 2?
-            position = Human_Move(legalInputs)
-        else:
-            position = AI_Move(field, playerNumber, roundNumber, legalInputs, bestModelExist, amountRandom) # get new position from extern
-        else:
-            position = AI_Move(field, playerNumber, roundNumber, legalInputs, bestModelExist, amountRandom) # get new position from extern
-        """
-
-        #print(position)
         while (subPr.getSignal() == "unvalidPlayer") or (subPr.getSignal() == "unvalidPosition" or subPr.getSignal() == "columnIsFull"):
             if (player[playerNumber-1] == -1): # is the human player 1 or player 2?
                 print("this move is not legal, please try again!!")
                 position = Human_Move(legalInputs)
             else:
                 #print("ERROR: The AI-Environment could not make a legal move. will try random move..")
-                position = AI_Move(field, playerNumber, roundNumber, legalInputs, False, amountRandom) # get new position from extern
+                position = AI_Move(field, playerNumber, roundNumber, legalInputs, False, amountRandom, saveTheGame) # get new position from extern
             subPr.isLegalMove(field, playerNumber, position)
 
 
-            '''
-            if subPr.getSignal() != "moveIsLegal":
-                print("ERROR: The AI-Environment could not make a legal move. will try random move..")
-                position = AI_Move(field, playerNumber, legalInputs, False) 
-                subPr.isLegalMove(field, playerNumber, position)
-            else:
-                print("yeehaaaaaaaaa")
-            '''            
-        saveList = savePositions(field, playerNumber, roundNumber, position, saveList, False)   #TODO : information wer gerade am zug ist abspeichern und providen. entweder jedes mal field invertieren oder ein feature mehr reintun.!!! 
-        #TODO komplette savelist logic in die classe hier?!
+        if(saveTheGame):
+            saveList = saveListHandler.savePositions(field, playerNumber, roundNumber, position, saveList, False)   #TODO : information wer gerade am zug ist abspeichern und providen. entweder jedes mal field invertieren oder ein feature mehr reintun.!!! 
+        else:
+            gamePath.append(position)
+            #TODO komplette savelist logic in die classe hier?!
 
         subPr.setStone(field, playerNumber, position)
         if subPr.getSignal() != "stoneIsSet":
@@ -172,9 +129,9 @@ def gameFlow(player):   #TODO vieleicht eher sowas wie gameFlow(player1, player2
         if(player[0] == -1 or player[1] == -1): #TODO für jede phase einzeln testen
             print(" ")
             print(field)        # show field in a game vs. a human !!!
+        global winner
         winner = subPr.hasAWinner(field, playerNumber, position)
         if (subPr.getSignal() == "weHaveAWinner"):
-            #print("we have a winner!!!")
             if winner == 0:
                 print("ERROR: we could not determine who won!")
             if(player[0] == -1 or player[1] == -1):
@@ -187,11 +144,19 @@ def gameFlow(player):   #TODO vieleicht eher sowas wie gameFlow(player1, player2
         if (subPr.getSignal() == "gameIsOver"):
             break
 
-#    print("################################")
-#    print("spielverlauf vom Sieger (zum lernen):")
-#    print(saveList[winner-1])
-    
-    return saveList[winner-1]
+    if(saveTheGame):
+        return saveList[winner-1]
+    else:
+        return gamePath  # returns only the path, the game took [do we need information about the  winner?]
+
+def getWinner():
+    return winner
+
+
+
+
+############################################
+
 
 # change name (AI_environment.py)
 #TODO add documentation!!!
@@ -202,52 +167,6 @@ def gameFlow(player):   #TODO vieleicht eher sowas wie gameFlow(player1, player2
 #TODO Elo tunier. (count when an older modelling beat an younger?) higher elo -> higher probability to play! Which model plays against which model in train phase? train phase trough turnier?
 #TODO rewrite entire code in c
 #TODO enjoy life
-
-
-def getTrainTestValidate(numberTrain, numberTest, numberValidate, KI_Number):
-    """
-    get the winning moves of many games (KIone vs. KItwo)
-    """
-    #classifier_models = folderHandler()
-    #bestModelExist = loadBestModel()
-
-    winnerPoolTrain =[[],[]]
-    for i in range(numberTrain):
-        if (i % 100 == 0):
-            print ("trainset number: " + str(i))
-        KI_One = nRand.nRand(KI_Number)
-        KI_Two = nRand.nRand(KI_Number)
-        field, position = gameFlow([KI_One, KI_Two])
-        winnerPoolTrain[0].extend(field)   #TODO append und etend checken! in der fourInARow - Class gibts auch noch so kandidaten!!
-        winnerPoolTrain[1].extend(position)
-
-    winnerPoolTest =[[],[]]
-    for i in range(numberTest):
-        KI_One = nRand.nRand(KI_Number)
-        KI_Two = nRand.nRand(KI_Number)
-        field, position = gameFlow([KI_One, KI_Two])
-        winnerPoolTest[0].extend(field)
-        winnerPoolTest[1].extend(position)
-
-    winnerPoolValidate =[[],[]]
-    for i in range(numberValidate):
-        KI_One = nRand.nRand(KI_Number)
-        KI_Two = nRand.nRand(KI_Number)
-        field, position = gameFlow([KI_One, KI_Two])
-        winnerPoolValidate[0].extend(field)
-        winnerPoolValidate[1].extend(position)
-
-
-    dataset = np.array((winnerPoolTrain, winnerPoolTest, winnerPoolValidate))   ## gucken wie dataset auszusehen hat, villeicht auch ([],(),[[]]....
-
-    #TODO wirklich pickln?
-#    newFile= open("gameTTV.p", "w+")
-#    pickle.dump(dataset, open("gameTTV.p", "rb"))
-    return dataset
-
-############################################
-
-
 
 
 ###########################################
