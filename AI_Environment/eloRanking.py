@@ -6,6 +6,7 @@ import os
 import shutil
 
 import AIenvironment as AIEnv
+import gameFlowClass as gFC
 
 
 #########################################
@@ -84,18 +85,19 @@ def sortModels(eloRanking, gameName):
 
 
 #################################################
-def turnier(amountGames, amountModels, gameName):
+def turnier(gameFlow, amountGames, amountModels, gameName):
 
     #eloRanking = loadEloFile(gameName)  # brauchen wir wirklich die ergebniss vorheriger turniere??
 
     #if (eloRanking == None):
     eloRanking = [1000] * amountModels
     print(eloRanking)
-    for game in range(amountGames):
+    for gameNumber in range(amountGames):
         KI_One = nRand.nRand(amountModels)  #TODO checken: wenn amountModels > 1, wird dann je ein random model benutzt? kommt das random model überhaupt in das eloRanking model??
         KI_Two = nRand.nRand(amountModels)
-        AIEnv.gameFlow([KI_One, KI_Two])
-        newRanking = naiveElo(eloRanking[KI_One], eloRanking[KI_Two], AIEnv.getWinner())
+        #AIEnv.gameFlow([KI_One, KI_Two])
+        gameFlow.gameFlow([KI_One, KI_Two])
+        newRanking = naiveElo(eloRanking[KI_One], eloRanking[KI_Two], gameFlow.getWinner())
         eloRanking[KI_One] = newRanking[0]
         eloRanking[KI_Two] = newRanking[1]
 

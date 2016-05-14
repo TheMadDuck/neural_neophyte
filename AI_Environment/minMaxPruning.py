@@ -1,5 +1,8 @@
 #import numpy as np
 import AIenvironment
+import gameFlowClass as gFC
+import games.fourInARow as gL
+import copy
 
 """
 def minmax(position, depth):
@@ -26,8 +29,16 @@ def minmax(position, depth):
 # oder so... :P
 """
 
-def mcts(field, tree, legalMoves, playerOne, playerTwo, randomMoveProba):
+def mcts(field, tree, legalMoves, classifier, playerOne, playerTwo, roundNumber, randomMoveProba):
     
-    path = AIenvironment.gameFlow([playerOne, playerTwo], field, False)
+#    path = AIenvironment.gameFlow([playerOne, playerTwo], field, False)
+    fieldCopy = copy.deepcopy(field)
+    tempGameLogic = gL.gameLogic()
+    tempGameFlow = gFC.gameFlowClass(classifier, tempGameLogic) # TODO: siehe todo nächste zeile...
+#    tempGameFlow.setImports(classifier, tempGameLogic) #TODO hier nicht nur player one imorten ?!
+    path = tempGameFlow.gameFlow([playerOne, playerTwo], fieldCopy, False, roundNumber)
+    del fieldCopy
+    del tempGameLogic
+    del tempGameFlow
     return 0
 
