@@ -26,13 +26,12 @@ class gameFlowClass(object):
 
     ########################################
     # TODO: winner is global variable. maybe i should rebuild this file as a class ?!
-    winner = None
+    #winner = None
 
     def __init__(self, extClassifier, extSubPr):
-        #global classifier           
         self.classifier = extClassifier
-        #global subPr
         self.subPr = extSubPr
+        self.winner = None
 
     #best_models = None
 
@@ -50,12 +49,12 @@ class gameFlowClass(object):
             flatField = np.append(flatField, roundNumber)
              
             if (saveTheGame == True):
-                minMaxPruning.mcts(field, None, None, self.classifier, classifierModel, classifierModel, roundNumber, 0.2)
-           
+                minMaxPruning.mcts(field, None, legalMoves, self.classifier, classifierModel, classifierModel, roundNumber, 0.2)
 
             return self.classifier.predict(flatField, classifierModel-1)[0]
         else: # random move:
             return rd.choice(legalMoves)
+
 
     #########################################
     #similar the human move:
@@ -88,8 +87,7 @@ class gameFlowClass(object):
                 print("ERROR: Field could not get initialized")
 
         while((self.subPr.getSignal() != "weHaveAWinner") or (self.subPr.getSignal() != "gameIsOver")):
-            roundNumber += 1
-            if roundNumber % 2 == 1:
+            if roundNumber % 2 == 0:
                 playerNumber = 1
             else:
                 playerNumber = 2
@@ -102,6 +100,10 @@ class gameFlowClass(object):
             self.subPr.isLegalMove(field, playerNumber, position)
 
             while (self.subPr.getSignal() == "unvalidPlayer") or (self.subPr.getSignal() == "unvalidPosition" or self.subPr.getSignal() == "columnIsFull"):
+                self.subPr.gameStopped(field, roundNumber)
+                if (self.subPr.getSignal() == "gameIsOver"):
+                    break
+
                 if (player[playerNumber-1] == -1):
                     print("this move is not legal, please try again!!")
                     position = self.Human_Move(legalInputs)
@@ -109,6 +111,7 @@ class gameFlowClass(object):
                     position = self.AI_Move(field, playerNumber, roundNumber, legalInputs, False, amountRandom, saveTheGame)
 
                 self.subPr.isLegalMove(field, playerNumber, position)
+                
                 #print(field)
             
 
@@ -123,28 +126,30 @@ class gameFlowClass(object):
             if(player[0] == -1 or player[1] == -1): #TODO für jede phase einzeln testen
                 print(" ")
                 print(field)        # show field in a game vs. a human !!!
-            global winner
-            winner = self.subPr.hasAWinner(field, playerNumber, position)
+            #global winner
+            self.winner = self.subPr.hasAWinner(field, playerNumber, position)
             if (self.subPr.getSignal() == "weHaveAWinner"):
-                if winner == 0:
+                if self.winner == 0:
                     print("ERROR: we could not determine who won!")
                 if(player[0] == -1 or player[1] == -1):
                     print(" ")
-                    print("the winner is: " + str(winner))
+                    print("the winner is: " + str(self.winner))
                     print(" ")
                 break
             
             self.subPr.gameStopped(field, roundNumber)
             if (self.subPr.getSignal() == "gameIsOver"):
                 break
+            
+            roundNumber += 1
 
         if(saveTheGame):
-            return saveList[winner-1]
+            return saveList[self.winner-1]
         else:
             return gamePath  # returns only the path, the game took [do we need information about the  winner?]
 
     def getWinner(self):
-        return winner
+        return self.winner
 
 
 
@@ -159,7 +164,8 @@ class gameFlowClass(object):
 #TODO always keep the X-best Models [X = 5 or ?], so AI-Move can choose from a set of models. <- git exclude one folder with models???!!!!!!!!
 #     mayby rank those with an elo number?! 
 #TODO Elo tunier. (count when an older modelling beat an younger?) higher elo -> higher probability to play! Which model plays against which model in train phase? train phase trough turnier?
-#TODO rewrite entire code in c
+#TODO to prevent import errors (especially in c) gameFlow-class and mcts-class could be written in one file. even if we create a small gameFlow-class we can not get rid of the circular recursion [gameflow-mcts-smallGameflow-mcts-smallGameflow-...]
+#TODO rewrite entire code in c/cpp
 #TODO enjoy life
 
 
