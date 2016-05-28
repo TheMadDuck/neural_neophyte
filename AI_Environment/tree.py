@@ -20,6 +20,13 @@ class gameTree(object):
         if self.childs:
             for child in self.childs:
                 child.printTree()
+
+    def getTreePreOrder(self, preOrderList = []):
+        preOrderList.append(self.move)
+        if self.childs:
+            for child in self.childs:
+                child.getTreePreOrder(preOrderList)
+        return preOrderList
     
     def addPath(self, path, winOrLoss):
         for move in path:
@@ -44,7 +51,7 @@ class gameTree(object):
     def mergeTrees(self, tree):
         pass
 
-
+"""
 
 print("t1")
 path = [0, 3, 14, 9, 11]
@@ -63,6 +70,7 @@ tree.addPath(path, win)
 tree.addPath(path2, loss)
 tree.addPath(path3, loss)
 tree.printTree()
+print(tree.getTreePreOrder())
 print("t2")
-
+"""
 
