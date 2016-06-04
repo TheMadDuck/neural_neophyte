@@ -47,6 +47,16 @@ class gameTree(object):
                 self.childs.append(newChild)
                 self = newChild
 
+    def getBestMove(self):
+        win_probability = 0
+        bestMove = None
+        for child in self.childs:
+            win_ratio = self.numberWon / self.numberPlayed
+            if (win_ratio >= win_probability):
+                win_probability = win_ratio
+                bestMove = child
+        return bestMove
+
     #TODO:
     def mergeTrees(self, tree):
         pass

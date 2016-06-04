@@ -28,9 +28,10 @@ class gameFlowClass(object):
     # TODO: winner is global variable. maybe i should rebuild this file as a class ?!
     #winner = None
 
-    def __init__(self, extClassifier, extSubPr):
+    def __init__(self, extClassifier, extSubPr, amountRandom = 0.15):
         self.classifier = extClassifier
         self.subPr = extSubPr
+        self.amountRandom = amountRandom
         self.winner = None
 
     #best_models = None
@@ -49,8 +50,8 @@ class gameFlowClass(object):
             flatField = np.append(flatField, roundNumber)
              
             if (saveTheGame == True):
-                minMaxPruning.mcts(field, None, legalMoves, self.classifier, classifierModel, classifierModel, roundNumber, 0.2)
-
+                minMaxPruning.mcts(field, None, legalMoves, self.classifier, classifierModel, classifierModel, roundNumber, playerNumber, 0.2)
+            print ("wer is dran: " + str(classifierModel))
             return self.classifier.predict(flatField, classifierModel-1)[0]
         else: # random move:
             return rd.choice(legalMoves)
@@ -71,7 +72,7 @@ class gameFlowClass(object):
     #def gameFlow(player):   #TODO vieleicht eher sowas wie gameFlow(player1, player2) human:-1 random:0 ai models:1-x [allerdings sollten die models extern geladen werden...)   ACHTUNG ! ! ! noch spielt jedes model immer gegen sich selbst (bestmodel vs bestmodel) das sollte nicht sein !!
         #TODO field mit in die gameflow()-init. um mit nem nicht-leeren feld anzufangen. + bool um zu sagen ob spiel gesaved wird oder nicht.
     def gameFlow(self, player, field = None, saveTheGame = True, roundNumber = 0):
-        amountRandom = 0.15  # vieleicht ausserhalb definieren?
+        self.amountRandom = 0.15  # vieleicht ausserhalb definieren?
         legalInputs = self.subPr.getLegalInputs()
         if self.subPr.getSignal() != "legalInputs_initialized":
             print("ERROR: legal Inputs could not get initialized")
@@ -95,7 +96,7 @@ class gameFlowClass(object):
             if (player[playerNumber-1] == -1):
                 position = self.Human_Move(legalInputs)
             else:
-                position = self.AI_Move(field, playerNumber, roundNumber, legalInputs, player[playerNumber-1], amountRandom, saveTheGame)
+                position = self.AI_Move(field, playerNumber, roundNumber, legalInputs, player[playerNumber-1], self.amountRandom, saveTheGame)
 
             self.subPr.isLegalMove(field, playerNumber, position)
 
@@ -108,7 +109,7 @@ class gameFlowClass(object):
                     print("this move is not legal, please try again!!")
                     position = self.Human_Move(legalInputs)
                 else:
-                    position = self.AI_Move(field, playerNumber, roundNumber, legalInputs, False, amountRandom, saveTheGame)
+                    position = self.AI_Move(field, playerNumber, roundNumber, legalInputs, False, self.amountRandom, saveTheGame)
 
                 self.subPr.isLegalMove(field, playerNumber, position)
                 

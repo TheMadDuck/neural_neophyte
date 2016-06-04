@@ -2,6 +2,7 @@ import numpy as np
 import gameFlowClass as gFC  # TODO Warning! circle import.
 import games.fourInARow as gL
 import copy
+import tree
 
 
 class gameTree(object):
@@ -65,7 +66,7 @@ for i in reversed(zugReihenfolge2):
 
 
 #TODO: difer between pure mcts(complete random, [possible with NNs?]) and exploited mcts (tree based)
-def mcts(field, tree, legalMoves, classifier, playerOne, playerTwo, roundNumber, randomMoveProba):
+def mcts(field, tree, legalMoves, classifier, playerOne, playerTwo, roundNumber, playerNumber, randomMoveProba): #without Tree!
     gameNumber = 2  # how many games should be played per move . maybe need a better name for parameter
     winProbability = np.zeros(len(legalMoves))
     for move in range(len(legalMoves)):
@@ -75,14 +76,41 @@ def mcts(field, tree, legalMoves, classifier, playerOne, playerTwo, roundNumber,
             tempGameLogic = gL.gameLogic()
             tempGameFlow = gFC.gameFlowClass(classifier, tempGameLogic) # TODO: Hier nicht nur player one importieren?!
             path = tempGameFlow.gameFlow([playerOne, playerTwo], fieldCopy, False, roundNumber)
-            if(tempGameFlow.getWinner == 1):
+            if(tempGameFlow.getWinner() == 1):
                 wins += 1
             del fieldCopy
             del tempGameLogic
             del tempGameFlow
         winProbability[move] = float(wins)/float(gameNumber)
+        #print (winProbability)
+        #print (winProbability.argmax(axis=0))
+    return winProbability.argmax(axis=0)
+
+
+def pure_mcts(field, tree, legalMoves, classifier, playerOne, playerTwo, roundNumber, playerNumbe, randomMoveProba): #with tree but without exploitation(should have same result as mcts)!
     return 0
 
+
+#TODO: why does AI_Move provide self.classifier + 2* classifierModel?? should provide who's turn is next.
+def exploited_mcts(field, oldTree, legalMoves, classifier, playerOne, playerTwo, roundNumber, playerNumber, randomMoveProba):
+    gameQuantity = 10 #how many games should be played.
+    t = tree.gameTree()
+    #t.getNextMove()
+    for move in range(gameQuantity):
+        fieldCopy = copy.deepcopy(field)
+        tempGameLogic = gL.gameLogic()
+        tempGameFlow = gFC.gameFlowClass(classifier, tempGameLogic, 0.5)
+        path = tempGameFlow.gameFlow([playerOne, playerTwo], fieldCopy, False, roundNumber) #check if path size is odd or even...
+
+        if(tempGameFlow.getWinner == playerNumber):
+            t.addPath(path, 1)
+        else:
+            t.addPath(path, 0)
+
+        del fieldCopy
+        del tempGameLogic
+        del tempGameFlow
+    return 0
 
 """
 def minmax(position, depth):
