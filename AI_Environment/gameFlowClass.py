@@ -39,22 +39,23 @@ class gameFlowClass(object):
 
     #########################################
     # naive AI:
-    def AI_Move(self, field, playerNumber, roundNumber, legalMoves, classifierModel, randomMoveProba, saveTheGame):
+    def AI_Move(self, field, playerNumber, roundNumber, legalMoves, players, randomMoveProba, saveTheGame):
         # sometimes you want a random move:
         if (rd.random() < randomMoveProba): 
-            classifierModel = 0
-
-        if(classifierModel):
-            flatField = field.flatten()        
-            flatField = np.append(flatField, playerNumber)
-            flatField = np.append(flatField, roundNumber)
-             
-            if (saveTheGame == True):
-                minMaxPruning.mcts(field, None, legalMoves, self.classifier, classifierModel, classifierModel, roundNumber, playerNumber, 0.2)
-            print ("wer is dran: " + str(classifierModel))
-            return self.classifier.predict(flatField, classifierModel-1)[0]
-        else: # random move:
             return rd.choice(legalMoves)
+        # player 0 means random move:
+        if (players[playerNumber-1] == 0):
+            return rd.choice(legalMoves)
+
+        flatField = field.flatten()        
+        flatField = np.append(flatField, playerNumber)
+        flatField = np.append(flatField, roundNumber)
+         
+        if (saveTheGame == True):
+            return minMaxPruning.mcts(field, None, legalMoves, self.classifier, players, roundNumber, playerNumber, 0.2)
+#            print ("wer is dran: " + str(classifierModelNumber))
+
+        return self.classifier.predict(flatField, players[playerNumber-1]-1)[0] # inner -1: because playerNumber is always 1 or 2, outer -1: because the models are named model0, model1, model2,... but the 0 is reserved for random. maybe i should make the -1 operation in the classifier class?!
 
 
     #########################################
@@ -73,6 +74,7 @@ class gameFlowClass(object):
         #TODO field mit in die gameflow()-init. um mit nem nicht-leeren feld anzufangen. + bool um zu sagen ob spiel gesaved wird oder nicht.
     def gameFlow(self, player, field = None, saveTheGame = True, roundNumber = 0):
         self.amountRandom = 0.15  # vieleicht ausserhalb definieren?
+        #print(player)
         legalInputs = self.subPr.getLegalInputs()
         if self.subPr.getSignal() != "legalInputs_initialized":
             print("ERROR: legal Inputs could not get initialized")
@@ -96,7 +98,7 @@ class gameFlowClass(object):
             if (player[playerNumber-1] == -1):
                 position = self.Human_Move(legalInputs)
             else:
-                position = self.AI_Move(field, playerNumber, roundNumber, legalInputs, player[playerNumber-1], self.amountRandom, saveTheGame)
+                position = self.AI_Move(field, playerNumber, roundNumber, legalInputs, player, self.amountRandom, saveTheGame)
 
             self.subPr.isLegalMove(field, playerNumber, position)
 
@@ -109,7 +111,7 @@ class gameFlowClass(object):
                     print("this move is not legal, please try again!!")
                     position = self.Human_Move(legalInputs)
                 else:
-                    position = self.AI_Move(field, playerNumber, roundNumber, legalInputs, False, self.amountRandom, saveTheGame)
+                    position = self.AI_Move(field, playerNumber, roundNumber, legalInputs, player, 1, saveTheGame)
 
                 self.subPr.isLegalMove(field, playerNumber, position)
                 
@@ -147,6 +149,7 @@ class gameFlowClass(object):
         if(saveTheGame):
             return saveList[self.winner-1]
         else:
+            print("we should brake2")
             return gamePath  # returns only the path, the game took [do we need information about the  winner?]
 
     def getWinner(self):

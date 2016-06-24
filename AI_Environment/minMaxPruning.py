@@ -3,7 +3,7 @@ import gameFlowClass as gFC  # TODO Warning! circle import.
 import games.fourInARow as gL
 import copy
 import tree
-
+import random as rd
 
 class gameTree(object):
     def __init__(self):
@@ -66,7 +66,7 @@ for i in reversed(zugReihenfolge2):
 
 
 #TODO: difer between pure mcts(complete random, [possible with NNs?]) and exploited mcts (tree based)
-def mcts(field, tree, legalMoves, classifier, playerOne, playerTwo, roundNumber, playerNumber, randomMoveProba): #without Tree!
+def mcts(field, tree, legalMoves, classifier, players, roundNumber, playerNumber, randomMoveProba): #without Tree!
     gameNumber = 2  # how many games should be played per move . maybe need a better name for parameter
     winProbability = np.zeros(len(legalMoves))
     for move in range(len(legalMoves)):
@@ -74,25 +74,25 @@ def mcts(field, tree, legalMoves, classifier, playerOne, playerTwo, roundNumber,
         for game in range(gameNumber):
             fieldCopy = copy.deepcopy(field)
             tempGameLogic = gL.gameLogic()
-            tempGameFlow = gFC.gameFlowClass(classifier, tempGameLogic) # TODO: Hier nicht nur player one importieren?!
-            path = tempGameFlow.gameFlow([playerOne, playerTwo], fieldCopy, False, roundNumber)
-            if(tempGameFlow.getWinner() == 1):
+            tempGameFlow = gFC.gameFlowClass(classifier, tempGameLogic) 
+            path = tempGameFlow.gameFlow(players, fieldCopy, False, roundNumber)
+            if(tempGameFlow.getWinner() == playerNumber):
                 wins += 1
             del fieldCopy
             del tempGameLogic
             del tempGameFlow
         winProbability[move] = float(wins)/float(gameNumber)
-        #print (winProbability)
-        #print (winProbability.argmax(axis=0))
-    return winProbability.argmax(axis=0)
+    allMaximalValues = np.argwhere(winProbability == np.amax(winProbability))
+    return rd.choice(allMaximalValues)[0]
+    #return winProbability.argmax(axis=0)
 
 
-def pure_mcts(field, tree, legalMoves, classifier, playerOne, playerTwo, roundNumber, playerNumbe, randomMoveProba): #with tree but without exploitation(should have same result as mcts)!
+def pure_mcts(field, tree, legalMoves, classifier, players, roundNumber, playerNumbe, randomMoveProba): #with tree but without exploitation(should have same result as mcts)!
     return 0
 
 
 #TODO: why does AI_Move provide self.classifier + 2* classifierModel?? should provide who's turn is next.
-def exploited_mcts(field, oldTree, legalMoves, classifier, playerOne, playerTwo, roundNumber, playerNumber, randomMoveProba):
+def exploited_mcts(field, oldTree, legalMoves, classifier, players, roundNumber, playerNumber, randomMoveProba):
     gameQuantity = 10 #how many games should be played.
     t = tree.gameTree()
     #t.getNextMove()
@@ -100,7 +100,7 @@ def exploited_mcts(field, oldTree, legalMoves, classifier, playerOne, playerTwo,
         fieldCopy = copy.deepcopy(field)
         tempGameLogic = gL.gameLogic()
         tempGameFlow = gFC.gameFlowClass(classifier, tempGameLogic, 0.5)
-        path = tempGameFlow.gameFlow([playerOne, playerTwo], fieldCopy, False, roundNumber) #check if path size is odd or even...
+        path = tempGameFlow.gameFlow(players, fieldCopy, False, roundNumber) #check if path size is odd or even...
 
         if(tempGameFlow.getWinner == playerNumber):
             t.addPath(path, 1)
