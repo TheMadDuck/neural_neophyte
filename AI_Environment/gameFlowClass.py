@@ -28,9 +28,11 @@ class gameFlowClass(object):
     # TODO: winner is global variable. maybe i should rebuild this file as a class ?!
     #winner = None
 
-    def __init__(self, extClassifier, extSubPr, amountRandom = 0.15):
+    def __init__(self, extClassifier, extSubPr, field = None, roundNumber = 0,  amountRandom = 0.15): #TODO: maybe more inits?
         self.classifier = extClassifier
         self.subPr = extSubPr
+        self.field = field
+        self.roundNumber = roundNumber
         self.amountRandom = amountRandom
         self.winner = None
 
@@ -39,7 +41,7 @@ class gameFlowClass(object):
 
     #########################################
     # naive AI:
-    def AI_Move(self, field, playerNumber, roundNumber, legalMoves, players, randomMoveProba, saveTheGame):
+    def AI_Move(self, playerNumber, legalMoves, players, randomMoveProba, saveTheGame):
         # sometimes you want a random move:
         if (rd.random() < randomMoveProba): 
             return rd.choice(legalMoves)
@@ -47,13 +49,18 @@ class gameFlowClass(object):
         if (players[playerNumber-1] == 0):
             return rd.choice(legalMoves)
 
-        flatField = field.flatten()        
+        flatField = self.field.flatten()        
         flatField = np.append(flatField, playerNumber)
-        flatField = np.append(flatField, roundNumber)
+        flatField = np.append(flatField, self.roundNumber)
          
         if (saveTheGame == True):
-            return minMaxPruning.mcts(field, None, legalMoves, self.classifier, players, roundNumber, playerNumber, 0.2)
-#            print ("wer is dran: " + str(classifierModelNumber))
+            #if one of the players is humans, minMaxPrunning should work with two AI_classifiers
+            if (players[0] == -1):
+                return minMaxPruning.pure_mcts(self.field, None, legalMoves, self.classifier, [players[1],players[1]], self.roundNumber, playerNumber, 0.2)
+            if (players[1] == -1):
+                return minMaxPruning.pure_mcts(self.field, None, legalMoves, self.classifier, [players[0],players[0]], self.roundNumber, playerNumber, 0.2)
+
+            return minMaxPruning.pure_mcts(self.field, None, legalMoves, self.classifier, players, self.roundNumber, playerNumber, 0.2)
 
         return self.classifier.predict(flatField, players[playerNumber-1]-1)[0] # inner -1: because playerNumber is always 1 or 2, outer -1: because the models are named model0, model1, model2,... but the 0 is reserved for random. maybe i should make the -1 operation in the classifier class?!
 
@@ -72,7 +79,9 @@ class gameFlowClass(object):
 
     #def gameFlow(player):   #TODO vieleicht eher sowas wie gameFlow(player1, player2) human:-1 random:0 ai models:1-x [allerdings sollten die models extern geladen werden...)   ACHTUNG ! ! ! noch spielt jedes model immer gegen sich selbst (bestmodel vs bestmodel) das sollte nicht sein !!
         #TODO field mit in die gameflow()-init. um mit nem nicht-leeren feld anzufangen. + bool um zu sagen ob spiel gesaved wird oder nicht.
-    def gameFlow(self, player, field = None, saveTheGame = True, roundNumber = 0):
+    def gameFlow(self, player, saveTheGame = True, prefixPath = []):
+        if prefixPath != []:
+            self.addPrefixPath(prefixPath)
         self.amountRandom = 0.15  # vieleicht ausserhalb definieren?
         #print(player)
         legalInputs = self.subPr.getLegalInputs()
@@ -84,13 +93,13 @@ class gameFlowClass(object):
         else:
             gamePath = [] # TODO: überlegen ob wenn wir zb monte-carlo benutzten wir nur den pfad benötigen
 
-        if (field == None): #testen
-            field = self.subPr.initField()
+        if (self.field == None): #testen
+            self.field = self.subPr.initField()
             if self.subPr.getSignal() != "field_initialized":
                 print("ERROR: Field could not get initialized")
 
         while((self.subPr.getSignal() != "weHaveAWinner") or (self.subPr.getSignal() != "gameIsOver")):
-            if roundNumber % 2 == 0:
+            if self.roundNumber % 2 == 0:
                 playerNumber = 1
             else:
                 playerNumber = 2
@@ -98,12 +107,12 @@ class gameFlowClass(object):
             if (player[playerNumber-1] == -1):
                 position = self.Human_Move(legalInputs)
             else:
-                position = self.AI_Move(field, playerNumber, roundNumber, legalInputs, player, self.amountRandom, saveTheGame)
+                position = self.AI_Move(playerNumber, legalInputs, player, self.amountRandom, saveTheGame)
 
-            self.subPr.isLegalMove(field, playerNumber, position)
+            self.subPr.isLegalMove(self.field, playerNumber, position)
 
             while (self.subPr.getSignal() == "unvalidPlayer") or (self.subPr.getSignal() == "unvalidPosition" or self.subPr.getSignal() == "columnIsFull"):
-                self.subPr.gameStopped(field, roundNumber)
+                self.subPr.gameStopped(self.field, self.roundNumber)
                 if (self.subPr.getSignal() == "gameIsOver"):
                     break
 
@@ -111,26 +120,26 @@ class gameFlowClass(object):
                     print("this move is not legal, please try again!!")
                     position = self.Human_Move(legalInputs)
                 else:
-                    position = self.AI_Move(field, playerNumber, roundNumber, legalInputs, player, 1, saveTheGame)
+                    position = self.AI_Move(playerNumber, legalInputs, player, 1, saveTheGame)
 
-                self.subPr.isLegalMove(field, playerNumber, position)
+                self.subPr.isLegalMove(self.field, playerNumber, position)
                 
                 #print(field)
             
 
             if(saveTheGame):
-                saveList = saveListHandler.savePositions(field, playerNumber, roundNumber, position, saveList, False)   #TODO : information wer gerade am zug ist abspeichern und providen. entweder jedes mal field invertieren oder ein feature mehr reintun.!!! 
+                saveList = saveListHandler.savePositions(self.field, playerNumber, self.roundNumber, position, saveList, False)   #TODO : information wer gerade am zug ist abspeichern und providen. entweder jedes mal field invertieren oder ein feature mehr reintun.!!! 
             else:
                 gamePath.append(position)
 
-            self.subPr.setStone(field, playerNumber, position)
+            self.subPr.setStone(self.field, playerNumber, position)
             if self.subPr.getSignal() != "stoneIsSet":
                 print("ERROR: Stone is not saved")
             if(player[0] == -1 or player[1] == -1): #TODO für jede phase einzeln testen
                 print(" ")
-                print(field)        # show field in a game vs. a human !!!
+                print(self.field)        # show field in a game vs. a human !!!
             #global winner
-            self.winner = self.subPr.hasAWinner(field, playerNumber, position)
+            self.winner = self.subPr.hasAWinner(self.field, playerNumber, position)
             if (self.subPr.getSignal() == "weHaveAWinner"):
                 if self.winner == 0:
                     print("ERROR: we could not determine who won!")
@@ -140,22 +149,63 @@ class gameFlowClass(object):
                     print(" ")
                 break
             
-            self.subPr.gameStopped(field, roundNumber)
+            self.subPr.gameStopped(self.field, self.roundNumber)
             if (self.subPr.getSignal() == "gameIsOver"):
                 break
             
-            roundNumber += 1
+            self.roundNumber += 1
 
         if(saveTheGame):
             return saveList[self.winner-1]
         else:
-            print("we should brake2")
+            #print("we should brake2")
             return gamePath  # returns only the path, the game took [do we need information about the  winner?]
 
     def getWinner(self):
         return self.winner
 
+    def resetgame(self):
+        self.field = None
+        self.roundNumber = 0
 
+    def addPrefixPath(self, prefixPath):    #TODO: diese funktion auf herz und nieren testen!
+        """
+        prefixPathSize = len(prefixPath)
+        pathPosition = 0
+        while((self.subPr.getSignal() != "weHaveAWinner") or (self.subPr.getSignal() != "gameIsOver")):
+            if(pathPosition >= prefixPathSize):
+                return 0
+            if self.roundNumber % 2 == 0:
+                playerNumber = 1
+            else:
+                playerNumber = 2
+                
+            position = prefixPath[pathPosition]
+            self.subPr.isLegalMove(self.field, playerNumber, position)
+
+            while (self.subPr.getSignal() == "unvalidPlayer") or (self.subPr.getSignal() == "unvalidPosition" or self.subPr.getSignal() == "columnIsFull"):
+                return 0
+
+                
+            
+
+
+            self.subPr.setStone(self.field, playerNumber, position)
+            if self.subPr.getSignal() != "stoneIsSet":
+                print("ERROR: Stone is not saved")
+            self.winner = self.subPr.hasAWinner(self.field, playerNumber, position)
+            if (self.subPr.getSignal() == "weHaveAWinner"):
+                if self.winner == 0:
+                    print("ERROR: we could not determine who won!")
+                break
+            
+            self.subPr.gameStopped(self.field, self.roundNumber)
+            if (self.subPr.getSignal() == "gameIsOver"):
+                break
+            self.roundNumber +=1
+            pathPosition += 1
+        """
+        return 0
 
 
 ############################################

@@ -51,18 +51,23 @@ class gameTree(object):
         win_probability = 0
         bestMove = None
         for child in self.childs:
-            win_ratio = self.numberWon / self.numberPlayed
+            if child.numberPlayed == 0:
+                win_ratio = 0
+            else:
+                win_ratio = child.numberWon / child.numberPlayed 
             if (win_ratio >= win_probability):
                 win_probability = win_ratio
                 bestMove = child
-        return bestMove
+        return bestMove.move 
+
 
     #TODO:
     def mergeTrees(self, tree):
         pass
 
-"""
 
+
+"""
 print("t1")
 path = [0, 3, 14, 9, 11]
 path2 = [0, 3, 66, 6, 6]
@@ -82,5 +87,5 @@ tree.addPath(path3, loss)
 tree.printTree()
 print(tree.getTreePreOrder())
 print("t2")
+print(tree.getBestMove())
 """
-

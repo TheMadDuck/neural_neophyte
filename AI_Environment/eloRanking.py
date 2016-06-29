@@ -96,7 +96,11 @@ def turnier(gameFlow, amountGames, amountModels, gameName):
         KI_One = nRand.nRand(amountModels)  #TODO checken: wenn amountModels > 1, wird dann je ein random model benutzt? kommt das random model überhaupt in das eloRanking model??
         KI_Two = nRand.nRand(amountModels)
         #AIEnv.gameFlow([KI_One, KI_Two])
+        gameFlow.resetgame()
         gameFlow.gameFlow([KI_One, KI_Two])
+        print(eloRanking[KI_One])
+        print(eloRanking[KI_Two])
+        print(gameFlow.getWinner())
         newRanking = naiveElo(eloRanking[KI_One], eloRanking[KI_Two], gameFlow.getWinner())
         eloRanking[KI_One] = newRanking[0]
         eloRanking[KI_Two] = newRanking[1]
