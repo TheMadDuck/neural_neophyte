@@ -1,3 +1,5 @@
+import math as mt
+
 class gameTree(object):
     def __init__(self):
         self.move = None
@@ -29,6 +31,7 @@ class gameTree(object):
         return preOrderList
     
     def addPath(self, path, winOrLoss):
+        self.numberPlayed +=1
         for move in path:
             pathExist = False
             for child in self.childs:
@@ -59,6 +62,24 @@ class gameTree(object):
                 win_probability = win_ratio
                 bestMove = child
         return bestMove.move 
+
+    def getNextMove(self):
+        next_probability = 0
+        nextMove = None
+        c = mt.sqrt(2)
+        for child in self.childs:
+            if child.numberPlayed == 0:
+                next_ratio = 0
+            else:
+                next_ratio = (child.numberWon / child.numberPlayed) + (c*mt.sqrt(mt.log(self.numberPlayed)/child.numberPlayed))
+            
+            if (next_ratio >= next_probability):
+                next_probability = next_ratio
+                nextMove = child
+        #        print("test")
+        #if (not nextMove):
+        #    return nextMove = rd.choice(self.childs)
+        return nextMove.move 
 
 
     #TODO:

@@ -35,7 +35,7 @@ class gameLogic(object):
             #global SIGNAL
             self.SIGNAL = "unvalidPlayer"
             return False
-        if position < 0 or position > field.shape[1]-1:
+        if (position < 0) or (position > field.shape[1]-1):
             print (str(position) + " is a unvalid position")
             #global SIGNAL
             self.SIGNAL = "unvalidPosition"

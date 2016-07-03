@@ -108,7 +108,43 @@ def pure_mcts(field, tree, legalMoves, classifier, players, roundNumber, playerN
 
 #TODO: why does AI_Move provide self.classifier + 2* classifierModel?? should provide who's turn is next.
 def exploited_mcts(field, oldTree, legalMoves, classifier, players, roundNumber, playerNumber, randomMoveProba):
-    gameQuantity = 10 #how many games should be played.
+
+    if (oldTree):
+        mcts_tree = oldTree
+    else:
+        mcts_tree = tr.gameTree()
+    
+    for move in legalMoves: # first every move is played at least once
+        fieldCopy = copy.deepcopy(field)
+        tempGameLogic = gL.gameLogic()
+        tempGameFlow = gFC.gameFlowClass(classifier, tempGameLogic, fieldCopy, roundNumber) 
+        path = tempGameFlow.gameFlow(players, False, [move])
+        if(tempGameFlow.getWinner() == playerNumber):
+            mcts_tree.addPath(path, 1)
+        else:
+            mcts_tree.addPath(path, 0)
+        del fieldCopy
+        del tempGameLogic
+        del tempGameFlow
+            
+
+    gameQuantity = 5  # then a few extra games are played
+    for i in range(gameQuantity):
+        move = mcts_tree.getNextMove()
+        fieldCopy = copy.deepcopy(field)
+        tempGameLogic = gL.gameLogic()
+        tempGameFlow = gFC.gameFlowClass(classifier, tempGameLogic, fieldCopy, roundNumber) 
+        path = tempGameFlow.gameFlow(players, False, [move])
+        if(tempGameFlow.getWinner() == playerNumber):
+            mcts_tree.addPath(path, 1)
+        else:
+            mcts_tree.addPath(path, 0)
+        del fieldCopy
+        del tempGameLogic
+        del tempGameFlow
+    return mcts_tree.getBestMove()
+
+    """
     t = tree.gameTree()
     #t.getNextMove()
     for move in range(gameQuantity):
@@ -126,6 +162,7 @@ def exploited_mcts(field, oldTree, legalMoves, classifier, players, roundNumber,
         del tempGameLogic
         del tempGameFlow
     return 0
+    """
 
 """
 def minmax(position, depth):
