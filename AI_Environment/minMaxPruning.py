@@ -142,6 +142,7 @@ def exploited_mcts(field, oldTree, legalMoves, classifier, players, roundNumber,
         del fieldCopy
         del tempGameLogic
         del tempGameFlow
+    
     return mcts_tree.getBestMove()
 
     """

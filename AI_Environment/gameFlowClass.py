@@ -7,7 +7,7 @@ import numpy as np
 import random as rd
 import pickle
 import os.path
-
+import tree as tr
 
 #########################################
 #import minMax heuristics
@@ -28,13 +28,14 @@ class gameFlowClass(object):
     # TODO: winner is global variable. maybe i should rebuild this file as a class ?!
     #winner = None
 
-    def __init__(self, extClassifier, extSubPr, field = None, roundNumber = 0,  amountRandom = 0.15): #TODO: maybe more inits?
+    def __init__(self, extClassifier, extSubPr, field = None, roundNumber = 0,  amountRandom = 0.15, tree = tr.gameTree()): #TODO: maybe more inits?
         self.classifier = extClassifier
         self.subPr = extSubPr
         self.field = field
         self.roundNumber = roundNumber
         self.amountRandom = amountRandom
         self.winner = None
+        self.tree = tree
 
     #best_models = None
 
@@ -56,11 +57,11 @@ class gameFlowClass(object):
         if (saveTheGame == True):
             #if one of the players is humans, minMaxPrunning should work with two AI_classifiers
             if (players[0] == -1):
-                return minMaxPruning.exploited_mcts(self.field, None, legalMoves, self.classifier, [players[1],players[1]], self.roundNumber, playerNumber, 0.2)
+                return minMaxPruning.exploited_mcts(self.field, self.tree, legalMoves, self.classifier, [players[1],players[1]], self.roundNumber, playerNumber, 0.2)
             if (players[1] == -1):
-                return minMaxPruning.exploited_mcts(self.field, None, legalMoves, self.classifier, [players[0],players[0]], self.roundNumber, playerNumber, 0.2)
+                return minMaxPruning.exploited_mcts(self.field, self.tree, legalMoves, self.classifier, [players[0],players[0]], self.roundNumber, playerNumber, 0.2)
 
-            return minMaxPruning.exploited_mcts(self.field, None, legalMoves, self.classifier, players, self.roundNumber, playerNumber, 0.2)
+            return minMaxPruning.exploited_mcts(self.field, self.tree, legalMoves, self.classifier, players, self.roundNumber, playerNumber, 0.2)
 
         return self.classifier.predict(flatField, players[playerNumber-1]-1)[0] # inner -1: because playerNumber is always 1 or 2, outer -1: because the models are named model0, model1, model2,... but the 0 is reserved for random. maybe i should make the -1 operation in the classifier class?!
 
@@ -112,6 +113,9 @@ class gameFlowClass(object):
                 position = self.Human_Move(legalInputs)
             else:
                 position = self.AI_Move(playerNumber, legalInputs, player, self.amountRandom, saveTheGame)
+            
+            if (saveTheGame): #TODO ueberlegen ob das hier und in zeile 131 an der richtigen stelle ist.
+                self.tree.cutRoot(position)
             self.subPr.isLegalMove(self.field, playerNumber, position)
 
             while (self.subPr.getSignal() == "unvalidPlayer") or (self.subPr.getSignal() == "unvalidPosition" or self.subPr.getSignal() == "columnIsFull"):
@@ -124,6 +128,8 @@ class gameFlowClass(object):
                     position = self.Human_Move(legalInputs)
                 else:
                     position = self.AI_Move(playerNumber, legalInputs, player, 1, saveTheGame)
+                if (saveTheGame):
+                    self.tree.cutRoot(position)
 
                 self.subPr.isLegalMove(self.field, playerNumber, position)
                 

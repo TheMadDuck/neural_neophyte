@@ -10,7 +10,7 @@ import eloRanking
 
 ########################################
 #load classifier:
-import learn_algorithms.theano_based.logistic_sgd as classifier
+import learn_algorithms.theano_based.mlp as classifier
 #import learn_algorithms.theano_based.mlp as classifier
 
 #########################################
@@ -52,7 +52,7 @@ def main():
             gameFlow.gameFlow([numberModels, -1])
         
     if mode == 2:
-        gameTTV = ttv.getTrainTestValidate(gameFlow, 4000,100,100, numberModels) #nur gegen bestes model?
+        gameTTV = ttv.getTrainTestValidate(gameFlow, 400,100,100, numberModels) #nur gegen bestes model?
         bestModelPath = "./best_models/" + str(gameName) + "/best_model_" + str(numberModels) + ".pkl"
         classifier.fit(learning_rate=0.13, n_epochs=1000, dataset=gameTTV, batch_size=600, bestModelPath=bestModelPath)
     

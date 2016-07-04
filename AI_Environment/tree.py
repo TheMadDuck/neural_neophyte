@@ -86,6 +86,13 @@ class gameTree(object):
     def mergeTrees(self, tree):
         pass
 
+    def cutRoot(self, nextRoot): # removes the root-node. the (winning) child gets the new root.
+        for child in self.childs:
+            if (child.move == nextRoot):
+                self.__dict__ = child.__dict__.copy()
+                del child
+
+
 
 
 """

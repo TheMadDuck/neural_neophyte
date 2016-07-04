@@ -23,7 +23,7 @@ from __future__ import print_function
 
 __docformat__ = 'restructedtext en'
 
-
+import six.moves.cPickle as pickle
 import os
 import sys
 import timeit
@@ -36,6 +36,7 @@ import theano.tensor as T
 
 from learn_algorithms.theano_based.logistic_sgd import LogisticRegression, load_data
 
+predict_models = []
 
 # start-snippet-1
 class HiddenLayer(object):
@@ -199,7 +200,7 @@ class MLP(object):
 
 
 def fit(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
-             dataset="test", batch_size=20, n_hidden=500):
+             dataset="test", batch_size=20, n_hidden=500, bestModelPath=""):
     """
     Demonstrate stochastic gradient descent optimization for a multilayer
     perceptron
@@ -227,7 +228,7 @@ def fit(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
 
 
    """
-    datasets = load_data(dataset)
+    datasets = load_data(dataset, True)
 
     train_set_x, train_set_y = datasets[0]
     valid_set_x, valid_set_y = datasets[1]
@@ -255,9 +256,9 @@ def fit(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     classifier = MLP(
         rng=rng,
         input=x,
-        n_in=28 * 28,
+        n_in=7*7 + 1 + 1,
         n_hidden=n_hidden,
-        n_out=10
+        n_out=7
     )
 
     # start-snippet-4
@@ -393,6 +394,9 @@ def fit(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
                           (epoch, minibatch_index + 1, n_train_batches,
                            test_score * 100.))
 
+#                    with open(bestModelPath, 'wb') as f:
+#                        pickle.dump(classifier, f)
+
             if patience <= iter:
                 done_looping = True
                 break
@@ -406,5 +410,23 @@ def fit(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
            ' ran for %.2fm' % ((end_time - start_time) / 60.)), file=sys.stderr)
 
 
+def loadBestModel(filePath):
+
+    #global best_classifier
+    global predict_models
+    best_classifier = pickle.load(open(filePath, 'rb'))
+    predict_models.append(theano.function(
+        inputs=[best_classifier.input],
+        outputs=best_classifier.y_pred))
+
+
+def predict(X, classifier_number):
+    newX = [X]
+    y = predict_models[classifier_number](newX)
+    return y
+
+"""
 if __name__ == '__main__':
     test_mlp()
+"""
+
