@@ -17,6 +17,13 @@ class gameTree(object):
     def getDepth(self):
         return self.depth
     
+    def getChilds(self):
+        childList = []
+        for child in self.childs:
+            childList.append(child.move)
+        
+        return childList
+    
     def printTree(self):
         print("move: " + str(self.move) + " depth: " + str(self.depth) + " numberPlayed: " + str(self.numberPlayed) + " numberWon: " + str(self.numberWon))
         if self.childs:
@@ -30,8 +37,9 @@ class gameTree(object):
                 child.getTreePreOrder(preOrderList)
         return preOrderList
     
-    def addPath(self, path, winOrLoss):
+    def addPath(self, path, winOrLoss):   #TODO: die funktion rekursiv basteln?
         self.numberPlayed +=1
+        self.numberWon += winOrLoss #ja?
         for move in path:
             pathExist = False
             for child in self.childs:
@@ -42,6 +50,7 @@ class gameTree(object):
                     self = child
             
             if pathExist == False:  #neuer zweig
+                #print("yoooooo")
                 newChild = gameTree()
                 newChild.move = move
                 newChild.depth = self.depth + 1
@@ -49,6 +58,50 @@ class gameTree(object):
                 newChild.numberWon += winOrLoss #da win =1 und loss=0 werden nur wins gezählt.
                 self.childs.append(newChild)
                 self = newChild
+
+        print("test")
+    
+    def addPathRec(self, path, winOrLoss):   #TODO: die funktion rekursiv basteln?
+        self.numberPlayed +=1
+        self.numberWon += winOrLoss #ja?
+        pathExist = False
+        if (not path):
+            return
+        for child in self.childs:
+            if path[0] == child.move:
+                pathExist = True
+                path.pop(0)
+                child.addPathRec(path, winOrLoss)
+                return
+        if pathExist == False:
+            newChild = gameTree()
+            #print ("yeaaaaaaaaaaaaaaaaaaaaaaaaa:" + str(path))
+            newChild.move = path[0]
+            newChild.depth = self.depth + 1
+            self.childs.append(newChild)
+            path.pop(0)
+            newChild.addPathRec(path, winOrLoss)
+            return
+        """
+        for move in path:
+            pathExist = False
+            for child in self.childs:
+                if move == child.move: # es existiert schon ein solcher (teil-) pfad
+                    pathExist = True
+                    child.numberPlayed += 1
+                    child.numberWon += winOrLoss #da win =1 und loss=0 werden nur wins gezählt.
+                    self = child
+            
+            if pathExist == False:  #neuer zweig
+                #print("yoooooo")
+                newChild = gameTree()
+                newChild.move = move
+                newChild.depth = self.depth + 1
+                newChild.numberPlayed += 1
+                newChild.numberWon += winOrLoss #da win =1 und loss=0 werden nur wins gezählt.
+                self.childs.append(newChild)
+                self = newChild
+        """
 
     def getBestMove(self):
         win_probability = 0
@@ -79,7 +132,19 @@ class gameTree(object):
         #        print("test")
         #if (not nextMove):
         #    return nextMove = rd.choice(self.childs)
-        return nextMove.move 
+        return nextMove.move
+    
+    def getProbabilities(self):
+        probabilities = []
+        index = 0
+        for child in self.childs:
+            index += 1
+            if child.numberPlayed == 0:
+                win_ratio = 0
+            else:
+                win_ratio = child.numberWon / child.numberPlayed
+            probabilities.append(win_ratio)
+        return probabilities 
 
 
     #TODO:
@@ -116,4 +181,5 @@ tree.printTree()
 print(tree.getTreePreOrder())
 print("t2")
 print(tree.getBestMove())
+print(tree.getProbabilities())
 """

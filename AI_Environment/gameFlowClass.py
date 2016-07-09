@@ -88,8 +88,8 @@ class gameFlowClass(object):
 
         if prefixPath != []:
             preWinner = self.addPrefixPath(prefixPath)
+            gamePath = prefixPath
             if (preWinner):
-                gamePath.extend(prefixPath)
                 return gamePath   #returnen 'TODO ja doch, oder?
         self.amountRandom = 0.15  # vieleicht ausserhalb definieren?
         #print(player)

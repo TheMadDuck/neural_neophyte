@@ -120,15 +120,17 @@ def exploited_mcts(field, oldTree, legalMoves, classifier, players, roundNumber,
         tempGameFlow = gFC.gameFlowClass(classifier, tempGameLogic, fieldCopy, roundNumber) 
         path = tempGameFlow.gameFlow(players, False, [move])
         if(tempGameFlow.getWinner() == playerNumber):
-            mcts_tree.addPath(path, 1)
+            #print ("yeaaaaaaaaaaaaaaaaaaaaaaaaaaa 1:" + str(path))
+            mcts_tree.addPathRec(path, 1)
         else:
-            mcts_tree.addPath(path, 0)
+            #print ("yeaaaaaaaaaaaaaaaaaaaaaaaaaaa 2:" + str(path))
+            mcts_tree.addPathRec(path, 0)
         del fieldCopy
         del tempGameLogic
         del tempGameFlow
             
 
-    gameQuantity = 5  # then a few extra games are played
+    gameQuantity = 8  # then a few extra games are played
     for i in range(gameQuantity):
         move = mcts_tree.getNextMove()
         fieldCopy = copy.deepcopy(field)
@@ -136,13 +138,19 @@ def exploited_mcts(field, oldTree, legalMoves, classifier, players, roundNumber,
         tempGameFlow = gFC.gameFlowClass(classifier, tempGameLogic, fieldCopy, roundNumber) 
         path = tempGameFlow.gameFlow(players, False, [move])
         if(tempGameFlow.getWinner() == playerNumber):
-            mcts_tree.addPath(path, 1)
+            #print ("yeaaaaaaaaaaaaaaaaaaaaaaaaaaa 3:" + str(path))
+            mcts_tree.addPathRec(path, 1)
         else:
-            mcts_tree.addPath(path, 0)
+            #print ("yeaaaaaaaaaaaaaaaaaaaaaaaaaaa 4:" + str(path))
+            mcts_tree.addPathRec(path, 0)
         del fieldCopy
         del tempGameLogic
         del tempGameFlow
-    
+
+    #TODO more loops with the best moves until only one is THE best move
+    print("probas")
+    print(mcts_tree.getChilds())
+    print(mcts_tree.getProbabilities()) 
     return mcts_tree.getBestMove()
 
     """
