@@ -1,10 +1,10 @@
 #include "gameflow.h"
 #include <iostream>
-GameFlow::GameFlow()
+GameFlow::GameFlow(LogisticSgd classifier, FourInARow *gameLogic)
 {
 }
 
-void GameFlow::run_game_flow(std::array<int, 2> player)
+void GameFlow::runGameFlow(std::array<int, 2> player)
 {
     std::cout << "testaa" << std::endl;
 }

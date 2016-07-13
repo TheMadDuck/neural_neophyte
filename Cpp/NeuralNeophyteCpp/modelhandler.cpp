@@ -4,7 +4,7 @@ ModelHandler::ModelHandler()
 {
 }
 
-int ModelHandler::loadBestModel(std::string gameName)
+int ModelHandler::loadBestModel(LogisticSgd classifier, std::string gameName)
 {
     return 0;
 }

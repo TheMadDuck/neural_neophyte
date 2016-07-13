@@ -6,7 +6,14 @@
 Menu::Menu()
 {
     gameLogic = new FourInARow();
-    gameFlow = new GameFlow();
+    /*Field * field = gameLogic->initField();
+    gameLogic->isLegalMove(field,1,4);
+    gameLogic->setstone(field,1,1);
+    gameLogic->gameStopped(field, 22);
+    gameLogic->hasAWinner(field, 2, 3);
+    field->showField();*/
+
+    gameFlow = new GameFlow(classifier, gameLogic);
     std::cout << "Play a Game (press 1)" << std::endl;
     std::cout << "Train the AI (press 2)" << std::endl;
     std::cout << "Sort existing classifiers and rank them (press 3)" << std::endl;
@@ -17,9 +24,12 @@ Menu::Menu()
         std::cout << "press 1, 2 or 3" << std::endl;
         std::cin >> mode;
     }
-    gameName = gameLogic->get_name();
-    //numberModels = modelHandler.loadBestModel(classifier, gameName)
-    numberModels = modelHandler.loadBestModel(gameName);
+
+
+    gameName = gameLogic->getName();
+
+    numberModels = modelHandler.loadBestModel(classifier, gameName);
+
 
     if (mode == 1){
         std::cout << ("do you want to be player 1 or player 2?") << std::endl;
@@ -29,9 +39,28 @@ Menu::Menu()
             std::cin >> humanPlayerNumber;
         }
         if (humanPlayerNumber == 1){
-            std::array<int, 2> player {2, 3};
-//            gameFlow->run_game_flow(std::array<int, 2>{2, 3});
-            gameFlow->run_game_flow(player);
+            std::array<int, 2> player {-1, numberModels};
+//            gameFlow->runGameFlow(std::array<int, 2>{2, 3});
+            gameFlow->runGameFlow(player);
         }
+        else{
+            gameFlow->runGameFlow(std::array<int, 2>{numberModels, -1});
+        }
+
     }
+
+    if (mode == 2){
+        TrainTestValidate gameTTV(gameFlow, 400, 100, 100, numberModels);
+        std::string bestModelPath = "./best_models" + gameName + "best_model_" + std::to_string(numberModels) + ".pkl";
+        classifier.fit();
+    }
+
+    if (mode == 3){
+        std::cout << "How many games should be played?" << std::endl;
+        int amountGames;
+        std::cin >> amountGames;
+        EloRanking eloRanking;
+        eloRanking.turnier(gameFlow, amountGames, numberModels, gameName);
+    }
+
 }
