@@ -5,5 +5,6 @@ aux_source_directory(. SRC_LIST)
 aux_source_directory(./games SRC_LIST)
 aux_source_directory(./learn_algorithms SRC_LIST)
 aux_source_directory(./learn_algorithms/cpp_based SRC_LIST)
+aux_source_directory(./Tests SRC_LIST)
 add_executable(${PROJECT_NAME} ${SRC_LIST})
 

@@ -2,52 +2,6 @@
 #include <iostream>
 
 
-Field::Field(int height, int width)
-    :_height(height), _width(width)
-{
-    _field.resize(height);
-    for (int i = 0; i < height; ++i) {
-        _field[i].resize(width);
-    }
-    //std::array<std::array<int, 7>, 7> field;
-}
-
-int Field::get(int i, int j)
-{
-    return _field[i][j];
-}
-
-void Field::set(int value, int i, int j)
-{
-    _field[i][j] = value;
-}
-
-int Field::getHeight()
-{
-    return _height;
-}
-
-int Field::getWidth()
-{
-    return _width;
-}
-
-int Field::getSize()
-{
-    return _width*_height;
-}
-
-void Field::showField()
-{
-    for (int i = 0; i < _height; ++i) {
-        for (int j = 0; j < _width; ++j) {
-            std::cout << _field[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-}
-
 
 ///////////////////////////////////////////////
 /// \brief FourInARow::FourInARow
@@ -67,9 +21,9 @@ std::string FourInARow::getName()
     return "four_in_a_row";
 }
 
-std::array<int, 7> FourInARow::getLegalInputs()
+std::vector<int> FourInARow::getLegalInputs()
 {
-    std::array<int, 7> legal_inputs = {0, 1, 2, 3, 4, 5, 6};
+    std::vector<int> legal_inputs = {0, 1, 2, 3, 4, 5, 6};
     Signal = "legalInputs_initialized";
     return legal_inputs;
 }
@@ -92,14 +46,6 @@ Field *FourInARow::initField(int height, int width)
         field->set(3,height,j);
     }
 
-/*
-    for (int i = 0; i < height+1; ++i) {
-        for (int j = 0; j < width; ++j) {
-            std::cout << field->get(i,j) << " ";
-        }
-        std::cout << std::endl;
-    }
-*/
 
     Signal = "field_initialized";
     return field;

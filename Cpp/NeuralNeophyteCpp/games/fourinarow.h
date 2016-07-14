@@ -3,23 +3,7 @@
 #include <string>
 #include <vector>
 #include <array>
-
-class Field
-{
-public:
-    Field(int height, int width); /*vieleicht noch ne init schreiben?*/
-    int get(int i, int j);
-    void set(int value, int i, int j);
-    int getHeight();
-    int getWidth();
-    int getSize();
-    void showField();
-
-private:
-    std::vector<std::vector<int>> _field;
-    int _height;
-    int _width;
-};
+#include "../field.h"
 
 
 
@@ -29,7 +13,7 @@ public:
     FourInARow();
     std::string getSignal();
     std::string getName();
-    std::array<int, 7> getLegalInputs();
+    std::vector<int> getLegalInputs();
     Field* initField(int height = 6, int width = 7);
     bool isLegalMove(Field *field, int playerNumber, int position);
     void setstone(Field *field, int color, int position);

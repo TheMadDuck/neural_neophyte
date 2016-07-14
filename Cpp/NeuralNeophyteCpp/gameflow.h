@@ -3,12 +3,32 @@
 #include <array>
 #include "learn_algorithms/cpp_based/logisticsgd.h" //TODO: here and in next line realy explizit includes or just interfaces??
 #include "games/fourinarow.h"
+#include "field.h"
+#include "tree.h"
+#include "minmaxpruning.h"
+#include <random>
 
 class GameFlow
 {
 public:
-    GameFlow(LogisticSgd classifier, FourInARow *gameLogic);
+    GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field* field = nullptr, int roundNumber = 0, int amountRandom = 0.15, Tree* tree = new Tree());
+    int AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba, bool saveTheGame);
+    int Human_Move(std::vector<int> legalMoves);
     void runGameFlow(std::array<int, 2> player);
+    void test();
+    void test2();
+private:
+    std::random_device seed;
+//    std::mt19937 rd;
+
+    LogisticSgd _classifier;
+    FourInARow *_gameLogic;
+    Field *_field;
+    int _roundNumber;
+    float _amountRandom;
+    Tree *_tree;
+    int _winner;
+
 };
 
 #endif // GAMEFLOW_H

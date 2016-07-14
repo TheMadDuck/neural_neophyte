@@ -6,13 +6,15 @@
 Menu::Menu()
 {
     gameLogic = new FourInARow();
-    /*Field * field = gameLogic->initField();
+
+    /*
+    Field * field = gameLogic->initField();
     gameLogic->isLegalMove(field,1,4);
-    gameLogic->setstone(field,1,1);
+    gameLogic->setstone(field,2,4);
     gameLogic->gameStopped(field, 22);
     gameLogic->hasAWinner(field, 2, 3);
-    field->showField();*/
-
+    field->showField();
+*/
     gameFlow = new GameFlow(classifier, gameLogic);
     std::cout << "Play a Game (press 1)" << std::endl;
     std::cout << "Train the AI (press 2)" << std::endl;
@@ -62,5 +64,6 @@ Menu::Menu()
         EloRanking eloRanking;
         eloRanking.turnier(gameFlow, amountGames, numberModels, gameName);
     }
-
+    delete gameLogic;
+    delete gameFlow;
 }
