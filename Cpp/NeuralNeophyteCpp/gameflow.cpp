@@ -72,7 +72,7 @@ int GameFlow::Human_Move(std::vector<int> legalMoves)
 
 
 
-void GameFlow::runGameFlow(std::array<int, 2> player)
+void GameFlow::runGameFlow(std::vector<int> player, bool saveTheGAme, std::vector<int> prefixPath)
 {
     std::cout << "testaa" << std::endl;
 }

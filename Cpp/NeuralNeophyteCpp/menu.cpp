@@ -41,12 +41,12 @@ Menu::Menu()
             std::cin >> humanPlayerNumber;
         }
         if (humanPlayerNumber == 1){
-            std::array<int, 2> player {-1, numberModels};
+            std::vector<int> player {-1, numberModels};
 //            gameFlow->runGameFlow(std::array<int, 2>{2, 3});
             gameFlow->runGameFlow(player);
         }
         else{
-            gameFlow->runGameFlow(std::array<int, 2>{numberModels, -1});
+            gameFlow->runGameFlow(std::vector<int>{numberModels, -1});
         }
 
     }

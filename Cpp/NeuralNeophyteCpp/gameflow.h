@@ -14,7 +14,7 @@ public:
     GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field* field = nullptr, int roundNumber = 0, int amountRandom = 0.15, Tree* tree = new Tree());
     int AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba, bool saveTheGame);
     int Human_Move(std::vector<int> legalMoves);
-    void runGameFlow(std::array<int, 2> player);
+    void runGameFlow(std::vector<int> player, bool saveTheGAme = true, std::vector<int> prefixPath = {});
     void test();
     void test2();
 private:
