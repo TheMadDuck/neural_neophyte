@@ -72,9 +72,68 @@ int GameFlow::Human_Move(std::vector<int> legalMoves)
 
 
 
-void GameFlow::runGameFlow(std::vector<int> player, bool saveTheGAme, std::vector<int> prefixPath)
+std::vector<int> GameFlow::runGameFlow(std::vector<int> player, bool saveTheGAme, std::vector<int> prefixPath)
 {
+    if(saveTheGAme){
+        SaveList* saveList = new SaveList();  //TODO pointer or normal?
+    }
+    else{
+        std::vector<int> gamePath = {};
+    }
+    if (!prefixPath.empty()) {
+        int preWinner = addPrefixPath(prefixPath);
+        std::vector<int> gamePath = prefixPath;
+        if (preWinner) {
+            return gamePath;
+        }
+    }
+
+    std::vector<int> legalInputs = _gameLogic->getLegalInputs();
+    if(_gameLogic->getSignal() != "legal_inputs_initialized"){
+        std::cout << "ERROR: legal inputs could not get initialized" << std::endl;
+    }
+
+    if(_field = nullptr){ //testen
+        _field = _gameLogic->initField();
+        if (_gameLogic->getSignal() != "field_initialized") {
+            std::cout << "ERROR: Field could not get initialized" << std::endl;
+        }
+    }
+
+    while((_gameLogic->getSignal() != "we_have_a_winner") || (_gameLogic->getSignal() != "game_is_over")){
+        int playerNumber;
+        if (_roundNumber % 2 == 0) {
+            playerNumber = 1;
+        }
+        else{
+            playerNumber = 2;
+        }
+        int position;
+        if (player[playerNumber - 1] == -1) {
+            position = Human_Move(legalInputs);
+        }
+        else{
+            position = AI_Move(playerNumber, legalInputs, player, _amountRandom, saveTheGAme);
+        }
+    }
+
     std::cout << "testaa" << std::endl;
+}
+
+int GameFlow::getWinner()
+{
+    return _winner;
+}
+
+void GameFlow::resetGame()
+{
+    _field = nullptr; //TODO: ja?
+    _roundNumber = 0;
+}
+
+int GameFlow::addPrefixPath(std::vector<int>)
+{
+
 }
 
 void GameFlow::test()

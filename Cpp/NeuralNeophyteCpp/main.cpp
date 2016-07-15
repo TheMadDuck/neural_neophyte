@@ -9,3 +9,4 @@ int main()
     return 0;
 }
 
+//TODO: Player as an object / interface for games /

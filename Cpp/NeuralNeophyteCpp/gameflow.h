@@ -7,6 +7,7 @@
 #include "tree.h"
 #include "minmaxpruning.h"
 #include <random>
+#include "savelist.h"
 
 class GameFlow
 {
@@ -14,7 +15,11 @@ public:
     GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field* field = nullptr, int roundNumber = 0, int amountRandom = 0.15, Tree* tree = new Tree());
     int AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba, bool saveTheGame);
     int Human_Move(std::vector<int> legalMoves);
-    void runGameFlow(std::vector<int> player, bool saveTheGAme = true, std::vector<int> prefixPath = {});
+    std::vector<int> runGameFlow(std::vector<int> player, bool saveTheGAme = true, std::vector<int> prefixPath = {});
+    int getWinner();
+    void resetGame();
+    int addPrefixPath(std::vector<int>);
+
     void test();
     void test2();
 private:

@@ -24,7 +24,7 @@ std::string FourInARow::getName()
 std::vector<int> FourInARow::getLegalInputs()
 {
     std::vector<int> legal_inputs = {0, 1, 2, 3, 4, 5, 6};
-    Signal = "legalInputs_initialized";
+    Signal = "legal_inputs_initialized";
     return legal_inputs;
 }
 
