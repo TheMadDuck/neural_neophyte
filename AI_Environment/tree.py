@@ -160,7 +160,6 @@ class gameTree(object):
 
 
 
-"""
 print("t1")
 path = [0, 3, 14, 9, 11]
 path2 = [0, 3, 66, 6, 6]
@@ -182,4 +181,3 @@ print(tree.getTreePreOrder())
 print("t2")
 print(tree.getBestMove())
 print(tree.getProbabilities())
-"""

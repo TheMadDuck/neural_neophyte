@@ -5,6 +5,8 @@
 int main()
 {
     //TimeTests timeTests;
+    Tree tree;
+    tree.Test();
     Menu menu;
     return 0;
 }

@@ -108,12 +108,17 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, bool saveTheGAme
         else{
             playerNumber = 2;
         }
+
         int position;
         if (player[playerNumber - 1] == -1) {
             position = Human_Move(legalInputs);
         }
         else{
             position = AI_Move(playerNumber, legalInputs, player, _amountRandom, saveTheGAme);
+        }
+
+        if (saveTheGAme) {
+            //_tree->cutRoot(position);
         }
     }
 
