@@ -46,13 +46,16 @@ void Tree::printTree()
 
 std::vector<int> Tree::getPreOrder(std::vector<int> preOrderList)
 {
+    std::cout << "does not work yet" << std::endl;
+    //std::cout << "yiip" << std::endl;
     preOrderList.push_back(_move);
+    if(!_childs.empty()){
     for(Tree* child: _childs){
         child->getPreOrder(preOrderList);
-    }
+    }}
     return preOrderList;
 }
-
+/*
 void Tree::addPath(std::vector<int> path, int winOrLoss)
 {
     _numberPlayed += 1;
@@ -78,7 +81,7 @@ void Tree::addPath(std::vector<int> path, int winOrLoss)
         }
     }
 }
-
+*/
 void Tree::addPathRec(std::vector<int> path, int winOrLoss)
 {
     _numberPlayed += 1;
@@ -125,8 +128,8 @@ int Tree::getBestMove()
             win_probability = win_ratio;
             bestMove = child;
         }
-        return bestMove->_move;
     }
+    return bestMove->_move;
 }
 
 int Tree::getNextMove()
@@ -156,6 +159,7 @@ std::vector<double> Tree::getProbabilities()
     std::vector<double> probabilities;
     int index = 0;
     for(Tree* child: _childs){
+        /*std::cout << "index: " << index << std::endl;*/
         index += 1;
         double win_ratio;
         if(child->_numberPlayed == 0){
@@ -192,6 +196,7 @@ void Tree::cutRoot(int nextRoot)
 
 bool Tree::Test()
 {
+    bool testV = true;
     int testA = 3;
     int testB = 2;
 
@@ -205,24 +210,28 @@ bool Tree::Test()
     int loss = 0;
 
     Tree tree; // test as obj and test as pointer.
-    tree.addPath(path, win);
-    tree.addPath(path2, loss);
-    tree.addPath(path3, loss);
+    tree.addPathRec(path, win);
+    tree.addPathRec(path2, loss);
+    tree.addPathRec(path3, win);
     tree.printTree();
-    std::cout << "\n \n" << "preOrder:" <<std::endl;
+    /*std::cout << "\n \n" << "preOrder:" <<std::endl;
     auto things = tree.getPreOrder();
     for (auto thing: things ) {
         std::cout << thing << std::endl;
-    }
+    }*/
     std::cout << std::endl;
     std::cout << "bestMove:" << std::endl;
     std::cout << tree.getBestMove() << std::endl;
+    if (getBestMove() != 32){
+        testV = false;
+    }
     std::cout << "probabilities:" << std::endl;
     auto things2 = tree.getProbabilities();
     for (auto thing: things2 ) {
         std::cout << thing << std::endl;
     }
     std::cout << std::endl;
+    return testV;
 
 }
 

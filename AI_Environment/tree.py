@@ -173,9 +173,9 @@ win = 1
 loss = 0
 
 tree = gameTree()
-tree.addPath(path, win)
-tree.addPath(path2, loss)
-tree.addPath(path3, loss)
+tree.addPathRec(path, win)
+tree.addPathRec(path2, loss)
+tree.addPathRec(path3, win)
 tree.printTree()
 print(tree.getTreePreOrder())
 print("t2")

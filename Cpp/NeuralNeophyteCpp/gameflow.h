@@ -26,6 +26,8 @@ private:
     std::random_device seed;
 //    std::mt19937 rd;
 
+    SaveList* saveList; // check this (realy a pointer?)
+    std::vector<int> gamePath;
     LogisticSgd _classifier;
     FourInARow *_gameLogic;
     Field *_field;

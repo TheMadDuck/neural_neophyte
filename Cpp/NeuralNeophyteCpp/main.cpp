@@ -1,12 +1,11 @@
 #include "menu.h"
 #include <iostream>
 
-#include "Tests/timetests.h"
+#include "Tests/classtests.h"
 int main()
 {
-    //TimeTests timeTests;
-    Tree tree;
-    tree.Test();
+    //ClassTests ct;
+
     Menu menu;
     return 0;
 }

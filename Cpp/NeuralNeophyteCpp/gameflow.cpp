@@ -74,11 +74,12 @@ int GameFlow::Human_Move(std::vector<int> legalMoves)
 
 std::vector<int> GameFlow::runGameFlow(std::vector<int> player, bool saveTheGAme, std::vector<int> prefixPath)
 {
+
     if(saveTheGAme){
-        SaveList* saveList = new SaveList();  //TODO pointer or normal?
+        saveList = new SaveList();  //TODO pointer or normal?
     }
     else{
-        std::vector<int> gamePath = {};
+        gamePath = {};
     }
     if (!prefixPath.empty()) {
         int preWinner = addPrefixPath(prefixPath);
@@ -117,9 +118,70 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, bool saveTheGAme
             position = AI_Move(playerNumber, legalInputs, player, _amountRandom, saveTheGAme);
         }
 
-        if (saveTheGAme) {
-            //_tree->cutRoot(position);
+        if (saveTheGAme) {  // hier an richtiger stelle?
+            _tree->cutRoot(position);
         }
+        _gameLogic->isLegalMove(_field, playerNumber, position);
+
+        while((_gameLogic->getSignal() == "unvalid_player")
+              || (_gameLogic->getSignal() == "unvalid_position")
+              || (_gameLogic->getSignal() == "column_is_full")){
+            _gameLogic->gameStopped(_field, _roundNumber);
+            if(_gameLogic->getSignal() == "game_is_over"){
+                break;
+            }
+
+            if (player[playerNumber - 1] == -1) {
+                std::cout << "this move is not legal, please try again!!" << std::endl;
+                position = Human_Move(legalInputs);
+            }
+            else{
+                position = AI_Move(playerNumber, legalInputs, player, 1, saveTheGAme);
+            }
+
+            if (saveTheGAme) {
+                _tree->cutRoot(position);
+            }
+            _gameLogic->isLegalMove(_field, playerNumber, position);
+        }
+
+        if(saveTheGAme){
+            saveList->savePositions(*_field, playerNumber, _roundNumber, position, false); //reference to _field ??
+        }
+        else{
+            gamePath.push_back(position);
+        }
+        _gameLogic->setstone(_field, playerNumber, position);
+        if (_gameLogic->getSignal() != "stone_is_set") {
+            std::cout << "ERROR: Stone is not saved" << std::endl;
+        }
+        if((player[0] == -1) || (player[1] == -1)){
+            std::cout << "\n" << _field << std::endl;
+        }
+        _winner = _gameLogic->hasAWinner(_field, playerNumber, position);
+        if (_gameLogic->getSignal() == "we_have_a_winner") {
+            if (_winner == 0) {
+                std::cout << "ERROR: we could not determine who won!" << std::endl;
+            }
+            if((player[0] == -1) || (player[1] == -1)){
+                std::cout << "\n" << "the winner is: " << _winner << std::endl;
+            }
+            break;
+        }
+        _gameLogic->gameStopped(_field, _roundNumber);
+        if(_gameLogic->getSignal() == "game_is_over"){
+            break;
+        }
+        _roundNumber += 1;
+    }
+    if(saveTheGAme){
+        /*if (_winner-1 == 0) {
+            saveList->
+        }
+        return saveList[_winner-1];*/
+    }
+    else {
+        return gamePath;
     }
 
     std::cout << "testaa" << std::endl;

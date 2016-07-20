@@ -19,6 +19,9 @@ private:
 
     std::vector<std::vector<int>> playerTwoFields;
     std::vector<int> playerTwoPositions;
+
+    //std::vector<> playerOne;
+
 };
 
 #endif // SAVELIST_H

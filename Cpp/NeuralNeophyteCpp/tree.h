@@ -5,14 +5,14 @@
 class Tree
 {
 public:
-    Tree(int move = 0, int depth = 0, int numberWon = 0, int numberPlayed = 0, std::vector<Tree*> childs = {});
+    Tree(int move = -1, int depth = 0, int numberWon = 0, int numberPlayed = 0, std::vector<Tree*> childs = {}); //TODO move als -1 initialisieren?
     int getNumberWon();
     int getNumberPlayed();
     int getDepth();
     std::vector<Tree *> getChilds();
     void printTree();
     std::vector<int> getPreOrder(std::vector<int> preOrderList = {});
-    void addPath(std::vector<int> path, int winOrLoss);
+    //void addPath(std::vector<int> path, int winOrLoss);
     void addPathRec(std::vector<int> path, int winOrLoss);
     int getBestMove();
     int getNextMove();
@@ -23,7 +23,7 @@ public:
     bool Test();
 
 private:
-    int _move = 0;
+    int _move = -1;
     int _depth = 0;
     int _numberWon = 0;
     int _numberPlayed = 0;
