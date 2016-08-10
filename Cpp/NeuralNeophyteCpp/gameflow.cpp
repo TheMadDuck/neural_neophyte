@@ -94,7 +94,7 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, bool saveTheGAme
         std::cout << "ERROR: legal inputs could not get initialized" << std::endl;
     }
 
-    if(_field = nullptr){ //testen
+    if(!_field){
         _field = _gameLogic->initField();
         if (_gameLogic->getSignal() != "field_initialized") {
             std::cout << "ERROR: Field could not get initialized" << std::endl;
