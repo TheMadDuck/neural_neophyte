@@ -9,26 +9,36 @@ GameFlow::GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field *field, 
     std::cout << " i: " << i << std::endl;
 }
 
-int GameFlow::AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba, bool saveTheGame)
+GameFlow::~GameFlow()
+{
+    delete _field;
+    delete _tree;
+}
+
+int GameFlow::AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba, SaveList* saveTheGame)
 {
 
     //TODO: test whole function!!!
-    std::mt19937 rd(seed());
+
+    std::mt19937 rd(seed());   // valgrind fehler?
     std::uniform_real_distribution<float> randomDistrib(0,1);
+
     if (randomDistrib(rd) < randomMoveProba) {
         std::uniform_int_distribution<int> randomDistrib(0, legalMoves.size());
         return legalMoves[randomDistrib(rd)];
     }
+
     if (players[playerNumber-1] == 0) {
         std::uniform_int_distribution<int> randomDistrib(0, legalMoves.size());
         return legalMoves[randomDistrib(rd)];
+
     }
 
     std::vector<int> flatField = _field->flatten();
     flatField.push_back(playerNumber);
     flatField.push_back(_roundNumber);
 
-    if(saveTheGame == true){
+    if(saveTheGame){
         MinMaxPruning minMaxPruning;
         if (players[0] == -1) {
             std::vector<int> p {players[1], players[1]};
@@ -143,7 +153,7 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
                 position = Human_Move(legalInputs);
             }
             else{
-                position = AI_Move(playerNumber, legalInputs, player, 1, saveList);
+                position = AI_Move(playerNumber, legalInputs, player, 1.0, saveList);
             }
 
             if (saveList) {
@@ -158,7 +168,7 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
         else{
             gamePath.push_back(position);
         }
-        _gameLogic->setstone(_field, playerNumber, position);
+        _gameLogic->setStone(_field, playerNumber, position);
         if (_gameLogic->getSignal() != "stone_is_set") {
             std::cout << "ERROR: Stone is not saved" << std::endl;
         }
@@ -175,23 +185,15 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
             }
             break;
         }
+        _roundNumber += 1;
         _gameLogic->gameStopped(_field, _roundNumber);
         if(_gameLogic->getSignal() == "game_is_over"){
             break;
         }
-        _roundNumber += 1;
     }
-    if(saveList){
-        /*if (_winner-1 == 0) {
-            saveList->
-        }
-        return saveList[_winner-1];*/
-    }
-    else {
-        return gamePath;
-    }
+    //std::cout << "testaa" << std::endl;
+    return gamePath;
 
-    std::cout << "testaa" << std::endl;
 }
 
 int GameFlow::getWinner()

@@ -31,9 +31,14 @@ int Field::getWidth()
     return _width;
 }
 
-int Field::getSize()
+int Field::getSizeTotal()
 {
     return _width*_height;
+}
+
+int Field::getSizeField()
+{
+    return _width *(_height-1);
 }
 
 void Field::showField()

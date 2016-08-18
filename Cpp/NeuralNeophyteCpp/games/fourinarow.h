@@ -16,7 +16,7 @@ public:
     std::vector<int> getLegalInputs();
     Field* initField(int height = 6, int width = 7);
     bool isLegalMove(Field *field, int playerNumber, int position);
-    void setstone(Field *field, int color, int position);
+    void setStone(Field *field, int color, int position);
     bool gameStopped(Field *field, int roundNumber);
     int hasAWinner(Field *field, int color, int position); /*TODO: Testen*/
 

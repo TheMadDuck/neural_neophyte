@@ -16,6 +16,7 @@ Menu::Menu()
     field->showField();
 */
     gameFlow = new GameFlow(classifier, gameLogic);
+
     std::cout << "Play a Game (press 1)" << std::endl;
     std::cout << "Train the AI (press 2)" << std::endl;
     std::cout << "Sort existing classifiers and rank them (press 3)" << std::endl;
@@ -53,7 +54,8 @@ Menu::Menu()
     }
 
     if (mode == 2){
-        TrainTestValidate gameTTV(gameFlow, 400, 100, 100, numberModels);
+        TrainTestValidate gameTTV;
+        gameTTV.run(gameFlow, 400, 100, 100, numberModels);
         std::string bestModelPath = "./best_models" + gameName + "best_model_" + std::to_string(numberModels) + ".pkl";
         classifier.fit();
     }

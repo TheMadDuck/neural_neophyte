@@ -11,7 +11,8 @@ public:
     void set(int value, int i, int j);
     int getHeight();
     int getWidth();
-    int getSize();
+    int getSizeTotal();
+    int getSizeField();
     void showField();
     std::vector<int> flatten();
 

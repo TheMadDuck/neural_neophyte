@@ -13,7 +13,8 @@ class GameFlow
 {
 public:
     GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field* field = nullptr, int roundNumber = 0, int amountRandom = 0.15, Tree* tree = new Tree());
-    int AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba, bool saveTheGame);
+    ~GameFlow();
+    int AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba, SaveList *saveTheGame);
     int Human_Move(std::vector<int> legalMoves);
     std::vector<int> runGameFlow(std::vector<int> player, std::vector<int> prefixPath = {}, SaveList* saveList = nullptr);
     int getWinner();
@@ -26,7 +27,7 @@ private:
     std::random_device seed;
 //    std::mt19937 rd;
 
-    SaveList* saveList; // check this (realy a pointer?)
+    //SaveList* saveList; // check this (realy a pointer?)
     std::vector<int> gamePath;
     LogisticSgd _classifier;
     FourInARow *_gameLogic;

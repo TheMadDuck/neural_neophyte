@@ -75,7 +75,7 @@ bool FourInARow::isLegalMove(Field *field, int playerNumber, int position)
     return true;
 }
 
-void FourInARow::setstone(Field *field, int color, int position)
+void FourInARow::setStone(Field *field, int color, int position)
 {
     for (int i = 0; i < field->getHeight(); ++i) {
         if(field->get(i,position) != 0){
@@ -89,7 +89,7 @@ void FourInARow::setstone(Field *field, int color, int position)
 
 bool FourInARow::gameStopped(Field *field, int roundNumber)
 {
-    if(roundNumber >= (field->getSize())){
+    if(roundNumber == (field->getSizeField())){
         std::cout << "you played a draw" << std::endl;
         Signal = "game_is_over";
         return 1;

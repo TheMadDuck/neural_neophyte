@@ -62,6 +62,7 @@ class gameLogic(object):
         return field
 
     def gameStopped(self, field, roundNumber):
+        print("roundNumber: " + str(roundNumber) + "field.size - field.shape[1]: " + str(field.size - field.shape[1]))
         if roundNumber == (field.size - field.shape[1]):
             print("you played a draw")
             #global SIGNAL
