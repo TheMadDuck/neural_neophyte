@@ -6,6 +6,12 @@ class Tree
 {
 public:
     Tree(int move = -1, int depth = 0, int numberWon = 0, int numberPlayed = 0, std::vector<Tree*> childs = {}); //TODO move als -1 initialisieren?
+    ~Tree(); //destructor
+    Tree(const Tree &other); //copy constructor
+    Tree(Tree&& other); //move constructor
+    Tree& operator=(const Tree& other); //copy assignment
+    Tree& operator=(Tree&& other); //move assignment
+
     int getNumberWon();
     int getNumberPlayed();
     int getDepth();

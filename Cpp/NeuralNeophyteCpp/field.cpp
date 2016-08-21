@@ -11,6 +11,44 @@ Field::Field(int height, int width)
     //std::array<std::array<int, 7>, 7> field;
 }
 
+Field::~Field()
+{
+    //delete _field; Nope, not a pointer.
+}
+
+Field::Field(const Field &other){    //Testen!
+//    _field(other._field);
+    _field = other._field;
+    _height = other._height;
+    _width = other._width;
+}
+
+Field::Field(Field &&other)
+    :_field(other._field), _height(other._height), _width(other._width)
+{
+//    other._field = nullptr;
+//    other._heigh = NULL;
+    //    other._width = NULL;
+}
+
+Field &Field::operator=(const Field &other)
+{
+//    std::vector<std::vector<int>> tempField = other._field;
+    _field = other._field;
+    _height = other._height;
+    _width = other._width;
+    return *this;
+}
+
+Field &Field::operator=(Field &&other)
+{
+    _field = other._field;
+    _height = other._height;
+    _width = other._width;
+    return *this;
+}
+
+
 int Field::get(int i, int j)
 {
     return _field[i][j];

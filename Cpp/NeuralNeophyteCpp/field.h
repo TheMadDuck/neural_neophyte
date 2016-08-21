@@ -7,6 +7,11 @@ class Field
 {
 public:
     Field(int height, int width); /*vieleicht noch ne init schreiben?*/
+    ~Field(); //destructor
+    Field(const Field &other); //copy constructor
+    Field(Field&& other); //move constructor
+    Field& operator=(const Field& other); //copy assignment
+    Field& operator=(Field&& other); //move assignment
     int get(int i, int j);
     void set(int value, int i, int j);
     int getHeight();

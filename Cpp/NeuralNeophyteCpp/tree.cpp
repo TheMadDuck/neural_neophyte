@@ -7,6 +7,47 @@ Tree::Tree(int move, int depth, int numberWon, int numberPlayed, std::vector<Tre
 {
 }
 
+Tree::~Tree()
+{
+    //    delete _childs;
+}
+
+Tree::Tree(const Tree &other)
+{
+    _move = other._move;
+    _depth = other._depth;
+    _numberWon = other._numberWon;
+    _numberPlayed = other._numberPlayed;
+    _childs = other._childs;
+}
+
+Tree::Tree(Tree &&other)
+    :_move(other._move), _depth(other._depth), _numberWon(other._numberWon), _numberPlayed(other._numberPlayed), _childs(other._childs)
+{
+
+}
+
+Tree &Tree::operator=(const Tree &other)
+{
+    std::cout << "test Test 123";
+    _move = other._move;
+    _depth = other._depth;
+    _numberWon = other._numberWon;
+    _numberPlayed = other._numberPlayed;
+    _childs = other._childs;
+    return *this;
+}
+
+Tree &Tree::operator=(Tree &&other)
+{
+    _move = other._move;
+    _depth = other._depth;
+    _numberWon = other._numberWon;
+    _numberPlayed = other._numberPlayed;
+    _childs = other._childs;
+    return *this;
+}
+
 int Tree::getNumberWon()
 {
     return _numberWon;
