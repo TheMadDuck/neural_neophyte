@@ -20,8 +20,10 @@ int main()
     //field.showField();
     field2->showField();
     delete pField;
-    //delete field2;
+    delete field2;
     */
+
+
     Menu menu;
     return 0;
 }
