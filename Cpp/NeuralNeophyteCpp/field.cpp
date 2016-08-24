@@ -4,6 +4,7 @@
 Field::Field(int height, int width)
     :_height(height), _width(width)
 {
+    std::cout << "nummer 0" << std::endl;
     _field.resize(height);
     for (int i = 0; i < height; ++i) {
         _field[i].resize(width);
@@ -18,6 +19,7 @@ Field::~Field()
 
 Field::Field(const Field &other){    //Testen!
 //    _field(other._field);
+    std::cout << "nummer 1" << std::endl;
     _field = other._field;
     _height = other._height;
     _width = other._width;
@@ -26,6 +28,7 @@ Field::Field(const Field &other){    //Testen!
 Field::Field(Field &&other)
     :_field(other._field), _height(other._height), _width(other._width)
 {
+    std::cout << "nummer 2" << std::endl;
 //    other._field = nullptr;
 //    other._heigh = NULL;
     //    other._width = NULL;
@@ -34,6 +37,7 @@ Field::Field(Field &&other)
 Field &Field::operator=(const Field &other)
 {
 //    std::vector<std::vector<int>> tempField = other._field;
+    std::cout << "nummer 3" << std::endl;
     _field = other._field;
     _height = other._height;
     _width = other._width;
@@ -42,6 +46,7 @@ Field &Field::operator=(const Field &other)
 
 Field &Field::operator=(Field &&other)
 {
+    std::cout << "nummer 4" << std::endl;
     _field = other._field;
     _height = other._height;
     _width = other._width;

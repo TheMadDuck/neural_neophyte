@@ -43,9 +43,9 @@ Menu::Menu()
         }
         if (humanPlayerNumber == 1){
             std::vector<int> player {-1, numberModels};
-//            gameFlow->runGameFlow(std::array<int, 2>{2, 3});
-            //SaveList* saveList = new SaveList();
-            gameFlow->runGameFlow(player);
+//            gameFlow->runGameFuulow(std::array<int, 2>{2, 3});
+            SaveList* saveList = new SaveList();
+            gameFlow->runGameFlow(player,{}, saveList); //TODO: remove saveList
         }
         else{
             gameFlow->runGameFlow(std::vector<int>{numberModels, -1});

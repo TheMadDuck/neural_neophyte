@@ -11,8 +11,8 @@ GameFlow::GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field *field, 
 
 GameFlow::~GameFlow()
 {
-    delete _field;
-    delete _tree;
+    //delete _field;
+    //delete _tree;
 }
 
 int GameFlow::AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba, SaveList* saveTheGame)
@@ -82,7 +82,7 @@ int GameFlow::Human_Move(std::vector<int> legalMoves)
 }
 
 
-
+//player:= -1:human  0:random  1-x:AImodel
 std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int> prefixPath, SaveList *saveList)
 {
 
@@ -203,7 +203,8 @@ int GameFlow::getWinner()
 
 void GameFlow::resetGame()
 {
-    _field = nullptr; //TODO: ja?
+    _field = _gameLogic->initField(6, 7);
+    //_field = nullptr; //TODO: ja?
     _roundNumber = 0;
 }
 

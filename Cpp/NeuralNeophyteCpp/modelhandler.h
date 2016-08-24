@@ -2,6 +2,7 @@
 #define MODELHANDLER_H
 #include <string>
 #include <iostream>
+#include <sys/stat.h>
 #include "learn_algorithms/cpp_based/logisticsgd.h"
 
 class ModelHandler
