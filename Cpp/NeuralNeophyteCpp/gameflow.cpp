@@ -1,18 +1,18 @@
 #include "gameflow.h"
 #include <iostream>
 
-GameFlow::GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field *field, int roundNumber, int amountRandom, Tree *tree)
+GameFlow::GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field *field, Tree *tree, int roundNumber, int amountRandom)
     :_classifier(classifier), _gameLogic(gameLogic), _field(field), _roundNumber(roundNumber), _amountRandom(amountRandom), _tree(tree)
 {
-    std::random_device a;
-    int i = a();
-    std::cout << " i: " << i << std::endl;
+    //std::random_device a;
+    //int i = a();
+    //std::cout << " i: " << i << std::endl;
 }
 
 GameFlow::~GameFlow()
 {
     //delete _field;
-    //delete _tree;
+    delete _tree;
 }
 
 int GameFlow::AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba, SaveList* saveTheGame)

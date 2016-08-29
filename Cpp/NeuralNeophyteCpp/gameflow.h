@@ -12,7 +12,7 @@
 class GameFlow
 {
 public:
-    GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field* field = nullptr, int roundNumber = 0, int amountRandom = 0.15, Tree* tree = new Tree());
+    GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field* field = nullptr, Tree* tree = new Tree(), int roundNumber = 0, int amountRandom = 0.15);
     ~GameFlow();
     int AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba, SaveList *saveTheGame);
     int Human_Move(std::vector<int> legalMoves);

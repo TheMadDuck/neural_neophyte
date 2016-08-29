@@ -28,7 +28,8 @@ int MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<int> leg
         Field* fieldCopy = new Field(*field);
         //Field fieldCopy(field);  //Testen!!!
 
-        GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, roundNumber);
+        //GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, roundNumber, randomProbability, mcts_tree); // tree weiter vererben???
+        GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber);
         std::vector<int> moveVector = {move};
         std::vector<int> path = tempGameFlow.runGameFlow(players, moveVector);
         if(tempGameFlow.getWinner() == playerNumber){
@@ -44,13 +45,13 @@ int MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<int> leg
     std::cout << "teeeeeeeest7" << std::endl;
     int gameQuantity = 8;
     for (int i = 0; i < gameQuantity; ++i) {
-        //int move = 3;
-        int move = mcts_tree->getNextMove();
+        int move = 3;
+        //int move = mcts_tree->getNextMove();
         //Field* fieldCopy(field);  //Testen!!!
         Field* fieldCopy = new Field(*field);
 
 
-        GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, roundNumber);
+        GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber);
         std::vector<int> moveVector = {move};
         std::vector<int> path = tempGameFlow.runGameFlow(players, moveVector);
         if(tempGameFlow.getWinner() == playerNumber){
