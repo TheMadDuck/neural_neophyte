@@ -25,6 +25,7 @@ public:
     std::vector<double> getProbabilities();
     void mergeTrees(Tree);
     void cutRoot(int nextRoot);
+    Tree *lookUp(std::vector<int> path);
 
     bool Test();
 

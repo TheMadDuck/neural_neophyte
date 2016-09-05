@@ -136,7 +136,7 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
         }
 
         if (saveList) {  // hier an richtiger stelle?
-            _tree->cutRoot(position);
+            _tree->cutRoot(position); // do not use?!
         }
         _gameLogic->isLegalMove(_field, playerNumber, position);
 

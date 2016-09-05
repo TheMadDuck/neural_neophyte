@@ -15,7 +15,8 @@ Menu::Menu()
     gameLogic->hasAWinner(field, 2, 3);
     field->showField();
 */
-    gameFlow = new GameFlow(classifier, gameLogic);
+    Tree* tree = new Tree;
+    gameFlow = new GameFlow(classifier, gameLogic, nullptr, tree);
 
     std::cout << "Play a Game (press 1)" << std::endl;
     std::cout << "Train the AI (press 2)" << std::endl;

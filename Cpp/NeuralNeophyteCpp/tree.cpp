@@ -235,6 +235,16 @@ void Tree::cutRoot(int nextRoot)
     }
 }
 
+Tree* Tree::lookUp(std::vector<int> path)
+{
+    Tree* parent = this;
+    //Tree* child;
+    for(int subTree: path){
+        parent = parent->_childs[subTree];
+    }
+    return parent;
+}
+
 bool Tree::Test()
 {
     bool testV = true;
