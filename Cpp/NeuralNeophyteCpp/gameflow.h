@@ -1,12 +1,13 @@
 #ifndef GAMEFLOW_H
 #define GAMEFLOW_H
 #include <array>
+#include <random>
+#include <chrono>
 #include "learn_algorithms/cpp_based/logisticsgd.h" //TODO: here and in next line realy explizit includes or just interfaces??
 #include "games/fourinarow.h"
 #include "field.h"
 #include "tree.h"
 #include "minmaxpruning.h"
-#include <random>
 #include "savelist.h"
 
 class GameFlow
@@ -19,7 +20,7 @@ public:
     std::vector<int> runGameFlow(std::vector<int> player, std::vector<int> prefixPath = {}, SaveList* saveList = nullptr);
     int getWinner();
     void resetGame();
-    int addPrefixPath(std::vector<int>);
+    int addPrefixPath(std::vector<int> prefixPath);
 
     void test();
     void test2();
@@ -28,7 +29,7 @@ private:
 //    std::mt19937 rd;
 
     //SaveList* saveList; // check this (realy a pointer?)
-    std::vector<int> gamePath;
+    std::vector<int> _gamePath;
     LogisticSgd _classifier;
     FourInARow *_gameLogic;
     Field *_field;
@@ -36,6 +37,7 @@ private:
     float _amountRandom;
     Tree *_tree;
     int _winner;
+    std::mt19937 _rd;
 
 };
 

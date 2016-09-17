@@ -1,7 +1,7 @@
 #include "menu.h"
 #include <iostream>
 
-#include "Tests/classtests.h"
+#include "Tests/randomtest.h"
 //#include "n_random_distrib/nrandomdistrib.h"
 #include "field.h"
 int main()
@@ -23,7 +23,12 @@ int main()
     delete field2;
     */
 
-
+    /*
+    RandomTest jo;
+    for (int var = 0; var < 22; ++var) {
+        std::cout << jo.getRandom() << std::endl;
+    }
+    */
     Menu menu;
     return 0;
 }

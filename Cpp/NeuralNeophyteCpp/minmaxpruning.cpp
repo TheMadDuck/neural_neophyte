@@ -19,7 +19,7 @@ int MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<int> leg
         mcts_tree = tree;
     }
     else{
-        mcts_tree = new Tree();
+        //mcts_tree = new Tree();
     }
     std::cout << "legalMoves: " << legalMoves.size() << std::endl;
     for (int move: legalMoves) {
