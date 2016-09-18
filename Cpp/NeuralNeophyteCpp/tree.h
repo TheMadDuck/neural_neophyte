@@ -26,6 +26,7 @@ public:
     void mergeTrees(Tree);
     void cutRoot(int nextRoot);
     Tree *lookUp(std::vector<int> path);
+    void deleteTree(Tree *tree);
 
     bool Test();
 

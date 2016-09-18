@@ -8,6 +8,7 @@ class ClassTests
 public:
     ClassTests();
     bool t_tree();
+    bool t_field();
 };
 
 #endif // CLASSTESTS_H

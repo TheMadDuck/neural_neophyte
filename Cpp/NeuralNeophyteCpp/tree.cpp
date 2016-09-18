@@ -2,6 +2,12 @@
 #include <iostream>
 #include <math.h>
 
+/*
+Tree::Tree()
+{
+    _move = -1, _depth = 0, _numberWon = 0, _numberPlayed = 0, _childs = {};
+}
+*/
 Tree::Tree(int move, int depth, int numberWon, int numberPlayed, std::vector<Tree *> childs)
     :_move(move), _depth(depth), _numberWon(numberWon), _numberPlayed(numberPlayed), _childs(childs)
 {
@@ -10,6 +16,7 @@ Tree::Tree(int move, int depth, int numberWon, int numberPlayed, std::vector<Tre
 Tree::~Tree()
 {
     //    delete _childs;
+    //deleteTree(this);
 }
 
 Tree::Tree(const Tree &other)
@@ -123,14 +130,18 @@ void Tree::addPath(std::vector<int> path, int winOrLoss)
     }
 }
 */
+/*
 void Tree::addPathRec(std::vector<int> path, int winOrLoss)
 {
+
     _numberPlayed += 1;
     _numberWon += winOrLoss;
+
     bool pathExist = false;
     if (path.empty()){ //testen
         return;
     }
+
     for(Tree* child: _childs){
         if (path[0] == child->_move) {
             pathExist = true;
@@ -148,14 +159,41 @@ void Tree::addPathRec(std::vector<int> path, int winOrLoss)
         newChild->addPathRec(path, winOrLoss);
         return;
     }
+}*/
+void Tree::addPathRec(std::vector<int> path, int winOrLoss)
+{
 
+    std::cout << _numberPlayed;
 
+    _numberPlayed += 1;
+    _numberWon += winOrLoss;
+
+    if (path.empty()){ //testen
+        return;
+    }
+
+    for(Tree* child: _childs){
+        if (path[0] == child->_move) {
+            path.erase(path.begin()); // ACHTUNG INEFIZIENT !!!
+            child->addPathRec(path, winOrLoss);
+            return;
+        }
+    }
+    Tree* newChild = new Tree();
+    newChild->_move = path[0];
+    newChild->_depth = _depth + 1;
+    _childs.push_back(newChild);
+    path.erase(path.begin());
+    newChild->addPathRec(path, winOrLoss);
+
+    return;
 }
 
 int Tree::getBestMove()
 {
     double win_probability = 0;
-    Tree* bestMove;
+    //Tree* bestMove = new Tree();
+    int bestMove = -1;
     for(Tree* child: _childs){
         double win_ratio;
         if (child->_numberPlayed == 0) {
@@ -167,16 +205,17 @@ int Tree::getBestMove()
 
         if (win_ratio >= win_probability) {
             win_probability = win_ratio;
-            bestMove = child;
+            bestMove = child->_move;
         }
     }
-    return bestMove->_move;
+    return bestMove;
 }
 
 int Tree::getNextMove()
 {
     double next_probability = 0;
-    Tree* nextMove;
+    //Tree* nextMove = new Tree();
+    int nextMove;
     double c = sqrt(2);
     for(Tree* child: _childs){
         double next_ratio;
@@ -189,10 +228,11 @@ int Tree::getNextMove()
 
         if (next_ratio >= next_probability) {
             next_probability = next_ratio;
-            nextMove = child;
+            nextMove = child->_move;
         }
     }
-    return nextMove->_move;
+    //delete nextMove;
+    return nextMove;
 }
 
 std::vector<double> Tree::getProbabilities()
@@ -202,14 +242,16 @@ std::vector<double> Tree::getProbabilities()
     for(Tree* child: _childs){
         /*std::cout << "index: " << index << std::endl;*/
         index += 1;
-        double win_ratio;
-        if(child->_numberPlayed == 0){
-            win_ratio = 0;
-        }
-        else{
+        double win_ratio = 0;
+        if(child->_numberPlayed != 0){
             win_ratio = (double)child->_numberWon / (double)child->_numberPlayed; // use exploited algo?
         }
+
         probabilities.push_back(win_ratio);
+
+    }
+    for(double i: probabilities){
+        std::cout << " i:" << i << std::endl;
     }
     return probabilities;
 }
@@ -243,6 +285,24 @@ Tree* Tree::lookUp(std::vector<int> path)
         parent = parent->_childs[subTree];
     }
     return parent;
+}
+
+void Tree::deleteTree(Tree *tree)
+{
+    /*if (tree->getChilds().size() == 0){
+        std::cout << "yo";
+        delete tree;
+        return;
+    }
+    */
+    for(Tree* child: tree->getChilds()){
+        std::cout << "yo1";
+        deleteTree(child);
+        std::cout << "yo2";
+    }
+    std::cout << "yo";
+    delete tree;
+    return;
 }
 
 bool Tree::Test()

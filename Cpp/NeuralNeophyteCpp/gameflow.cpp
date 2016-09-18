@@ -14,7 +14,8 @@ GameFlow::GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field *field, 
 GameFlow::~GameFlow()
 {
     //delete _field;
-    delete _tree;
+    //_tree->deleteTree(_tree);
+//    delete _tree;
 }
 
 int GameFlow::AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba, SaveList* saveTheGame)

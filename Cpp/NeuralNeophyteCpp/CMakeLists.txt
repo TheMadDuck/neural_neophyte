@@ -7,5 +7,6 @@ aux_source_directory(./n_random_distrib SRC_LIST)
 aux_source_directory(./learn_algorithms SRC_LIST)
 aux_source_directory(./learn_algorithms/cpp_based SRC_LIST)
 aux_source_directory(./Tests SRC_LIST)
+#SET(CMAKE_EXE_LINKER_FLAGS "-static -g")
 add_executable(${PROJECT_NAME} ${SRC_LIST})
 

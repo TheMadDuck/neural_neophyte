@@ -68,6 +68,7 @@ Menu::Menu()
         EloRanking eloRanking;
         eloRanking.turnier(gameFlow, amountGames, numberModels, gameName);
     }
+    tree->deleteTree(tree);
     delete gameLogic;
     delete gameFlow;
 }

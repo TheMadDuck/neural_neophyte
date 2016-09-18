@@ -3,10 +3,10 @@
 
 #include "Tests/randomtest.h"
 //#include "n_random_distrib/nrandomdistrib.h"
-#include "field.h"
+//#include "field.h"
+#include "Tests/classtests.h"
 int main()
 {
-    //ClassTests ct;
     //NRandomDistrib R;
     //R.nRand(3);
 
@@ -30,6 +30,7 @@ int main()
     }
     */
     Menu menu;
+    //ClassTests ct;
     return 0;
 }
 
