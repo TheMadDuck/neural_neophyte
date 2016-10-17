@@ -9,6 +9,7 @@ class SaveList
 public:
     SaveList();
     void savePositions(Field field, int color, int roundNumber, int position, bool transposed);
+    int _test;
 
 private:
 //    std::vector<std::vector<int>> playerOne;

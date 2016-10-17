@@ -3,6 +3,7 @@
 SaveList::SaveList()
 //:playerOneFields({{}}), playerTwo({{},{}})  //TODO: test obs immer normal initialisiert wird
 {
+    _test = 3;
 }
 
 void SaveList::savePositions(Field field, int color, int roundNumber, int position, bool transposed)

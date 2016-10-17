@@ -11,6 +11,7 @@ class FourInARow
 {
 public:
     FourInARow();
+    ~FourInARow();
     std::string getSignal();
     std::string getName();
     std::vector<int> getLegalInputs();
@@ -22,7 +23,7 @@ public:
 
 private:
     std::string Signal = "";
-    //Field* field;
+    Field* _field;
 };
 
 #endif // FOURINAROW_H

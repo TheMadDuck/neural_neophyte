@@ -47,6 +47,7 @@ Menu::Menu()
 //            gameFlow->runGameFuulow(std::array<int, 2>{2, 3});
             SaveList* saveList = new SaveList();
             gameFlow->runGameFlow(player,{}, saveList); //TODO: remove saveList
+            delete saveList;
         }
         else{
             gameFlow->runGameFlow(std::vector<int>{numberModels, -1});

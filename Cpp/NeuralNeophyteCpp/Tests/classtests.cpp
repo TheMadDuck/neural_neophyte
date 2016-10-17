@@ -3,7 +3,8 @@
 ClassTests::ClassTests()
 {
     //t_tree();
-    t_field();
+    //t_field();
+    t_pointer();
 }
 
 #include "../tree.h"
@@ -55,4 +56,20 @@ bool ClassTests::t_field()
     delete fieldPointer;
 
 }
+
+#include "../savelist.h"
+bool ClassTests::t_pointer()
+{
+    SaveList* saveList;
+    t_pointer2(saveList);
+    std::cout << "end" << std::endl;
+}
+
+bool ClassTests::t_pointer2(SaveList *saveList)
+{
+    if (!saveList){
+        std::cout << "i am function 2" << std::endl;
+    }
+}
+
 

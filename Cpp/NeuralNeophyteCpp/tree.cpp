@@ -163,7 +163,6 @@ void Tree::addPathRec(std::vector<int> path, int winOrLoss)
 void Tree::addPathRec(std::vector<int> path, int winOrLoss)
 {
 
-    std::cout << _numberPlayed;
 
     _numberPlayed += 1;
     _numberWon += winOrLoss;

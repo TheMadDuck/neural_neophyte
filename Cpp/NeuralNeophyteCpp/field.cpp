@@ -19,7 +19,7 @@ Field::~Field()
 
 Field::Field(const Field &other){    //Testen!
 //    _field(other._field);
-    std::cout << "nummer 1" << std::endl;
+//    std::cout << "nummer 1" << std::endl;
     _field = other._field;
     _height = other._height;
     _width = other._width;

@@ -42,7 +42,6 @@ int MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<int> leg
 //        delete tempGameFlow;
     }
 
-    std::cout << "teeeeeeeest7" << std::endl;
     int gameQuantity = 8;
     for (int i = 0; i < gameQuantity; ++i) {
         int move = 3;

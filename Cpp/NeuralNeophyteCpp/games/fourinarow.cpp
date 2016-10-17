@@ -9,6 +9,12 @@
 
 FourInARow::FourInARow()
 {
+    _field = nullptr;
+}
+
+FourInARow::~FourInARow()
+{
+    delete _field;
 }
 
 std::string FourInARow::getSignal()
@@ -33,22 +39,22 @@ Field *FourInARow::initField(int height, int width)
     // Game Field is 6 high and 7 wide, but we need a bottom row,
     // so the stones dont fall through the game
 
-    Field *field = new Field(height +1, width);
+    _field = new Field(height +1, width);            // use member _field here?
 
     for (int i = 0; i < height - 1; ++i) {
         for (int j = 0; j < width; ++j) {
-            field->set(0,i,j);
+            _field->set(0,i,j);
         }
     }
 
     // fill the bottom line with threes.
     for (int j = 0; j < width; ++j) {
-        field->set(3,height,j);
+        _field->set(3,height,j);
     }
 
 
     Signal = "field_initialized";
-    return field;
+    return _field;
 }
 
 bool FourInARow::isLegalMove(Field *field, int playerNumber, int position)

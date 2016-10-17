@@ -41,6 +41,7 @@ int GameFlow::AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector
     flatField.push_back(playerNumber);
     flatField.push_back(_roundNumber);
     //                             FEHLER HIER
+
     if(saveTheGame){
         MinMaxPruning minMaxPruning;
 
@@ -88,7 +89,7 @@ int GameFlow::Human_Move(std::vector<int> legalMoves)
 }
 
 
-//player:= -1:human  0:random  1-x:AImodel
+//player:= -1:human  0:random  1-x:AImodel  //TODO maybe  0= human; negative = random, mcts..; positive= AI-Models
 std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int> prefixPath, SaveList *saveList)
 {
 
