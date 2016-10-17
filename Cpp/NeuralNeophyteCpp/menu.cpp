@@ -43,14 +43,14 @@ Menu::Menu()
             std::cin >> humanPlayerNumber;
         }
         if (humanPlayerNumber == 1){
-            std::vector<int> player {-1, numberModels};
+            std::vector<int> player {0, numberModels};
 //            gameFlow->runGameFuulow(std::array<int, 2>{2, 3});
             SaveList* saveList = new SaveList();
             gameFlow->runGameFlow(player,{}, saveList); //TODO: remove saveList
             delete saveList;
         }
         else{
-            gameFlow->runGameFlow(std::vector<int>{numberModels, -1});
+            gameFlow->runGameFlow(std::vector<int>{numberModels, 0});
         }
 
     }

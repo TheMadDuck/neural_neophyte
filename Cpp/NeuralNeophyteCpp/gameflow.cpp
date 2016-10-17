@@ -31,7 +31,7 @@ int GameFlow::AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector
         return legalMoves[randomMoveDistrib(_rd)];
     }
 
-    if (players[playerNumber-1] == 0) {
+    if (players[playerNumber-1] == -1) {
         std::uniform_int_distribution<int> randomMoveDistrib(0, legalMoves.size());
         return legalMoves[randomMoveDistrib(_rd)];
 
@@ -45,18 +45,18 @@ int GameFlow::AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector
     if(saveTheGame){
         MinMaxPruning minMaxPruning;
 
-        if (players[0] == -1) {
+        if (players[0] == 0) {
             std::vector<int> p {players[1], players[1]};            
             return minMaxPruning.exploited_mcts(_field, _tree->lookUp(_gamePath), legalMoves, _classifier, p, _roundNumber, playerNumber, 0.2);
         }
-        if (players[1] == -1){
+        if (players[1] == 0){
             std::vector<int> p {players[0], players[0]};
             return minMaxPruning.exploited_mcts(_field, _tree->lookUp(_gamePath), legalMoves, _classifier, p, _roundNumber, playerNumber, 0.2);
         }
 
         return minMaxPruning.exploited_mcts(_field, _tree->lookUp(_gamePath), legalMoves, _classifier, players, _roundNumber, playerNumber, 0.2);
     }
-    return _classifier.predict(flatField, players[playerNumber-1]-1)[0];
+    return _classifier.predict(flatField, players[playerNumber-1]-1)[0];   /// TEST!
     //                           BIS HIER
 }
 
@@ -89,7 +89,7 @@ int GameFlow::Human_Move(std::vector<int> legalMoves)
 }
 
 
-//player:= -1:human  0:random  1-x:AImodel  //TODO maybe  0= human; negative = random, mcts..; positive= AI-Models
+// 0= human; negative = random, mcts..; positive= AI-Models
 std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int> prefixPath, SaveList *saveList)
 {
 
@@ -137,7 +137,7 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
         }
 
         int position;
-        if (player[playerNumber - 1] == -1) {
+        if (player[playerNumber - 1] == 0) {
             position = Human_Move(legalInputs);
         }
         else{
@@ -158,7 +158,7 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
                 break;
             }
 
-            if (player[playerNumber - 1] == -1) {
+            if (player[playerNumber - 1] == 0) {
                 std::cout << "this move is not legal, please try again!!" << std::endl;
                 position = Human_Move(legalInputs);
             }
@@ -183,7 +183,7 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
         if (_gameLogic->getSignal() != "stone_is_set") {
             std::cout << "ERROR: Stone is not saved" << std::endl;
         }
-        if((player[0] == -1) || (player[1] == -1)){
+        if((player[0] == 0) || (player[1] == 0)){
             _field->showField();
         }
         _winner = _gameLogic->hasAWinner(_field, playerNumber, position);
@@ -191,7 +191,7 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
             if (_winner == 0) {
                 std::cout << "ERROR: we could not determine who won!" << std::endl;
             }
-            if((player[0] == -1) || (player[1] == -1)){
+            if((player[0] == 0) || (player[1] == 0)){
                 std::cout << "\n" << "the winner is: " << _winner << std::endl;
             }
             break;
