@@ -21,7 +21,6 @@ int MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<int> leg
     else{
         //mcts_tree = new Tree();
     }
-    std::cout << "legalMoves: " << legalMoves.size() << std::endl;
     for (int move: legalMoves) {
         //Field* fieldCopy = new Field(field); //needs copy constructor (rule of 5)
         //Field* fieldCopy(field);

@@ -6,7 +6,7 @@ class LogisticSgd
 {
 public:
     LogisticSgd();
-    void fit();
+    void fit(int learning_rate = 0.13, int n_epochs=1000);
     std::vector<int> predict(std::vector<int> field, int player);
 };
 

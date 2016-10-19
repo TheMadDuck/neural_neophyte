@@ -5,7 +5,7 @@ LogisticSgd::LogisticSgd()
 {
 }
 
-void LogisticSgd::fit()
+void LogisticSgd::fit(int learning_rate, int n_epochs)
 {
 
 }
@@ -13,6 +13,6 @@ void LogisticSgd::fit()
 std::vector<int> LogisticSgd::predict(std::vector<int> field, int player)
 {
     std::vector<int> a{5,4,3};                    // TODO: IMPLEMENT!!!!!!!!!!!
-    std::cout << "NOT YET IMPLEMENTED!!!!!!!!" << std::endl;
+    //std::cout << "NOT YET IMPLEMENTED!!!!!!!!" << std::endl;
     return a;
 }

@@ -27,12 +27,12 @@ int GameFlow::AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector
 
     std::uniform_real_distribution<float> randomDistrib(0,1);
     if (randomDistrib(_rd) < randomMoveProba) {
-        std::uniform_int_distribution<int> randomMoveDistrib(0, legalMoves.size());
+        std::uniform_int_distribution<int> randomMoveDistrib(0, legalMoves.size()-1);
         return legalMoves[randomMoveDistrib(_rd)];
     }
 
     if (players[playerNumber-1] == -1) {
-        std::uniform_int_distribution<int> randomMoveDistrib(0, legalMoves.size());
+        std::uniform_int_distribution<int> randomMoveDistrib(0, legalMoves.size()-1);
         return legalMoves[randomMoveDistrib(_rd)];
 
     }
@@ -214,7 +214,7 @@ int GameFlow::getWinner()
 
 void GameFlow::resetGame()
 {
-    _field = _gameLogic->initField(6, 7);
+    _field = _gameLogic->initField();
     //_field = nullptr; //TODO: ja?
     _roundNumber = 0;
 }
