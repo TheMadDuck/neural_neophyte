@@ -34,5 +34,5 @@ int NRandomDistrib::nRand(int border)
                   << p.first << ' ' << std::string(p.second/200, '*') << '\n';
     }
     */
-    return 1;
+    return -2;
 }

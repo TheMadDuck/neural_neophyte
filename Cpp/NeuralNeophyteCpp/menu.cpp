@@ -5,7 +5,7 @@
 
 Menu::Menu()
 {
-    gameLogic = new FourInARow();
+    _gameLogic = new FourInARow();
 
     /*
     Field * field = gameLogic->initField();
@@ -16,60 +16,60 @@ Menu::Menu()
     field->showField();
 */
     Tree* tree = new Tree;
-    gameFlow = new GameFlow(classifier, gameLogic, nullptr, tree);
+    _gameFlow = new GameFlow(_classifier, _gameLogic, nullptr, tree);
 
     std::cout << "Play a Game (press 1)" << std::endl;
     std::cout << "Train the AI (press 2)" << std::endl;
     std::cout << "Sort existing classifiers and rank them (press 3)" << std::endl;
     std::cout << "\n";
-    std::cin >> mode;
-    std::cout << "your number was: " << mode << std::endl;
-    while ((mode != 1) && (mode != 2) && (mode != 3)){
+    std::cin >> _mode;
+    std::cout << "your number was: " << _mode << std::endl;
+    while ((_mode != 1) && (_mode != 2) && (_mode != 3)){
         std::cout << "press 1, 2 or 3" << std::endl;
-        std::cin >> mode;
+        std::cin >> _mode;
     }
 
 
-    gameName = gameLogic->getName();
+    _gameName = _gameLogic->getName();
 
-    numberModels = modelHandler.loadBestModel(classifier, gameName);
+    _numberModels = _modelHandler.loadBestModel(_classifier, _gameName);
 
 
-    if (mode == 1){
+    if (_mode == 1){
         std::cout << ("do you want to be player 1 or player 2?") << std::endl;
-        std::cin >> humanPlayerNumber;
-        while((humanPlayerNumber != 1) && (humanPlayerNumber != 2)){
+        std::cin >> _humanPlayerNumber;
+        while((_humanPlayerNumber != 1) && (_humanPlayerNumber != 2)){
             std::cout << ("Press 1 or 2!: ") << std::endl;
-            std::cin >> humanPlayerNumber;
+            std::cin >> _humanPlayerNumber;
         }
-        if (humanPlayerNumber == 1){
-            std::vector<int> player {0, numberModels};
-//            gameFlow->runGameFuulow(std::array<int, 2>{2, 3});
+        if (_humanPlayerNumber == 1){
+            std::vector<int> player {0, _numberModels};
+//            _gameFlow->runGameFuulow(std::array<int, 2>{2, 3});
             SaveList* saveList = new SaveList();
-            gameFlow->runGameFlow(player,{}, saveList); //TODO: remove saveList
+            _gameFlow->runGameFlow(player,{}, saveList); //TODO: remove saveList
             delete saveList;
         }
         else{
-            gameFlow->runGameFlow(std::vector<int>{numberModels, 0});
+            _gameFlow->runGameFlow(std::vector<int>{_numberModels, 0});  //here for testing purposes -2 (for mcts)
         }
 
     }
 
-    if (mode == 2){
+    if (_mode == 2){
         TrainTestValidate gameTTV;
-        gameTTV.run(gameFlow, 400, 100, 100, numberModels);
-        std::string bestModelPath = "./best_models" + gameName + "best_model_" + std::to_string(numberModels) + ".pkl";
-        classifier.fit();
+        std::array<SaveList*, 3> TTV_Data = gameTTV.run(_gameFlow, 400, 100, 100, _numberModels);
+        std::string bestModelPath = "./best_models" + _gameName + "best_model_" + std::to_string(_numberModels) + ".pkl";
+        _classifier.fit();
     }
 
-    if (mode == 3){
+    if (_mode == 3){
         std::cout << "How many games should be played?" << std::endl;
         int amountGames;
         std::cin >> amountGames;
         EloRanking eloRanking;
-        eloRanking.turnier(gameFlow, amountGames, numberModels, gameName);
+        eloRanking.turnier(_gameFlow, amountGames, _numberModels, _gameName);
     }
     tree->deleteTree(tree);
-    delete gameLogic;
-    delete gameFlow;
+    delete _gameLogic;
+    delete _gameFlow;
 }

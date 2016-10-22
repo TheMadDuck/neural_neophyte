@@ -13,16 +13,16 @@ class Menu
 public:
     Menu();
 private:
-    int mode;
-    std::string gameName;
-    int numberModels;
-    int humanPlayerNumber;
+    int _mode;
+    std::string _gameName;
+    int _numberModels;
+    int _humanPlayerNumber;
 
-    FourInARow *gameLogic;
-    GameFlow *gameFlow;
+    FourInARow *_gameLogic;
+    GameFlow *_gameFlow;
 
-    ModelHandler modelHandler;
-    LogisticSgd classifier;
+    ModelHandler _modelHandler; //pointer?
+    LogisticSgd _classifier; //pointer?
 };
 
 #endif // MENU_H

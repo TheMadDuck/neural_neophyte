@@ -42,18 +42,20 @@ int GameFlow::AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector
     flatField.push_back(_roundNumber);
     //                             FEHLER HIER
 
-    if(saveTheGame){
+    if(players[playerNumber-1] == -2){
         MinMaxPruning minMaxPruning;
 
         if (players[0] == 0) {
-            std::vector<int> p {players[1], players[1]};            
+            std::cout << "jo1!" << std::endl;
+            std::vector<int> p {players[1], players[1]};
             return minMaxPruning.exploited_mcts(_field, _tree->lookUp(_gamePath), legalMoves, _classifier, p, _roundNumber, playerNumber, 0.2);
         }
         if (players[1] == 0){
+            std::cout << "jo2!" << std::endl;
             std::vector<int> p {players[0], players[0]};
             return minMaxPruning.exploited_mcts(_field, _tree->lookUp(_gamePath), legalMoves, _classifier, p, _roundNumber, playerNumber, 0.2);
         }
-
+        std::cout << "jo3!" << std::endl;
         return minMaxPruning.exploited_mcts(_field, _tree->lookUp(_gamePath), legalMoves, _classifier, players, _roundNumber, playerNumber, 0.2);
     }
     return _classifier.predict(flatField, players[playerNumber-1]-1)[0];   /// TEST!
@@ -141,7 +143,10 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
             position = Human_Move(legalInputs);
         }
         else{
+            std::cout << "hallo" << std::endl;
+            _field->showField();
             position = AI_Move(playerNumber, legalInputs, player, _amountRandom, saveList);
+            std::cout << "welt" << std::endl;
         }
         /*
         if (saveList) {  // hier an richtiger stelle?

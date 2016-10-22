@@ -222,7 +222,7 @@ int Tree::getNextMove()
             next_ratio = 0;
         }
         else{
-            next_ratio = ((double)child->_numberWon /(double)child->_numberWon) + (c * sqrt(log(_numberPlayed)/(double)child->_numberPlayed));
+            next_ratio = ((double)child->_numberWon /(double)child->_numberPlayed) + (c * sqrt(log(_numberPlayed)/(double)child->_numberPlayed));
         }
 
         if (next_ratio >= next_probability) {

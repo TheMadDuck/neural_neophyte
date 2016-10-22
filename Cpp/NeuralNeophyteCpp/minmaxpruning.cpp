@@ -21,7 +21,7 @@ int MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<int> leg
     else{
         //mcts_tree = new Tree();
     }
-    for (int move: legalMoves) {
+    for (int move: legalMoves) {                                                                 /// DELETE THIS PART. change tree.getNextMove() so that if a move has _numberPlayed=0 it gets played! or not?
         //Field* fieldCopy = new Field(field); //needs copy constructor (rule of 5)
         //Field* fieldCopy(field);
         Field* fieldCopy = new Field(*field);
