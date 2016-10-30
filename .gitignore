@@ -2,3 +2,4 @@ AI_Environment/best_models/*
 **/__pycache__/*
 Cpp/NeuralNeophyteCpp-build/*
 Cpp/NeuralNeophyteCpp/CMakeLists.txt.user*
+Cpp/NeuralNeophyteCpp/CMakeLists.txt.user.*

@@ -10,6 +10,7 @@ class TrainTestValidate
 public:
     TrainTestValidate();
     std::array<SaveList*, 3> run(GameFlow* gameFlow, int numberTrain, int numberTest, int numberValidate, int numberModels);
+    SaveList *provideGameLists(GameFlow *gameFlow, int numberGames, int numberModels);
 private:
     NRandomDistrib _nRand;
 };
