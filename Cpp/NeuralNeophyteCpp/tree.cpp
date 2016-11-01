@@ -21,6 +21,7 @@ Tree::~Tree()
 
 Tree::Tree(const Tree &other)
 {
+    std::cout << "tree constr. 2" << std::endl;
     _move = other._move;
     _depth = other._depth;
     _numberWon = other._numberWon;
@@ -31,12 +32,12 @@ Tree::Tree(const Tree &other)
 Tree::Tree(Tree &&other)
     :_move(other._move), _depth(other._depth), _numberWon(other._numberWon), _numberPlayed(other._numberPlayed), _childs(other._childs)
 {
-
+    std::cout << "tree constr. 3" << std::endl;
 }
 
 Tree &Tree::operator=(const Tree &other)
 {
-    std::cout << "test Test 123";
+    std::cout << "tree constr. 4" << std::endl;
     _move = other._move;
     _depth = other._depth;
     _numberWon = other._numberWon;
@@ -47,6 +48,7 @@ Tree &Tree::operator=(const Tree &other)
 
 Tree &Tree::operator=(Tree &&other)
 {
+    std::cout << "tree constr. 5" << std::endl;
     _move = other._move;
     _depth = other._depth;
     _numberWon = other._numberWon;
@@ -210,18 +212,29 @@ int Tree::getBestMove()
     return bestMove;
 }
 
-int Tree::getNextMove()
+int Tree::getNextMove(int amountPosslibleMoves)
 {
     double next_probability = 0;
     //Tree* nextMove = new Tree();
-    int nextMove;
+    int nextMove = -1;
     double c = sqrt(2);
     for(Tree* child: _childs){
+        std::cout << "reibungsdichte!" <<std::endl;
         double next_ratio;
-        if (child->_numberPlayed == 0) {
-            next_ratio = 0;
+        /*
+        if (child->_numberPlayed == 0) { // wenn one move was not played until now, a random[return-1](or exactly this?[return child._move]) move gets played.
+            //next_ratio = 0;
+            return child->_move;
+        }
+        */
+
+        //TODO what to do if the game reaches a draw?
+        if (amountPosslibleMoves > _childs.size()){  // return -1 for random move
+            std::cout << "yolo" << std::endl;
+            return -1;
         }
         else{
+            std::cout << "            kopter" << std::endl;
             next_ratio = ((double)child->_numberWon /(double)child->_numberPlayed) + (c * sqrt(log(_numberPlayed)/(double)child->_numberPlayed));
         }
 

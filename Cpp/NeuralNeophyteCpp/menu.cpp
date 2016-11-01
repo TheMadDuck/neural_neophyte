@@ -23,8 +23,8 @@ Menu::Menu()
     std::cout << "Sort existing classifiers and rank them (press 3)" << std::endl;
     std::cout << "\n";
     std::cin >> _mode;
-    std::cout << "your number was: " << _mode << std::endl;
     while ((_mode != 1) && (_mode != 2) && (_mode != 3)){
+        std::cout << "your number was: " << _mode << std::endl;
         std::cout << "press 1, 2 or 3" << std::endl;
         std::cin >> _mode;
     }

@@ -21,7 +21,7 @@ public:
     //void addPath(std::vector<int> path, int winOrLoss);
     void addPathRec(std::vector<int> path, int winOrLoss);
     int getBestMove();
-    int getNextMove();
+    int getNextMove(int amountPosslibleMoves);
     std::vector<double> getProbabilities();
     void mergeTrees(Tree);
     void cutRoot(int nextRoot);

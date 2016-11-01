@@ -3,7 +3,7 @@
 
 MinMaxPruning::MinMaxPruning()
 {
-    _gameLogic = new FourInARow;
+    _gameLogic = new FourInARow();
 }
 
 MinMaxPruning::~MinMaxPruning()
@@ -21,6 +21,7 @@ int MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<int> leg
     else{
         //mcts_tree = new Tree();
     }
+    /*
     for (int move: legalMoves) {                                                                 /// DELETE THIS PART. change tree.getNextMove() so that if a move has _numberPlayed=0 it gets played! or not?
         //Field* fieldCopy = new Field(field); //needs copy constructor (rule of 5)
         //Field* fieldCopy(field);
@@ -40,18 +41,28 @@ int MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<int> leg
         delete fieldCopy;
 //        delete tempGameFlow;
     }
+    */
 
     int gameQuantity = 8;
     for (int i = 0; i < gameQuantity; ++i) {
-        int move = 3;
-        //int move = mcts_tree->getNextMove();
+//        if(tree->_childs.size() < _gameLogic->getLegalInputs().size())
+        int amountPossibleMoves = _gameLogic->getLegalInputs().size();
+        int move = mcts_tree->getNextMove(amountPossibleMoves);
+        std::cout << "my move: " <<  move << std::endl;
         //Field* fieldCopy(field);  //Testen!!!
         Field* fieldCopy = new Field(*field);
 
 
         GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber);
-        std::vector<int> moveVector = {move};
-        std::vector<int> path = tempGameFlow.runGameFlow(players, moveVector);
+        std::vector<int> path;
+        if (move != -1){
+            std::vector<int> moveVector = {move};
+            path = tempGameFlow.runGameFlow(players, moveVector);
+        }
+        else{ // play now random
+            path = tempGameFlow.runGameFlow({-1, -1});
+        }
+        std::cout << "getWinnter: " << tempGameFlow.getWinner() << std::endl;
         if(tempGameFlow.getWinner() == playerNumber){
             mcts_tree->addPathRec(path, 1);
         }

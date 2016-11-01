@@ -143,10 +143,10 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
             position = Human_Move(legalInputs);
         }
         else{
-            std::cout << "hallo" << std::endl;
+            //std::cout << "hallo" << std::endl;
             _field->showField();
             position = AI_Move(playerNumber, legalInputs, player, _amountRandom, saveList);
-            std::cout << "welt" << std::endl;
+            //std::cout << "welt" << std::endl;
         }
         /*
         if (saveList) {  // hier an richtiger stelle?
