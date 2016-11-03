@@ -219,7 +219,6 @@ int Tree::getNextMove(int amountPosslibleMoves)
     int nextMove = -1;
     double c = sqrt(2);
     for(Tree* child: _childs){
-        std::cout << "reibungsdichte!" <<std::endl;
         double next_ratio;
         /*
         if (child->_numberPlayed == 0) { // wenn one move was not played until now, a random[return-1](or exactly this?[return child._move]) move gets played.

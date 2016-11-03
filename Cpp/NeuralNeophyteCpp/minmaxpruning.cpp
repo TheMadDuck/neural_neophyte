@@ -48,7 +48,7 @@ int MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<int> leg
 //        if(tree->_childs.size() < _gameLogic->getLegalInputs().size())
         int amountPossibleMoves = _gameLogic->getLegalInputs().size();
         int move = mcts_tree->getNextMove(amountPossibleMoves);
-        std::cout << "my move: " <<  move << std::endl;
+        //std::cout << "my move: " <<  move << std::endl;
         //Field* fieldCopy(field);  //Testen!!!
         Field* fieldCopy = new Field(*field);
 
@@ -62,12 +62,20 @@ int MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<int> leg
         else{ // play now random
             path = tempGameFlow.runGameFlow({-1, -1});
         }
-        std::cout << "getWinnter: " << tempGameFlow.getWinner() << std::endl;
-        if(tempGameFlow.getWinner() == playerNumber){
-            mcts_tree->addPathRec(path, 1);
+
+        for (auto i:path){
+            std::cout << i << " ";
         }
-        else{
-            mcts_tree->addPathRec(path, 0);
+        std::cout << "< mcts path" << std::endl;
+
+        std::cout << "getWinnter: " << tempGameFlow.getWinner() << std::endl;
+        if(tempGameFlow.getWinner() != 0){
+            if(tempGameFlow.getWinner() == playerNumber){
+                mcts_tree->addPathRec(path, 1);
+            }
+            else{
+                mcts_tree->addPathRec(path, 0);
+            }
         }
         delete fieldCopy;
 //        delete tempGameFlow;

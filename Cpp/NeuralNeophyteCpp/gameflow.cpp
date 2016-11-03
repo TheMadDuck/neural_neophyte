@@ -9,6 +9,7 @@ GameFlow::GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field *field, 
     //int i = a();
     //std::cout << " i: " << i << std::endl;
     _rd.seed(std::time(NULL));
+    _winner = 0;  // 0 for 'there is no winner yet' TODO: make _winner a type.
 }
 
 GameFlow::~GameFlow()
@@ -45,6 +46,11 @@ int GameFlow::AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector
     if(players[playerNumber-1] == -2){
         MinMaxPruning minMaxPruning;
 
+
+        for (auto i: _gamePath){
+            std::cout << i << " ";
+        }
+        std::cout << "< original path" << std::endl;
         if (players[0] == 0) {
             std::cout << "jo1!" << std::endl;
             std::vector<int> p {players[1], players[1]};
@@ -144,7 +150,7 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
         }
         else{
             //std::cout << "hallo" << std::endl;
-            _field->showField();
+            //_field->showField();
             position = AI_Move(playerNumber, legalInputs, player, _amountRandom, saveList);
             //std::cout << "welt" << std::endl;
         }
@@ -184,6 +190,9 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
         else{
             _gamePath.push_back(position);
         }
+        std::cout << "realy an else here?" << std::endl;
+
+
         _gameLogic->setStone(_field, playerNumber, position);
         if (_gameLogic->getSignal() != "stone_is_set") {
             std::cout << "ERROR: Stone is not saved" << std::endl;
@@ -222,6 +231,7 @@ void GameFlow::resetGame()
     _field = _gameLogic->initField();
     //_field = nullptr; //TODO: ja?
     _roundNumber = 0;
+    _winner = 0;
 }
 
 int GameFlow::addPrefixPath(std::vector<int> prefixPath)
