@@ -7,6 +7,7 @@
 #include "modelhandler.h"
 #include "traintestvalidate.h"
 #include "eloranking.h"
+#include "n_random_distrib/nrandomdistrib.h"
 
 class Menu
 {

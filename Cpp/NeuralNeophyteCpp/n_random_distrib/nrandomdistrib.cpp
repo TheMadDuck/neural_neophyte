@@ -8,6 +8,7 @@
 #include <cmath>
 NRandomDistrib::NRandomDistrib()
 {
+    _rd.seed(std::time(NULL));
 }
 
 int NRandomDistrib::nRand(int border)
@@ -35,4 +36,10 @@ int NRandomDistrib::nRand(int border)
     }
     */
     return -2;
+}
+
+int NRandomDistrib::getRandomInt(int lowerBound, int upperBound)
+{
+    std::uniform_int_distribution<int> randomMoveDistrib(lowerBound, upperBound);
+    return randomMoveDistrib(_rd);
 }

@@ -233,8 +233,8 @@ int Tree::getNextMove(int amountPosslibleMoves)
             return -1;
         }
         else{
-            std::cout << "            kopter" << std::endl;
             next_ratio = ((double)child->_numberWon /(double)child->_numberPlayed) + (c * sqrt(log(_numberPlayed)/(double)child->_numberPlayed));
+            std::cout << "            kopter: " << next_ratio << " - move: " << child->_move << std::endl;
         }
 
         if (next_ratio >= next_probability) {
@@ -243,6 +243,7 @@ int Tree::getNextMove(int amountPosslibleMoves)
         }
     }
     //delete nextMove;
+    std::cout << "nextMove: " << nextMove << std::endl;
     return nextMove;
 }
 
@@ -293,7 +294,12 @@ Tree* Tree::lookUp(std::vector<int> path)
     Tree* parent = this;
     //Tree* child;
     for(int subTree: path){
-        parent = parent->_childs[subTree];
+        for(Tree* child: parent->_childs){
+            if (child->_move == subTree){
+                parent = child;
+            }
+        }
+//        parent = parent->_childs[subTree];
     }
     return parent;
 }

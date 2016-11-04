@@ -6,6 +6,7 @@
 #include "gameflow.h"
 #include "games/fourinarow.h"
 #include "learn_algorithms/cpp_based/logisticsgd.h"
+#include "n_random_distrib/nrandomdistrib.h"
 
 class MinMaxPruning
 {
@@ -19,7 +20,8 @@ public:
                        std::vector<int> players,
                        int roundNumber,
                        int playerNumber,
-                       float randomProbability);
+                       float randomProbability,
+                       NRandomDistrib* nRd);
 private:
     FourInARow* _gameLogic;
 };

@@ -23,12 +23,17 @@ int main()
     delete field2;
     */
 
-    /*
+/*
     RandomTest jo;
     for (int var = 0; var < 22; ++var) {
         std::cout << jo.getRandom() << std::endl;
     }
-    */
+    RandomTest jo2;
+    for (int var = 0; var < 22; ++var) {
+        std::cout << jo2.getRandom() << std::endl;
+    }
+*/
+
     Menu menu;
     //ClassTests ct;
     return 0;

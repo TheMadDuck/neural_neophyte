@@ -2,13 +2,14 @@
 #include <iostream>
 //#include "Tests/randomtest.h"
 
-GameFlow::GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field *field, Tree *tree, int roundNumber, int amountRandom)
-    :_classifier(classifier), _gameLogic(gameLogic), _field(field), _roundNumber(roundNumber), _amountRandom(amountRandom), _tree(tree)
+GameFlow::GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field *field, Tree *tree, int roundNumber, int amountRandom, NRandomDistrib *nRd)
+    :_classifier(classifier), _gameLogic(gameLogic), _field(field), _roundNumber(roundNumber), _amountRandom(amountRandom), _tree(tree), _nRd(nRd)
 {
     //std::random_device a;
     //int i = a();
     //std::cout << " i: " << i << std::endl;
-    _rd.seed(std::time(NULL));
+    std::cout << "terror" << std::endl;
+    //_rd.seed(std::time(NULL));
     _winner = 0;  // 0 for 'there is no winner yet' TODO: make _winner a type.
 }
 
@@ -28,14 +29,11 @@ int GameFlow::AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector
 
     std::uniform_real_distribution<float> randomDistrib(0,1);
     if (randomDistrib(_rd) < randomMoveProba) {
-        std::uniform_int_distribution<int> randomMoveDistrib(0, legalMoves.size()-1);
-        return legalMoves[randomMoveDistrib(_rd)];
+        return legalMoves[_nRd->getRandomInt(0, legalMoves.size()-1)];
     }
 
     if (players[playerNumber-1] == -1) {
-        std::uniform_int_distribution<int> randomMoveDistrib(0, legalMoves.size()-1);
-        return legalMoves[randomMoveDistrib(_rd)];
-
+        return legalMoves[_nRd->getRandomInt(0, legalMoves.size()-1)];
     }
 
     std::vector<int> flatField = _field->flatten();
@@ -54,15 +52,15 @@ int GameFlow::AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector
         if (players[0] == 0) {
             std::cout << "jo1!" << std::endl;
             std::vector<int> p {players[1], players[1]};
-            return minMaxPruning.exploited_mcts(_field, _tree->lookUp(_gamePath), legalMoves, _classifier, p, _roundNumber, playerNumber, 0.2);
+            return minMaxPruning.exploited_mcts(_field, _tree->lookUp(_gamePath), legalMoves, _classifier, p, _roundNumber, playerNumber, 0.2, _nRd);
         }
         if (players[1] == 0){
             std::cout << "jo2!" << std::endl;
             std::vector<int> p {players[0], players[0]};
-            return minMaxPruning.exploited_mcts(_field, _tree->lookUp(_gamePath), legalMoves, _classifier, p, _roundNumber, playerNumber, 0.2);
+            return minMaxPruning.exploited_mcts(_field, _tree->lookUp(_gamePath), legalMoves, _classifier, p, _roundNumber, playerNumber, 0.2, _nRd);
         }
         std::cout << "jo3!" << std::endl;
-        return minMaxPruning.exploited_mcts(_field, _tree->lookUp(_gamePath), legalMoves, _classifier, players, _roundNumber, playerNumber, 0.2);
+        return minMaxPruning.exploited_mcts(_field, _tree->lookUp(_gamePath), legalMoves, _classifier, players, _roundNumber, playerNumber, 0.2, _nRd);
     }
     return _classifier.predict(flatField, players[playerNumber-1]-1)[0];   /// TEST!
     //                           BIS HIER
@@ -116,7 +114,7 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
 
     if (!prefixPath.empty()) {
         int preWinner = addPrefixPath(prefixPath);
-        std::vector<int> _gamePath = prefixPath;
+        //std::vector<int> _gamePath = prefixPath;
         if (preWinner != -1) {
             return _gamePath;
         }
@@ -187,10 +185,7 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
         if(saveList){
             saveList->savePositions(*_field, playerNumber, _roundNumber, position, false); //reference to _field ??
         }
-        else{
-            _gamePath.push_back(position);
-        }
-        std::cout << "realy an else here?" << std::endl;
+        _gamePath.push_back(position);
 
 
         _gameLogic->setStone(_field, playerNumber, position);
@@ -276,6 +271,7 @@ int GameFlow::addPrefixPath(std::vector<int> prefixPath)
     return getWinner();
 
 }
+
 
 void GameFlow::test()
 {

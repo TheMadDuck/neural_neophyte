@@ -5,6 +5,7 @@
 
 Menu::Menu()
 {
+    NRandomDistrib nRd;
     _gameLogic = new FourInARow();
 
     /*
@@ -16,7 +17,7 @@ Menu::Menu()
     field->showField();
 */
     Tree* tree = new Tree;
-    _gameFlow = new GameFlow(_classifier, _gameLogic, nullptr, tree);
+    _gameFlow = new GameFlow(_classifier, _gameLogic, nullptr, tree, 0, 0.15, &nRd);
 
     std::cout << "Play a Game (press 1)" << std::endl;
     std::cout << "Train the AI (press 2)" << std::endl;

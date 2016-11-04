@@ -9,11 +9,12 @@
 #include "tree.h"
 #include "minmaxpruning.h"
 #include "savelist.h"
+#include "n_random_distrib/nrandomdistrib.h"
 
 class GameFlow
 {
 public:
-    GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field* field = nullptr, Tree* tree = new Tree(), int roundNumber = 0, int amountRandom = 0.15);
+    GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field* field = nullptr, Tree* tree = new Tree(), int roundNumber = 0, int amountRandom = 0.15,  NRandomDistrib *nRd = nullptr);
     ~GameFlow();
     int AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba, SaveList *saveTheGame);
     int Human_Move(std::vector<int> legalMoves);
@@ -38,7 +39,7 @@ private:
     Tree *_tree;
     int _winner;
     std::mt19937 _rd;
-
+    NRandomDistrib* _nRd;
 };
 
 #endif // GAMEFLOW_H

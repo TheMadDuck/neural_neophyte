@@ -49,7 +49,7 @@ std::vector<std::string> ModelHandler::folderHandler(std::string gameName)
 
 int ModelHandler::loadBestModel(LogisticSgd classifier, std::string gameName)
 {
-    return 1;  // only for testing purpose. should be removed!
+    return -2;  // only for testing purpose. should be removed!
     std::vector<std::string> filePaths = folderHandler(gameName);
     if(filePaths.size() != 0){  // TESTEN!
         std::cout << "best model exist" << std::endl;
