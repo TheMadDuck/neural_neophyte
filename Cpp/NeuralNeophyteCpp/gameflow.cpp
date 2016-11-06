@@ -111,7 +111,6 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
 
 
 
-
     if (!prefixPath.empty()) {
         int preWinner = addPrefixPath(prefixPath);
         //std::vector<int> _gamePath = prefixPath;
@@ -148,7 +147,7 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
         }
         else{
             //std::cout << "hallo" << std::endl;
-            //_field->showField();
+            _field->showField();
             position = AI_Move(playerNumber, legalInputs, player, _amountRandom, saveList);
             //std::cout << "welt" << std::endl;
         }

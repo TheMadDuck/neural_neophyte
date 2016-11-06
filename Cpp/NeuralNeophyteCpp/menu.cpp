@@ -55,6 +55,7 @@ Menu::Menu()
         }
 
     }
+    tree->printTree();
 
     if (_mode == 2){
         TrainTestValidate gameTTV;

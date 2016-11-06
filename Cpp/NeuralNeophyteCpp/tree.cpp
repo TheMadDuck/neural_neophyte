@@ -11,6 +11,7 @@ Tree::Tree()
 Tree::Tree(int move, int depth, int numberWon, int numberPlayed, std::vector<Tree *> childs)
     :_move(move), _depth(depth), _numberWon(numberWon), _numberPlayed(numberPlayed), _childs(childs)
 {
+    _numberWon = {0, 0};  // why?
 }
 
 Tree::~Tree()
@@ -57,9 +58,9 @@ Tree &Tree::operator=(Tree &&other)
     return *this;
 }
 
-int Tree::getNumberWon()
+int Tree::getNumberWon(int player)
 {
-    return _numberWon;
+    return _numberWon[player -1];
 }
 
 int Tree::getNumberPlayed()
@@ -85,9 +86,11 @@ void Tree::printTree()
 {
     std::cout << "move: " << _move
               << " depth: " << _depth
-              << " numberPlayed: " << _numberPlayed
-              << " numberWon: " << _numberWon
-              << std::endl;
+              << " numberPlayed: " << _numberPlayed;
+    for (auto i : _numberWon){
+        std::cout << " numberWon: " << i;
+    }
+    std::cout << std::endl;
 //    if(_childs){
     for(Tree* child: _childs){
             child->printTree();
@@ -162,12 +165,17 @@ void Tree::addPathRec(std::vector<int> path, int winOrLoss)
         return;
     }
 }*/
-void Tree::addPathRec(std::vector<int> path, int winOrLoss)
+void Tree::addPathRec(std::vector<int> path, int winner)
 {
 
 
     _numberPlayed += 1;
-    _numberWon += winOrLoss;
+    for(int player = 1; player<= _numberWon.size(); player++){
+        if(player == winner){
+            _numberWon[player-1] += 1;
+        }
+    }
+    //_numberWon[player -1] += winOrLoss;
 
     if (path.empty()){ //testen
         return;
@@ -176,7 +184,7 @@ void Tree::addPathRec(std::vector<int> path, int winOrLoss)
     for(Tree* child: _childs){
         if (path[0] == child->_move) {
             path.erase(path.begin()); // ACHTUNG INEFIZIENT !!!
-            child->addPathRec(path, winOrLoss);
+            child->addPathRec(path, winner);
             return;
         }
     }
@@ -185,12 +193,12 @@ void Tree::addPathRec(std::vector<int> path, int winOrLoss)
     newChild->_depth = _depth + 1;
     _childs.push_back(newChild);
     path.erase(path.begin());
-    newChild->addPathRec(path, winOrLoss);
+    newChild->addPathRec(path, winner);
 
     return;
 }
 
-int Tree::getBestMove()
+int Tree::getBestMove(int player)
 {
     double win_probability = 0;
     //Tree* bestMove = new Tree();
@@ -201,7 +209,12 @@ int Tree::getBestMove()
             win_ratio = 0;
         }
         else {
-            win_ratio = (double)child->_numberWon / (double)child->_numberPlayed;
+            std::cout << player << std::endl;
+            for (auto i: _numberWon){
+                std::cout << "_numberWon: " << i << std::endl;
+            }
+            std::cout << child->_numberWon[player-1] << std::endl;
+            win_ratio = (double)child->_numberWon[player-1] / (double)child->_numberPlayed;
         }
 
         if (win_ratio >= win_probability) {
@@ -212,7 +225,7 @@ int Tree::getBestMove()
     return bestMove;
 }
 
-int Tree::getNextMove(int amountPosslibleMoves)
+int Tree::getNextMove(int amountPosslibleMoves, int player)
 {
     double next_probability = 0;
     //Tree* nextMove = new Tree();
@@ -229,11 +242,10 @@ int Tree::getNextMove(int amountPosslibleMoves)
 
         //TODO what to do if the game reaches a draw?
         if (amountPosslibleMoves > _childs.size()){  // return -1 for random move
-            std::cout << "yolo" << std::endl;
             return -1;
         }
         else{
-            next_ratio = ((double)child->_numberWon /(double)child->_numberPlayed) + (c * sqrt(log(_numberPlayed)/(double)child->_numberPlayed));
+            next_ratio = ((double)child->_numberWon[player-1] /(double)child->_numberPlayed) + (c * sqrt(log(_numberPlayed)/(double)child->_numberPlayed));
             std::cout << "            kopter: " << next_ratio << " - move: " << child->_move << std::endl;
         }
 
@@ -243,11 +255,10 @@ int Tree::getNextMove(int amountPosslibleMoves)
         }
     }
     //delete nextMove;
-    std::cout << "nextMove: " << nextMove << std::endl;
     return nextMove;
 }
 
-std::vector<double> Tree::getProbabilities()
+std::vector<double> Tree::getProbabilities(int player)
 {
     std::vector<double> probabilities;
     int index = 0;
@@ -256,7 +267,7 @@ std::vector<double> Tree::getProbabilities()
         index += 1;
         double win_ratio = 0;
         if(child->_numberPlayed != 0){
-            win_ratio = (double)child->_numberWon / (double)child->_numberPlayed; // use exploited algo?
+            win_ratio = (double)child->_numberWon[player-1] / (double)child->_numberPlayed; // use exploited algo?
         }
 
         probabilities.push_back(win_ratio);
@@ -313,11 +324,8 @@ void Tree::deleteTree(Tree *tree)
     }
     */
     for(Tree* child: tree->getChilds()){
-        std::cout << "yo1";
         deleteTree(child);
-        std::cout << "yo2";
     }
-    std::cout << "yo";
     delete tree;
     return;
 }
@@ -349,12 +357,12 @@ bool Tree::Test()
     }*/
     std::cout << std::endl;
     std::cout << "bestMove:" << std::endl;
-    std::cout << tree.getBestMove() << std::endl;
-    if (getBestMove() != 32){
+    std::cout << tree.getBestMove(1) << std::endl;
+    if (getBestMove(1) != 32){
         testV = false;
     }
     std::cout << "probabilities:" << std::endl;
-    auto things2 = tree.getProbabilities();
+    auto things2 = tree.getProbabilities(1);
     for (auto thing: things2 ) {
         std::cout << thing << std::endl;
     }
