@@ -170,11 +170,14 @@ void Tree::addPathRec(std::vector<int> path, int winner)
 
 
     _numberPlayed += 1;
+    _numberWon[winner-1] += 1;
+    /*
     for(int player = 1; player<= _numberWon.size(); player++){
         if(player == winner){
             _numberWon[player-1] += 1;
         }
     }
+    */
     //_numberWon[player -1] += winOrLoss;
 
     if (path.empty()){ //testen
@@ -241,11 +244,15 @@ int Tree::getNextMove(int amountPosslibleMoves, int player)
         */
 
         //TODO what to do if the game reaches a draw?
+        std::cout << "amountPossiblites:" << amountPosslibleMoves << std::endl;
+        std::cout << "child.size"<< _childs.size() << std::endl;
         if (amountPosslibleMoves > _childs.size()){  // return -1 for random move
+            std::cout << "         juuuuuuuuuuust random......" << std::endl;
             return -1;
         }
         else{
-            next_ratio = ((double)child->_numberWon[player-1] /(double)child->_numberPlayed) + (c * sqrt(log(_numberPlayed)/(double)child->_numberPlayed));
+            std::cout << "numberWon: " << child->_numberWon[player-1] << std::endl;
+            next_ratio = ((double)child->_numberWon[player-1] /(double)child->_numberPlayed) + (c * (double)sqrt((double)log(_numberPlayed)/(double)child->_numberPlayed));
             std::cout << "            kopter: " << next_ratio << " - move: " << child->_move << std::endl;
         }
 
@@ -342,31 +349,33 @@ bool Tree::Test()
     std::vector<int> path2 = {0, 3, 66, 6, 6};
     std::vector<int> path3 = {32, 212, 15, 221, 74, 23, 0, 2};
 
-    int win = 1;
-    int loss = 0;
+    int player1 = 1;
+    int player2 = 2;
 
-    Tree tree; // test as obj and test as pointer.
-    tree.addPathRec(path, win);
-    tree.addPathRec(path2, loss);
-    tree.addPathRec(path3, win);
-    tree.printTree();
+    Tree* tree = new Tree(); // test as obj and test as pointer.
+    tree->addPathRec(path, player2);
+    tree->addPathRec(path2, player1);
+    tree->addPathRec(path3, player2);
+    std::cout << "bumb" << std::endl;
+    tree->printTree();
     /*std::cout << "\n \n" << "preOrder:" <<std::endl;
     auto things = tree.getPreOrder();
     for (auto thing: things ) {
         std::cout << thing << std::endl;
     }*/
     std::cout << std::endl;
-    std::cout << "bestMove:" << std::endl;
-    std::cout << tree.getBestMove(1) << std::endl;
+    Tree* tempTree = tree->lookUp({0, 3});
+    std::cout << "tempTree best Move: " << tempTree->getBestMove(2) << std::endl;
+    std::cout <<"getNext1: " << tempTree->getNextMove(0, 1) << std::endl;
+    std::cout <<"getNext2: " << tempTree->getNextMove(0, 2) << std::endl;
     if (getBestMove(1) != 32){
         testV = false;
     }
     std::cout << "probabilities:" << std::endl;
-    auto things2 = tree.getProbabilities(1);
+    auto things2 = tree->getProbabilities(1);
     for (auto thing: things2 ) {
         std::cout << thing << std::endl;
     }
-    std::cout << std::endl;
     return testV;
 
 }

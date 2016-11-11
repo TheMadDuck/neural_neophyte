@@ -16,7 +16,7 @@ Menu::Menu()
     gameLogic->hasAWinner(field, 2, 3);
     field->showField();
 */
-    Tree* tree = new Tree;
+    Tree* tree = new Tree();
     _gameFlow = new GameFlow(_classifier, _gameLogic, nullptr, tree, 0, 0.15, &nRd);
 
     std::cout << "Play a Game (press 1)" << std::endl;
@@ -55,7 +55,7 @@ Menu::Menu()
         }
 
     }
-    tree->printTree();
+    //tree->printTree();
 
     if (_mode == 2){
         TrainTestValidate gameTTV;

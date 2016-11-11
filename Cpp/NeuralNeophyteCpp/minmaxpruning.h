@@ -20,6 +20,7 @@ public:
                        std::vector<int> players,
                        int roundNumber,
                        int playerNumber,
+                       std::vector<int> gamePath,
                        float randomProbability,
                        NRandomDistrib* nRd);
 private:

@@ -2,13 +2,10 @@
 #include <iostream>
 //#include "Tests/randomtest.h"
 
-GameFlow::GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field *field, Tree *tree, int roundNumber, int amountRandom, NRandomDistrib *nRd)
-    :_classifier(classifier), _gameLogic(gameLogic), _field(field), _roundNumber(roundNumber), _amountRandom(amountRandom), _tree(tree), _nRd(nRd)
+GameFlow::GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field *field, Tree *tree, int roundNumber, int amountRandom, NRandomDistrib *nRd, std::vector<int> gamePath)
+    :_classifier(classifier), _gameLogic(gameLogic), _field(field), _roundNumber(roundNumber), _amountRandom(amountRandom), _tree(tree), _nRd(nRd), _gamePath(gamePath)
 {
-    //std::random_device a;
-    //int i = a();
     //std::cout << " i: " << i << std::endl;
-    std::cout << "terror" << std::endl;
     //_rd.seed(std::time(NULL));
     _winner = 0;  // 0 for 'there is no winner yet' TODO: make _winner a type.
 }
@@ -52,15 +49,15 @@ int GameFlow::AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector
         if (players[0] == 0) {
             std::cout << "jo1!" << std::endl;
             std::vector<int> p {players[1], players[1]};
-            return minMaxPruning.exploited_mcts(_field, _tree->lookUp(_gamePath), legalMoves, _classifier, p, _roundNumber, playerNumber, 0.2, _nRd);
+            return minMaxPruning.exploited_mcts(_field, _tree, legalMoves, _classifier, p, _roundNumber, playerNumber, _gamePath, 0.2, _nRd);
         }
         if (players[1] == 0){
             std::cout << "jo2!" << std::endl;
             std::vector<int> p {players[0], players[0]};
-            return minMaxPruning.exploited_mcts(_field, _tree->lookUp(_gamePath), legalMoves, _classifier, p, _roundNumber, playerNumber, 0.2, _nRd);
+            return minMaxPruning.exploited_mcts(_field, _tree, legalMoves, _classifier, p, _roundNumber, playerNumber, _gamePath, 0.2, _nRd);
         }
         std::cout << "jo3!" << std::endl;
-        return minMaxPruning.exploited_mcts(_field, _tree->lookUp(_gamePath), legalMoves, _classifier, players, _roundNumber, playerNumber, 0.2, _nRd);
+        return minMaxPruning.exploited_mcts(_field, _tree, legalMoves, _classifier, players, _roundNumber, playerNumber, _gamePath, 0.2, _nRd);
     }
     return _classifier.predict(flatField, players[playerNumber-1]-1)[0];   /// TEST!
     //                           BIS HIER
@@ -106,14 +103,16 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
     }
 */
 //    else{
-    _gamePath = {};
+    //_gamePath = {};
 //    }
 
 
-
-    if (!prefixPath.empty()) {
+    if (!prefixPath.empty()) { 
         int preWinner = addPrefixPath(prefixPath);
         //std::vector<int> _gamePath = prefixPath;
+        //_gamePath = prefixPath;
+        //_gamePath.insert( _gamePath.end(), prefixPath.begin(), prefixPath.end());
+        //_gamePath.push_back(prefixPath[0]);
         if (preWinner != -1) {
             return _gamePath;
         }
@@ -147,7 +146,7 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
         }
         else{
             //std::cout << "hallo" << std::endl;
-            _field->showField();
+            //_field->showField();
             position = AI_Move(playerNumber, legalInputs, player, _amountRandom, saveList);
             //std::cout << "welt" << std::endl;
         }
@@ -202,12 +201,14 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
             if((player[0] == 0) || (player[1] == 0)){
                 std::cout << "\n" << "the winner is: " << _winner << std::endl;
             }
-            break;
+            return _gamePath;
+            //break;
         }
         _roundNumber += 1;
         _gameLogic->gameStopped(_field, _roundNumber);
         if(_gameLogic->getSignal() == "game_is_over"){
-            break;
+            return _gamePath;
+            //break;
         }
     }
     //std::cout << "testaa" << std::endl;
@@ -226,6 +227,7 @@ void GameFlow::resetGame()
     //_field = nullptr; //TODO: ja?
     _roundNumber = 0;
     _winner = 0;
+    _gamePath = {};
 }
 
 int GameFlow::addPrefixPath(std::vector<int> prefixPath)
@@ -250,6 +252,7 @@ int GameFlow::addPrefixPath(std::vector<int> prefixPath)
         }
 
         _gameLogic->setStone(_field, playerNumber, position);
+        _gamePath.push_back(position);
         if(_gameLogic->getSignal() != "stone_is_set"){
             std::cout << "ERROR: Stone is not saved" << std::endl;
         }
@@ -258,11 +261,13 @@ int GameFlow::addPrefixPath(std::vector<int> prefixPath)
             if(_winner == 0){
                 std::cout << "ERROR: We could not determine who won!" << std::endl;
             }
-            break; // ??
+            //break; // ??
+            return getWinner();
         }
         _gameLogic->gameStopped(_field, _roundNumber);
         if (_gameLogic->getSignal() == "game_is_over"){
-            break; // ??
+            //break; // ??
+            return getWinner();
         }
         _roundNumber += 1;
         pathPosition += 1;
