@@ -1,3 +1,37 @@
+/*   Copyright (C) 2016 by Daniel M.H. Noll                                *
+ *   Author: Daniel Noll                                                   *
+ *                                                                         *
+ *   Email: sport.mann@gmx.de                                              *
+ *                                                                         *
+ *                                                                         *
+ *                                                                         *
+ * Redistribution and use in source and binary forms, with or without      *
+ * modification, are permitted provided that the following conditions are  *
+ *  met:                                                                   *
+ *                                                                         *
+ *     * Redistributions of source code must retain the above copyright    *
+ *       notice, this list of conditions and the following disclaimer.     *
+ *     * Redistributions in binary form must reproduce the above copyright *
+ *       notice, this list of conditions and the following disclaimer in   *
+ *       the documentation and/or other materials provided with            *
+ *       the distribution.                                                 *
+ *     * Neither the name of the author nor the names of its contributors  *
+ *       may be used to endorse or promote products derived from this      *
+ *       software without specific prior written permission.               *
+ *                                                                         *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS     *
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT       *
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR   *
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT    *
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,   *
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT        *
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,   *
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY   *
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT     *
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE   *
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
+ ***************************************************************************/
+
 #include "gameflow.h"
 #include <iostream>
 //#include "Tests/randomtest.h"
@@ -13,13 +47,47 @@ GameFlow::~GameFlow()
 {
     //delete _field;
     //_tree->deleteTree(_tree);
-//    delete _tree;
+    //    delete _tree;
 }
 
-int GameFlow::AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba, SaveList* saveTheGame)
+
+int GameFlow::move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba)
 {
+    int position;
+    if (players[playerNumber - 1] == 0) {
+        position = Human_Move(legalMoves);
+    }
+    else{
+        //_field->showField();
+        position = AI_Move(playerNumber, legalMoves, players, _amountRandom);
+    }
+    _gameLogic->isLegalMove(_field, playerNumber, position);
+
+    while((_gameLogic->getSignal() == "unvalid_player")
+          || (_gameLogic->getSignal() == "unvalid_position")
+          || (_gameLogic->getSignal() == "column_is_full")){
+
+        _gameLogic->gameStopped(_field, _roundNumber);
+        if(_gameLogic->getSignal() == "game_is_over"){
+            break;
+        }
+
+        if (players[playerNumber - 1] == 0) {
+            std::cout << "this move is not legal, please try again!!" << std::endl;
+            position = Human_Move(legalMoves);
+        }
+        else{
+            position = AI_Move(playerNumber, legalMoves, players, 1.0);
+        }
+
+        _gameLogic->isLegalMove(_field, playerNumber, position);
+    }
+    return position;
+}
 
 
+int GameFlow::AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba)
+{
     std::uniform_real_distribution<float> randomDistrib(0,1);
     if (randomDistrib(_rd) < randomMoveProba) {
         return legalMoves[_nRd->getRandomInt(0, legalMoves.size()-1)];
@@ -79,9 +147,8 @@ int GameFlow::Human_Move(std::vector<int> legalMoves)
 
 
 // 0= human; negative = random, mcts..; positive= AI-Models
-std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int> prefixPath, SaveList *saveList)
+std::vector<int> GameFlow::runGameFlow(std::vector<int> players, std::vector<int> prefixPath, SaveList *saveList)
 {
-
     if (!prefixPath.empty()) { 
         int preWinner = addPrefixPath(prefixPath);
         if (preWinner != -1) {
@@ -89,8 +156,7 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
         }
     }
 
-
-    std::vector<int> legalInputs = _gameLogic->getLegalInputs();
+    std::vector<int> legalMoves = _gameLogic->getLegalInputs();
     if(_gameLogic->getSignal() != "legal_inputs_initialized"){
         std::cout << "ERROR: legal inputs could not get initialized" << std::endl;
     }
@@ -111,46 +177,17 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
             playerNumber = 2;
         }
 
-        int position;
-        if (player[playerNumber - 1] == 0) {
-            position = Human_Move(legalInputs);
-        }
-        else{
-            //_field->showField();
-            position = AI_Move(playerNumber, legalInputs, player, _amountRandom, saveList);
-        }
-        _gameLogic->isLegalMove(_field, playerNumber, position);
-
-        while((_gameLogic->getSignal() == "unvalid_player")
-              || (_gameLogic->getSignal() == "unvalid_position")
-              || (_gameLogic->getSignal() == "column_is_full")){
-            _gameLogic->gameStopped(_field, _roundNumber);
-            if(_gameLogic->getSignal() == "game_is_over"){
-                break;
-            }
-
-            if (player[playerNumber - 1] == 0) {
-                std::cout << "this move is not legal, please try again!!" << std::endl;
-                position = Human_Move(legalInputs);
-            }
-            else{
-                position = AI_Move(playerNumber, legalInputs, player, 1.0, saveList);
-            }
-
-            _gameLogic->isLegalMove(_field, playerNumber, position);
-        }
-
+        int position = move(playerNumber, legalMoves, players, _amountRandom);
         if(saveList){
             saveList->savePositions(*_field, playerNumber, _roundNumber, position, false); //reference to _field ??
         }
         _gamePath.push_back(position);
 
-
         _gameLogic->setStone(_field, playerNumber, position);
         if (_gameLogic->getSignal() != "stone_is_set") {
             std::cout << "ERROR: Stone is not saved" << std::endl;
         }
-        if((player[0] == 0) || (player[1] == 0)){
+        if((players[0] == 0) || (players[1] == 0)){// in Human_Move?
             std::cout << "Last Move: " << position << std::endl;
             _field->showField();
         }
@@ -159,7 +196,7 @@ std::vector<int> GameFlow::runGameFlow(std::vector<int> player, std::vector<int>
             if (_winner == 0) {
                 std::cout << "ERROR: we could not determine who won!" << std::endl;
             }
-            if((player[0] == 0) || (player[1] == 0)){
+            if((players[0] == 0) || (players[1] == 0)){
                 std::cout << "\n" << "the winner is: " << _winner << std::endl;
             }
             return _gamePath;

@@ -32,21 +32,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#ifndef TRAINTESTVALIDATE_H
-#define TRAINTESTVALIDATE_H
-#include <iostream>
-#include <array>
-#include "gameflow.h"
-#include "n_random_distrib/nrandomdistrib.h"
+#ifndef MULTILAYERPERCEPTRON_H
+#define MULTILAYERPERCEPTRON_H
 
-class TrainTestValidate
+class MultiLayerPerceptron
 {
 public:
-    TrainTestValidate();
-    std::array<SaveList*, 3> run(GameFlow* gameFlow, int numberTrain, int numberTest, int numberValidate, int numberModels);
-    SaveList *provideGameLists(GameFlow *gameFlow, int numberGames, int numberModels);
-private:
-    NRandomDistrib _nRand;
+    MultiLayerPerceptron();
 };
 
-#endif // TRAINTESTVALIDATE_H
+#endif // MULTILAYERPERCEPTRON_H
