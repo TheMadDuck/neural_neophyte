@@ -91,7 +91,6 @@ void Tree::printTree()
         std::cout << " numberWon: " << i;
     }
     std::cout << std::endl;
-//    if(_childs){
     for(Tree* child: _childs){
             child->printTree();
     }
@@ -100,7 +99,6 @@ void Tree::printTree()
 std::vector<int> Tree::getPreOrder(std::vector<int> preOrderList)
 {
     std::cout << "does not work yet" << std::endl;
-    //std::cout << "yiip" << std::endl;
     preOrderList.push_back(_move);
     if(!_childs.empty()){
     for(Tree* child: _childs){
@@ -135,52 +133,14 @@ void Tree::addPath(std::vector<int> path, int winOrLoss)
     }
 }
 */
-/*
-void Tree::addPathRec(std::vector<int> path, int winOrLoss)
-{
-
-    _numberPlayed += 1;
-    _numberWon += winOrLoss;
-
-    bool pathExist = false;
-    if (path.empty()){ //testen
-        return;
-    }
-
-    for(Tree* child: _childs){
-        if (path[0] == child->_move) {
-            pathExist = true;
-            path.erase(path.begin()); // ACHTUNG INEFIZIENT !!!
-            child->addPathRec(path, winOrLoss);
-            return;
-        }
-    }
-    if (pathExist == false) {
-        Tree* newChild = new Tree();
-        newChild->_move = path[0];
-        newChild->_depth = _depth + 1;
-        _childs.push_back(newChild);
-        path.erase(path.begin());
-        newChild->addPathRec(path, winOrLoss);
-        return;
-    }
-}*/
 void Tree::addPathRec(std::vector<int> path, int winner)
 {
 
 
     _numberPlayed += 1;
     _numberWon[winner-1] += 1;
-    /*
-    for(int player = 1; player<= _numberWon.size(); player++){
-        if(player == winner){
-            _numberWon[player-1] += 1;
-        }
-    }
-    */
-    //_numberWon[player -1] += winOrLoss;
 
-    if (path.empty()){ //testen
+    if (path.empty()){
         return;
     }
 
@@ -204,7 +164,6 @@ void Tree::addPathRec(std::vector<int> path, int winner)
 int Tree::getBestMove(int player)
 {
     double win_probability = 0;
-    //Tree* bestMove = new Tree();
     int bestMove = -1;
     for(Tree* child: _childs){
         double win_ratio;
@@ -212,11 +171,6 @@ int Tree::getBestMove(int player)
             win_ratio = 0;
         }
         else {
-            std::cout << player << std::endl;
-            for (auto i: _numberWon){
-                std::cout << "_numberWon: " << i << std::endl;
-            }
-            std::cout << child->_numberWon[player-1] << std::endl;
             win_ratio = (double)child->_numberWon[player-1] / (double)child->_numberPlayed;
         }
 
@@ -231,29 +185,18 @@ int Tree::getBestMove(int player)
 int Tree::getNextMove(int amountPosslibleMoves, int player)
 {
     double next_probability = 0;
-    //Tree* nextMove = new Tree();
     int nextMove = -1;
     double c = sqrt(2);
     for(Tree* child: _childs){
         double next_ratio;
-        /*
-        if (child->_numberPlayed == 0) { // wenn one move was not played until now, a random[return-1](or exactly this?[return child._move]) move gets played.
-            //next_ratio = 0;
-            return child->_move;
-        }
-        */
 
         //TODO what to do if the game reaches a draw?
-        std::cout << "amountPossiblites:" << amountPosslibleMoves << std::endl;
-        std::cout << "child.size"<< _childs.size() << std::endl;
         if (amountPosslibleMoves > _childs.size()){  // return -1 for random move
-            std::cout << "         juuuuuuuuuuust random......" << std::endl;
             return -1;
         }
         else{
-            std::cout << "numberWon: " << child->_numberWon[player-1] << std::endl;
             next_ratio = ((double)child->_numberWon[player-1] /(double)child->_numberPlayed) + (c * (double)sqrt((double)log(_numberPlayed)/(double)child->_numberPlayed));
-            std::cout << "            kopter: " << next_ratio << " - move: " << child->_move << std::endl;
+            std::cout << "Win-Probability: " << next_ratio << " - move: " << child->_move << std::endl;
         }
 
         if (next_ratio >= next_probability) {
@@ -261,7 +204,6 @@ int Tree::getNextMove(int amountPosslibleMoves, int player)
             nextMove = child->_move;
         }
     }
-    //delete nextMove;
     return nextMove;
 }
 
@@ -270,11 +212,10 @@ std::vector<double> Tree::getProbabilities(int player)
     std::vector<double> probabilities;
     int index = 0;
     for(Tree* child: _childs){
-        /*std::cout << "index: " << index << std::endl;*/
         index += 1;
         double win_ratio = 0;
         if(child->_numberPlayed != 0){
-            win_ratio = (double)child->_numberWon[player-1] / (double)child->_numberPlayed; // use exploited algo?
+            win_ratio = (double)child->_numberWon[player-1] / (double)child->_numberPlayed;
         }
 
         probabilities.push_back(win_ratio);
@@ -295,8 +236,6 @@ void Tree::cutRoot(int nextRoot)
 {
     for(Tree* child: _childs){
         if (child->_move == nextRoot) {
-            // TODO: copy child to self!!
-//            _move, _depth, _numberWon, _numberPlayed, _childs = child->_move, child->_depth, child->_numberWon, child->_numberPlayed, child->_childs; //TODO TESTEEN
             _move = child->_move;
             _depth = child->_depth;
             _numberWon = child->_numberWon;
@@ -310,14 +249,12 @@ void Tree::cutRoot(int nextRoot)
 Tree* Tree::lookUp(std::vector<int> path)
 {
     Tree* parent = this;
-    //Tree* child;
     for(int subTree: path){
         for(Tree* child: parent->_childs){
             if (child->_move == subTree){
                 parent = child;
             }
         }
-//        parent = parent->_childs[subTree];
     }
     return parent;
 }
@@ -340,11 +277,7 @@ void Tree::deleteTree(Tree *tree)
 bool Tree::Test()
 {
     bool testV = true;
-    int testA = 3;
-    int testB = 2;
 
-    double testC = log(2);
-    std::cout << testC << std::endl;
     std::vector<int> path = {0, 3, 14, 9, 17};
     std::vector<int> path2 = {0, 3, 66, 6, 6};
     std::vector<int> path3 = {32, 212, 15, 221, 74, 23, 0, 2};
@@ -356,14 +289,12 @@ bool Tree::Test()
     tree->addPathRec(path, player2);
     tree->addPathRec(path2, player1);
     tree->addPathRec(path3, player2);
-    std::cout << "bumb" << std::endl;
     tree->printTree();
     /*std::cout << "\n \n" << "preOrder:" <<std::endl;
     auto things = tree.getPreOrder();
     for (auto thing: things ) {
         std::cout << thing << std::endl;
     }*/
-    std::cout << std::endl;
     Tree* tempTree = tree->lookUp({0, 3});
     std::cout << "tempTree best Move: " << tempTree->getBestMove(2) << std::endl;
     std::cout <<"getNext1: " << tempTree->getNextMove(0, 1) << std::endl;

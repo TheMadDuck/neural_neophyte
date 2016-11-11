@@ -33,7 +33,6 @@ public:
 private:
     int _move = -1;
     int _depth = 0;
-//    int _numberWon = 0;
     std::vector<int> _numberWon = {0, 0}; // todo: make alloc dynamic.
     int _numberPlayed = 0;
     std::vector<Tree*> _childs = {};

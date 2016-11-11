@@ -21,6 +21,7 @@ private:
 
     FourInARow *_gameLogic;
     GameFlow *_gameFlow;
+    Tree* _tree;
 
     ModelHandler _modelHandler; //pointer?
     LogisticSgd _classifier; //pointer?

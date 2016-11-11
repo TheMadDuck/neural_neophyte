@@ -38,41 +38,18 @@ int MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<int> leg
         else{ // play now random
             path = tempGameFlow.runGameFlow({-1, -1});
         }
-
+        /*
         for (auto i:path){
             std::cout << i << " ";
         }
         std::cout << "< mcts path" << std::endl;
+        */
 
         if(tempGameFlow.getWinner() != 0){
-            std::cout << "tempGameFlow: " << tempGameFlow.getWinner() << std::endl;
             tree->addPathRec(path, tempGameFlow.getWinner());
-            /*
-            for(auto player: players){
-                if(tempGameFlow.getWinner() ==player){
-                    mcts_tree->addPathRec(path, 1, player);
-                }
-                else{
-                    mcts_tree->addPathRec(path, 0, player);
-                }
-            }
-            */
-            /*
-            if(tempGameFlow.getWinner() == playerNumber){
-                mcts_tree->addPathRec(path, 1);
-            }
-            else{
-                mcts_tree->addPathRec(path, 0);
-            }
-            */
         }
         delete fieldCopy;
-//        delete tempGameFlow;
     }
-    //std::cout << "probas: " << std::endl;
-    //std::cout << mcts_tree->getChilds() << std::endl;
-    //std::cout << mcts_tree->getProbabilities() << std::endl;
-    //mcts_tree->getBestMove(playerNumber);
 
     return mcts_tree->getBestMove(playerNumber);
 }

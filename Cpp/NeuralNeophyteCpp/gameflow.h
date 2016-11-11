@@ -27,7 +27,6 @@ public:
     void test2();
 private:
     std::random_device seed;
-//    std::mt19937 rd;
 
     //SaveList* saveList; // check this (realy a pointer?)
     std::vector<int> _gamePath;

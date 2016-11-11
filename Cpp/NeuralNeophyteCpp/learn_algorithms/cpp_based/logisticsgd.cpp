@@ -5,9 +5,9 @@ LogisticSgd::LogisticSgd()
 {
 }
 
-void LogisticSgd::fit(int learning_rate, int n_epochs)
+void LogisticSgd::fit(std::array<SaveList*, 3> dataset, int learning_rate, int n_epochs)
 {
-
+    SaveList* train_set_x = dataset[0];
 }
 
 std::vector<int> LogisticSgd::predict(std::vector<int> field, int player)

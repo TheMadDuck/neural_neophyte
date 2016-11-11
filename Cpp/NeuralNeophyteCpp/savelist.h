@@ -12,16 +12,11 @@ public:
     int _test;
 
 private:
-//    std::vector<std::vector<int>> playerOne;
-//    std::vector<std::vector<int>> playerTwo;
-
     std::vector<std::vector<int>> _playerOneFields;
     std::vector<int> _playerOnePositions;
 
     std::vector<std::vector<int>> _playerTwoFields;
     std::vector<int> _playerTwoPositions;
-
-    //std::vector<> playerOne;
 
 };
 
