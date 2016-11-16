@@ -32,58 +32,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#include "minmaxpruning.h"
+#include "logisticsgd.h"
 #include <iostream>
 
-MinMaxPruning::MinMaxPruning()
+LogisticSgd::LogisticSgd()
 {
-    _gameLogic = new FourInARow();
 }
 
-MinMaxPruning::~MinMaxPruning()
+void LogisticSgd::fit(std::array<SaveList*, 3> dataset, int learning_rate, int n_epochs)
 {
-    delete _gameLogic;
+    SaveList* train_set_x = dataset[0];
 }
 
-
-Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<Position> legalMoves, LogisticSgd classifier, std::vector<int> players, int roundNumber, int playerNumber, std::vector<Position> gamePath, float randomProbability, NRandomDistrib* nRd)
+std::vector<int> LogisticSgd::predict(std::vector<int> field, int player)
 {
-    Tree* mcts_tree;
-    if (tree){
-        mcts_tree = tree->lookUp(gamePath);
-    }
-    else{
-        //mcts_tree = new Tree();
-    }
-
-    int gameQuantity = 800;
-    for (int i = 0; i < gameQuantity; ++i) {
-        int amountPossibleMoves = _gameLogic->getLegalInputs().size();
-        Position move = mcts_tree->getNextMove(amountPossibleMoves, playerNumber);
-        Field* fieldCopy = new Field(*field);
-
-
-        GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber, 0.15, nRd, gamePath);
-        std::vector<Position> path;
-        if (!move.isRandom()){
-            std::vector<Position> moveVector = {move};
-            path = tempGameFlow.runGameFlow({-1, -1}, moveVector);
-        }
-        else{ // play now random
-            path = tempGameFlow.runGameFlow({-1, -1});
-        }
-        /*
-        for (auto i:path){
-            std::cout << i << " ";
-        }
-        std::cout << "< mcts path" << std::endl;
-        */
-
-        if(tempGameFlow.getWinner() != 0){
-            tree->addPathRec(path, tempGameFlow.getWinner());
-        }
-        delete fieldCopy;
-    }
-
-    return mcts_tree->getBestMove(playerNumber);
+    std::vector<int> a{5,4,3};                    // TODO: IMPLEMENT!!!!!!!!!!!
+    //std::cout << "NOT YET IMPLEMENTED!!!!!!!!" << std::endl;
+    return a;
 }

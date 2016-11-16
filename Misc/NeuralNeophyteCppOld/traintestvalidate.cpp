@@ -32,58 +32,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#include "minmaxpruning.h"
-#include <iostream>
+#include "traintestvalidate.h"
 
-MinMaxPruning::MinMaxPruning()
+
+TrainTestValidate::TrainTestValidate()
 {
-    _gameLogic = new FourInARow();
+
 }
 
-MinMaxPruning::~MinMaxPruning()
+SaveList* TrainTestValidate::provideGameLists(GameFlow *gameFlow, int numberGames, int numberModels)
 {
-    delete _gameLogic;
+    SaveList* winnersList = new SaveList();
+    for (int i = 0; i < numberGames; ++i) {
+        if (i % 100 == 0) {
+            std::cout << "Game Number: " << i << std::endl;
+        }
+        int KI_One = _nRand.nRand(numberModels);
+        int KI_Two = _nRand.nRand(numberModels);
+
+        gameFlow->resetGame();
+        std::vector<int> players{KI_One, KI_Two};
+        gameFlow->runGameFlow(players, {}, winnersList);
+//        gameFlow->runGameFlow(std::vector<int> {KI_One, KI_Two},{}, winnersTrain); //TODO look for savelist
+
+    }
+    return winnersList;
 }
 
-
-Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<Position> legalMoves, LogisticSgd classifier, std::vector<int> players, int roundNumber, int playerNumber, std::vector<Position> gamePath, float randomProbability, NRandomDistrib* nRd)
+std::array<SaveList*, 3> TrainTestValidate::run(GameFlow *gameFlow, int numberTrain, int numberTest, int numberValidate, int numberModels)
 {
-    Tree* mcts_tree;
-    if (tree){
-        mcts_tree = tree->lookUp(gamePath);
-    }
-    else{
-        //mcts_tree = new Tree();
-    }
+    std::array<SaveList*, 3> dataset;
+    dataset[0] = provideGameLists(gameFlow, numberTrain, numberModels);
+    dataset[1] = provideGameLists(gameFlow, numberTest, numberModels);
+    dataset[2] = provideGameLists(gameFlow, numberValidate, numberModels);
 
-    int gameQuantity = 800;
-    for (int i = 0; i < gameQuantity; ++i) {
-        int amountPossibleMoves = _gameLogic->getLegalInputs().size();
-        Position move = mcts_tree->getNextMove(amountPossibleMoves, playerNumber);
-        Field* fieldCopy = new Field(*field);
-
-
-        GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber, 0.15, nRd, gamePath);
-        std::vector<Position> path;
-        if (!move.isRandom()){
-            std::vector<Position> moveVector = {move};
-            path = tempGameFlow.runGameFlow({-1, -1}, moveVector);
-        }
-        else{ // play now random
-            path = tempGameFlow.runGameFlow({-1, -1});
-        }
-        /*
-        for (auto i:path){
-            std::cout << i << " ";
-        }
-        std::cout << "< mcts path" << std::endl;
-        */
-
-        if(tempGameFlow.getWinner() != 0){
-            tree->addPathRec(path, tempGameFlow.getWinner());
-        }
-        delete fieldCopy;
-    }
-
-    return mcts_tree->getBestMove(playerNumber);
+    return dataset;
 }

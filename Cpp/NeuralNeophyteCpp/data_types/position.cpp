@@ -32,58 +32,95 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#include "minmaxpruning.h"
-#include <iostream>
+#include "position.h"
 
-MinMaxPruning::MinMaxPruning()
+Position::Position()
 {
-    _gameLogic = new FourInARow();
+    _isRandom = true;
 }
 
-MinMaxPruning::~MinMaxPruning()
+Position::Position(std::vector<int> newVector)
+    :_positionVector(newVector)
 {
-    delete _gameLogic;
 }
 
-
-Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<Position> legalMoves, LogisticSgd classifier, std::vector<int> players, int roundNumber, int playerNumber, std::vector<Position> gamePath, float randomProbability, NRandomDistrib* nRd)
+Position::Position(const Position &newPosition)
 {
-    Tree* mcts_tree;
-    if (tree){
-        mcts_tree = tree->lookUp(gamePath);
+    _positionVector = newPosition._positionVector;
+}
+
+Position::Position(Position &&newPosition)
+{
+    _positionVector = newPosition._positionVector;
+}
+
+Position &Position::operator=(const Position &newPosition)
+{
+    _positionVector = newPosition._positionVector;
+    return *this;
+}
+
+Position &Position::operator=(Position &&newPosition)
+{
+    _positionVector = newPosition._positionVector;
+    return *this;
+}
+
+int Position::getVectorSize()
+{
+    return _positionVector.size();
+}
+
+void Position::setVectorSize(int size)
+{
+    for (int i = 0; i < size; ++i) {
+        _positionVector.push_back(0);
+    }
+}
+
+std::vector<int> Position::getPositionVector() const
+{
+    return _positionVector;
+}
+
+void Position::setPositionVector(std::vector<int> newPosition)
+{
+    _positionVector = newPosition;
+}
+
+bool Position::operator ==(const Position &other)
+{
+    /*
+    if(_positionVector == other.getPositionVector()){
+        return true;
     }
     else{
-        //mcts_tree = new Tree();
+        return false;
     }
+    */
+    return (_positionVector == other.getPositionVector());
+}
 
-    int gameQuantity = 800;
-    for (int i = 0; i < gameQuantity; ++i) {
-        int amountPossibleMoves = _gameLogic->getLegalInputs().size();
-        Position move = mcts_tree->getNextMove(amountPossibleMoves, playerNumber);
-        Field* fieldCopy = new Field(*field);
+bool Position::isRandom()
+{
+    return _isRandom;
+}
 
+void Position::setRandomnes(bool random)
+{
+    _isRandom = random;
+}
 
-        GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber, 0.15, nRd, gamePath);
-        std::vector<Position> path;
-        if (!move.isRandom()){
-            std::vector<Position> moveVector = {move};
-            path = tempGameFlow.runGameFlow({-1, -1}, moveVector);
-        }
-        else{ // play now random
-            path = tempGameFlow.runGameFlow({-1, -1});
-        }
-        /*
-        for (auto i:path){
-            std::cout << i << " ";
-        }
-        std::cout << "< mcts path" << std::endl;
-        */
-
-        if(tempGameFlow.getWinner() != 0){
-            tree->addPathRec(path, tempGameFlow.getWinner());
-        }
-        delete fieldCopy;
+void Position::printPosition()
+{
+    for(int i: _positionVector){
+        std::cout << i << " ";
     }
+}
 
-    return mcts_tree->getBestMove(playerNumber);
+void Position::inputPosition()
+{
+    for(int i = 0; i<getVectorSize(); i++){
+        std::cin >> _positionVector[i];
+    }
 }

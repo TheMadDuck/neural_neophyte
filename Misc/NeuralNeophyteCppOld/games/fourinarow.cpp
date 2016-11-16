@@ -61,17 +61,9 @@ std::string FourInARow::getName()
     return "four_in_a_row";
 }
 
-int FourInARow::positionVectorSize()
+std::vector<int> FourInARow::getLegalInputs()
 {
-    return 1;
-}
-
-std::vector<Position> FourInARow::getLegalInputs()
-{
-    std::vector<Position> legal_inputs;// = {0, 1, 2, 3, 4, 5, 6}; /Todo: speed limitation?
-    for (int i = 0; i< 7 ; i++){
-        legal_inputs.push_back(Position({i}));
-    }
+    std::vector<int> legal_inputs = {0, 1, 2, 3, 4, 5, 6};
     Signal = "legal_inputs_initialized";
     return legal_inputs;
 }
@@ -99,7 +91,7 @@ Field *FourInARow::initField(int height, int width)
     return _field;
 }
 
-bool FourInARow::isLegalMove(Field *field, int playerNumber, Position position)
+bool FourInARow::isLegalMove(Field *field, int playerNumber, int position)
 {
     // wrong player number -> False
     if((playerNumber != 1) && (playerNumber != 2)){
@@ -108,13 +100,13 @@ bool FourInARow::isLegalMove(Field *field, int playerNumber, Position position)
         return false;
     }
     // wrong position -> False
-    if ((position[0] < 0) || (position[0] > field->getWidth() -1)){
-        std::cout << position[0] << " is a unvalid position" << std::endl;
+    if ((position < 0) || (position > field->getWidth() -1)){
+        std::cout << position << " is a unvalid position" << std::endl;
         Signal = "unvalid_position";
         return false;
     }
     // column is already full -> False
-    if (field->get(0, position[0]) != 0){
+    if (field->get(0, position) != 0){
         Signal = "column_is_full";
         return false;
     }
@@ -123,11 +115,11 @@ bool FourInARow::isLegalMove(Field *field, int playerNumber, Position position)
     return true;
 }
 
-void FourInARow::setStone(Field *field, int color, Position position)
+void FourInARow::setStone(Field *field, int color, int position)
 {
     for (int i = 0; i < field->getHeight(); ++i) {
-        if(field->get(i,position[0]) != 0){   // replace position[0] with getX()?
-            field->set(color, i-1, position[0]);
+        if(field->get(i,position) != 0){
+            field->set(color, i-1, position);
             break;
         }
     }
@@ -144,13 +136,13 @@ bool FourInARow::gameStopped(Field *field, int roundNumber)
     }
 }
 
-int FourInARow::hasAWinner(Field* field, int color, Position position)
+int FourInARow::hasAWinner(Field* field, int color, int position)
 {
     int longestLine = 0;
     //check depth of the new stone
     int depth = 0;
     for (int i = 0; i < field->getHeight(); ++i) {
-        if (field->get(i, position[0]) == 0) {
+        if (field->get(i, position) == 0) {
             depth += 1;
         }
         else {
@@ -159,10 +151,10 @@ int FourInARow::hasAWinner(Field* field, int color, Position position)
     }
     //column check:
     for (int i = 0; i < field->getHeight(); ++i) {
-        if (field->get(i,position[0]) == 0) {
+        if (field->get(i,position) == 0) {
             continue; /*TODO: Testen*/
         }
-        if (field->get(i,position[0]) == color) {
+        if (field->get(i,position) == color) {
             longestLine += 1;
         }
         else{
@@ -193,8 +185,8 @@ int FourInARow::hasAWinner(Field* field, int color, Position position)
     //diagonal check:
     int longestLineUp = 0;
     int longestLineDown = 0;
-    int topLeftStart = depth - position[0];
-    int bottomLeftStart = depth + position[0];
+    int topLeftStart = depth - position;
+    int bottomLeftStart = depth + position;
     for (int i = 0; i < field->getWidth(); ++i) {
         if ((topLeftStart >= 0) && (topLeftStart < field->getHeight())) {
             if (field->get(topLeftStart, i) == color){

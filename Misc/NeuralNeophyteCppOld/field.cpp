@@ -32,58 +32,118 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#include "minmaxpruning.h"
+#include "field.h"
 #include <iostream>
 
-MinMaxPruning::MinMaxPruning()
+Field::Field(int height, int width)
+    :_height(height), _width(width)
 {
-    _gameLogic = new FourInARow();
+    std::cout << "nummer 0" << std::endl;
+    _field.resize(height);
+    for (int i = 0; i < height; ++i) {
+        _field[i].resize(width);
+    }
+    //std::array<std::array<int, 7>, 7> field;
 }
 
-MinMaxPruning::~MinMaxPruning()
+Field::~Field()
 {
-    delete _gameLogic;
+    //delete _field; Nope, not a pointer.
+}
+
+Field::Field(const Field &other){    //Testen!
+//    _field(other._field);
+//    std::cout << "nummer 1" << std::endl;
+    _field = other._field;
+    _height = other._height;
+    _width = other._width;
+}
+
+Field::Field(Field &&other)
+    :_field(other._field), _height(other._height), _width(other._width)
+{
+    std::cout << "nummer 2" << std::endl;
+//    other._field = nullptr;
+//    other._heigh = NULL;
+    //    other._width = NULL;
+}
+
+Field &Field::operator=(const Field &other)
+{
+//    std::vector<std::vector<int>> tempField = other._field;
+    std::cout << "nummer 3" << std::endl;
+    _field = other._field;
+    _height = other._height;
+    _width = other._width;
+    return *this;
+}
+
+Field &Field::operator=(Field &&other)
+{
+    std::cout << "nummer 4" << std::endl;
+    _field = other._field;
+    _height = other._height;
+    _width = other._width;
+    return *this;
 }
 
 
-Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<Position> legalMoves, LogisticSgd classifier, std::vector<int> players, int roundNumber, int playerNumber, std::vector<Position> gamePath, float randomProbability, NRandomDistrib* nRd)
+int Field::get(int i, int j)
 {
-    Tree* mcts_tree;
-    if (tree){
-        mcts_tree = tree->lookUp(gamePath);
+    return _field[i][j];
+}
+
+void Field::set(int value, int i, int j)
+{
+    _field[i][j] = value;
+}
+
+int Field::getHeight()
+{
+    return _height;
+}
+
+int Field::getWidth()
+{
+    return _width;
+}
+
+int Field::getSizeTotal()
+{
+    return _width*_height;
+}
+
+int Field::getSizeField()
+{
+    return _width *(_height-1);
+}
+
+void Field::showField()
+{
+    for (int i = 0; i < _height; ++i) {
+        for (int j = 0; j < _width; ++j) {
+            std::cout << _field[i][j] << " ";
+        }
+        std::cout << std::endl;
     }
-    else{
-        //mcts_tree = new Tree();
+    std::cout << std::endl;
+}
+
+std::vector<int> Field::flatten()
+{
+    /*
+    std::vector<int> flatField;
+    for (int i = 0; i < _height; ++i) {
+        for (int j = 0; j < _width; ++j) {
+            flatField.push_back(_field[i][j]);
+        }
     }
-
-    int gameQuantity = 800;
-    for (int i = 0; i < gameQuantity; ++i) {
-        int amountPossibleMoves = _gameLogic->getLegalInputs().size();
-        Position move = mcts_tree->getNextMove(amountPossibleMoves, playerNumber);
-        Field* fieldCopy = new Field(*field);
-
-
-        GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber, 0.15, nRd, gamePath);
-        std::vector<Position> path;
-        if (!move.isRandom()){
-            std::vector<Position> moveVector = {move};
-            path = tempGameFlow.runGameFlow({-1, -1}, moveVector);
-        }
-        else{ // play now random
-            path = tempGameFlow.runGameFlow({-1, -1});
-        }
-        /*
-        for (auto i:path){
-            std::cout << i << " ";
-        }
-        std::cout << "< mcts path" << std::endl;
-        */
-
-        if(tempGameFlow.getWinner() != 0){
-            tree->addPathRec(path, tempGameFlow.getWinner());
-        }
-        delete fieldCopy;
+    */
+    //TODO Testen!
+    std::vector<int> flatField;
+    for (int i = 0; i < _height; ++i) {
+        flatField.insert(flatField.end(), _field[i].begin(), _field[i].end());
     }
+    return flatField;
 
-    return mcts_tree->getBestMove(playerNumber);
 }

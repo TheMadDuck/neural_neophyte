@@ -41,20 +41,21 @@
 #include "games/fourinarow.h"
 #include "learn_algorithms/cpp_based/logisticsgd.h"
 #include "n_random_distrib/nrandomdistrib.h"
+#include "data_types/position.h"
 
 class MinMaxPruning
 {
 public:
     MinMaxPruning();
     ~MinMaxPruning();
-    int exploited_mcts(Field *field, //TODO: field und tree wirklich pointer?
+    Position exploited_mcts(Field *field, //TODO: field und tree wirklich pointer?
                        Tree *tree, //TODO: field und tree wirklich pointer?
-                       std::vector<int> legalMoves,
+                       std::vector<Position> legalMoves,
                        LogisticSgd classifier,
                        std::vector<int> players,
                        int roundNumber,
                        int playerNumber,
-                       std::vector<int> gamePath,
+                       std::vector<Position> gamePath,
                        float randomProbability,
                        NRandomDistrib* nRd);
 private:

@@ -32,58 +32,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#include "minmaxpruning.h"
-#include <iostream>
+#ifndef SAVELIST_H
+#define SAVELIST_H
 
-MinMaxPruning::MinMaxPruning()
+#include "field.h"
+#include <vector>
+
+class SaveList
 {
-    _gameLogic = new FourInARow();
-}
+public:
+    SaveList();
+    void savePositions(Field field, int color, int roundNumber, int position, bool transposed);
+    int _test;
 
-MinMaxPruning::~MinMaxPruning()
-{
-    delete _gameLogic;
-}
+private:
+    std::vector<std::vector<int>> _playerOneFields;
+    std::vector<int> _playerOnePositions;
 
+    std::vector<std::vector<int>> _playerTwoFields;
+    std::vector<int> _playerTwoPositions;
 
-Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<Position> legalMoves, LogisticSgd classifier, std::vector<int> players, int roundNumber, int playerNumber, std::vector<Position> gamePath, float randomProbability, NRandomDistrib* nRd)
-{
-    Tree* mcts_tree;
-    if (tree){
-        mcts_tree = tree->lookUp(gamePath);
-    }
-    else{
-        //mcts_tree = new Tree();
-    }
+};
 
-    int gameQuantity = 800;
-    for (int i = 0; i < gameQuantity; ++i) {
-        int amountPossibleMoves = _gameLogic->getLegalInputs().size();
-        Position move = mcts_tree->getNextMove(amountPossibleMoves, playerNumber);
-        Field* fieldCopy = new Field(*field);
-
-
-        GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber, 0.15, nRd, gamePath);
-        std::vector<Position> path;
-        if (!move.isRandom()){
-            std::vector<Position> moveVector = {move};
-            path = tempGameFlow.runGameFlow({-1, -1}, moveVector);
-        }
-        else{ // play now random
-            path = tempGameFlow.runGameFlow({-1, -1});
-        }
-        /*
-        for (auto i:path){
-            std::cout << i << " ";
-        }
-        std::cout << "< mcts path" << std::endl;
-        */
-
-        if(tempGameFlow.getWinner() != 0){
-            tree->addPathRec(path, tempGameFlow.getWinner());
-        }
-        delete fieldCopy;
-    }
-
-    return mcts_tree->getBestMove(playerNumber);
-}
+#endif // SAVELIST_H

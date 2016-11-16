@@ -32,58 +32,68 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#include "minmaxpruning.h"
-#include <iostream>
-
-MinMaxPruning::MinMaxPruning()
+#include "timetests.h"
+#include <random>
+TimeTests::TimeTests()
 {
-    _gameLogic = new FourInARow();
+    // Test 1:
+    std::chrono::high_resolution_clock::time_point t1_start =
+            std::chrono::high_resolution_clock::now();
+    randomGeneratorTest();
+    std::chrono::high_resolution_clock::time_point t1_end
+            = std::chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(t1_end - t1_start).count();
+
+    std::cout << std::endl;
+
+    // Test 2:
+    std::chrono::high_resolution_clock::time_point t2_start =
+            std::chrono::high_resolution_clock::now();
+    randomGeneratorTest2();
+    std::chrono::high_resolution_clock::time_point t2_end
+            = std::chrono::high_resolution_clock::now();
+
+    auto duration2 = std::chrono::duration_cast<std::chrono::nanoseconds>(t2_end - t2_start).count();
+
+    std::cout << std::endl;
+    std::cout << "test1: " << duration << std::endl;
+    std::cout << "test2: " << duration2 << std::endl;
+    std::cout << "test1 / test2: " << (float) duration/(float) duration2 << std::endl;
+    std::cout << "test2 / test1: " << (float) duration2/(float) duration << std::endl;
 }
 
-MinMaxPruning::~MinMaxPruning()
+
+//increment Test
+////////////////////////////////////////////
+
+void TimeTests::increment()
 {
-    delete _gameLogic;
+    long number = 0;
+    for (int var = 0; var < 1000000; ++var) {
+        number += 7;
+    }
 }
 
-
-Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<Position> legalMoves, LogisticSgd classifier, std::vector<int> players, int roundNumber, int playerNumber, std::vector<Position> gamePath, float randomProbability, NRandomDistrib* nRd)
+// random generator test
+////////////////////////////////////////////
+void TimeTests::randomGeneratorTest()
 {
-    Tree* mcts_tree;
-    if (tree){
-        mcts_tree = tree->lookUp(gamePath);
+    std::mt19937 rd(23);
+    std::uniform_int_distribution<int> rdist(0,123);
+    for (int var = 0; var < 10; ++var) {
+        int i = rdist(rd);
+        std::cout << i;
     }
-    else{
-        //mcts_tree = new Tree();
-    }
-
-    int gameQuantity = 800;
-    for (int i = 0; i < gameQuantity; ++i) {
-        int amountPossibleMoves = _gameLogic->getLegalInputs().size();
-        Position move = mcts_tree->getNextMove(amountPossibleMoves, playerNumber);
-        Field* fieldCopy = new Field(*field);
-
-
-        GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber, 0.15, nRd, gamePath);
-        std::vector<Position> path;
-        if (!move.isRandom()){
-            std::vector<Position> moveVector = {move};
-            path = tempGameFlow.runGameFlow({-1, -1}, moveVector);
-        }
-        else{ // play now random
-            path = tempGameFlow.runGameFlow({-1, -1});
-        }
-        /*
-        for (auto i:path){
-            std::cout << i << " ";
-        }
-        std::cout << "< mcts path" << std::endl;
-        */
-
-        if(tempGameFlow.getWinner() != 0){
-            tree->addPathRec(path, tempGameFlow.getWinner());
-        }
-        delete fieldCopy;
-    }
-
-    return mcts_tree->getBestMove(playerNumber);
 }
+
+void TimeTests::randomGeneratorTest2()
+{
+    std::random_device a;
+    std::uniform_int_distribution<int> rdist(0,123);
+    for (int var = 0; var < 10; ++var) {
+        int i = rdist(a);
+        std::cout << i;
+    }
+}
+/////////////////////////////////////////////

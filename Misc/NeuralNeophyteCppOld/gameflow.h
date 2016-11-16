@@ -32,58 +32,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
+#ifndef GAMEFLOW_H
+#define GAMEFLOW_H
+#include <array>
+#include <random>
+#include <chrono>
+#include "learn_algorithms/cpp_based/logisticsgd.h" //TODO: here and in next line realy explizit includes or just interfaces??
+#include "games/fourinarow.h"
+#include "field.h"
+#include "tree.h"
 #include "minmaxpruning.h"
-#include <iostream>
+#include "savelist.h"
+#include "n_random_distrib/nrandomdistrib.h"
 
-MinMaxPruning::MinMaxPruning()
+class GameFlow
 {
-    _gameLogic = new FourInARow();
-}
+public:
+    GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field* field = nullptr, Tree* tree = new Tree(), int roundNumber = 0, int amountRandom = 0.15,  NRandomDistrib *nRd = nullptr, std::vector<int> gamePath = {});
+    ~GameFlow();
+    int move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba);
+    int AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba);
+    int Human_Move(std::vector<int> legalMoves);
+    std::vector<int> runGameFlow(std::vector<int> player, std::vector<int> prefixPath = {}, SaveList* saveList = nullptr);
+    int getWinner();
+    void resetGame();
+    int addPrefixPath(std::vector<int> prefixPath);
 
-MinMaxPruning::~MinMaxPruning()
-{
-    delete _gameLogic;
-}
+    void test();
+    void test2();
+private:
+    std::random_device seed;
 
+    //SaveList* saveList; // check this (realy a pointer?)
+    std::vector<int> _gamePath;
+    LogisticSgd _classifier;
+    FourInARow *_gameLogic;
+    Field *_field;
+    int _roundNumber;
+    float _amountRandom;
+    Tree *_tree;
+    int _winner;
+    std::mt19937 _rd;
+    NRandomDistrib* _nRd;
+};
 
-Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<Position> legalMoves, LogisticSgd classifier, std::vector<int> players, int roundNumber, int playerNumber, std::vector<Position> gamePath, float randomProbability, NRandomDistrib* nRd)
-{
-    Tree* mcts_tree;
-    if (tree){
-        mcts_tree = tree->lookUp(gamePath);
-    }
-    else{
-        //mcts_tree = new Tree();
-    }
-
-    int gameQuantity = 800;
-    for (int i = 0; i < gameQuantity; ++i) {
-        int amountPossibleMoves = _gameLogic->getLegalInputs().size();
-        Position move = mcts_tree->getNextMove(amountPossibleMoves, playerNumber);
-        Field* fieldCopy = new Field(*field);
-
-
-        GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber, 0.15, nRd, gamePath);
-        std::vector<Position> path;
-        if (!move.isRandom()){
-            std::vector<Position> moveVector = {move};
-            path = tempGameFlow.runGameFlow({-1, -1}, moveVector);
-        }
-        else{ // play now random
-            path = tempGameFlow.runGameFlow({-1, -1});
-        }
-        /*
-        for (auto i:path){
-            std::cout << i << " ";
-        }
-        std::cout << "< mcts path" << std::endl;
-        */
-
-        if(tempGameFlow.getWinner() != 0){
-            tree->addPathRec(path, tempGameFlow.getWinner());
-        }
-        delete fieldCopy;
-    }
-
-    return mcts_tree->getBestMove(playerNumber);
-}
+#endif // GAMEFLOW_H

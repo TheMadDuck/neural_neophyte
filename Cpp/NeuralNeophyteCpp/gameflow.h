@@ -44,19 +44,20 @@
 #include "minmaxpruning.h"
 #include "savelist.h"
 #include "n_random_distrib/nrandomdistrib.h"
+#include "data_types/position.h"
 
 class GameFlow
 {
 public:
-    GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field* field = nullptr, Tree* tree = new Tree(), int roundNumber = 0, int amountRandom = 0.15,  NRandomDistrib *nRd = nullptr, std::vector<int> gamePath = {});
+    GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field* field = nullptr, Tree* tree = new Tree(), int roundNumber = 0, int amountRandom = 0.15,  NRandomDistrib *nRd = nullptr, std::vector<Position> gamePath = {});
     ~GameFlow();
-    int move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba);
-    int AI_Move(int playerNumber, std::vector<int> legalMoves, std::vector<int> players, float randomMoveProba);
-    int Human_Move(std::vector<int> legalMoves);
-    std::vector<int> runGameFlow(std::vector<int> player, std::vector<int> prefixPath = {}, SaveList* saveList = nullptr);
+    void move(int playerNumber, std::vector<Position> legalMoves, std::vector<int> players, float randomMoveProba);
+    void AI_Move(int playerNumber, std::vector<Position> legalMoves, std::vector<int> players, float randomMoveProba);
+    void Human_Move(std::vector<Position> legalMoves);
+    std::vector<Position> runGameFlow(std::vector<int> player, std::vector<Position> prefixPath = {}, SaveList* saveList = nullptr);
     int getWinner();
     void resetGame();
-    int addPrefixPath(std::vector<int> prefixPath);
+    int addPrefixPath(std::vector<Position> prefixPath);
 
     void test();
     void test2();
@@ -64,7 +65,7 @@ private:
     std::random_device seed;
 
     //SaveList* saveList; // check this (realy a pointer?)
-    std::vector<int> _gamePath;
+    std::vector<Position> _gamePath;
     LogisticSgd _classifier;
     FourInARow *_gameLogic;
     Field *_field;
@@ -74,6 +75,8 @@ private:
     int _winner;
     std::mt19937 _rd;
     NRandomDistrib* _nRd;
+    Position _nextPosition; // todo: replace position(or move) with _nextPosition array.
+    //int _nextPosition;
 };
 
 #endif // GAMEFLOW_H

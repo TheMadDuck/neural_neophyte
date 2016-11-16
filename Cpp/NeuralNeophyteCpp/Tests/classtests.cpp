@@ -54,6 +54,7 @@ bool ClassTests::t_tree()
     int loss = 0;
     std::cout << "test0";
 
+    /*
     tree->addPathRec(path, win);
     tree->addPathRec(path2, loss);
     tree->addPathRec(path3, win);
@@ -61,6 +62,7 @@ bool ClassTests::t_tree()
     if(tree->getBestMove(1) != 32){
         t_test = false;
     }
+    */
     std::vector<double> a = tree->getProbabilities(1);
     std::vector<double> b ={0.5, 1};
     for (int var = 0; var < 2; ++var) {

@@ -32,58 +32,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#include "minmaxpruning.h"
+#include "nrandomdistrib.h"
+
 #include <iostream>
-
-MinMaxPruning::MinMaxPruning()
+#include <iomanip>
+#include <string>
+#include <map>
+#include <random>
+#include <cmath>
+NRandomDistrib::NRandomDistrib()
 {
-    _gameLogic = new FourInARow();
+    _rd.seed(std::time(NULL));
 }
 
-MinMaxPruning::~MinMaxPruning()
+int NRandomDistrib::nRand(int border)
 {
-    delete _gameLogic;
+    /*
+    if(border == 0){
+        return 0;
+    }
+
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    // values near the mean are the most likely
+    // standard deviation affects the dispersion of generated values from the mean
+    std::normal_distribution<> d(5,2);
+
+    std::map<int, int> hist;
+    for(int n=0; n<10000; ++n) {
+        ++hist[std::round(d(gen))];
+    }
+    for(auto p : hist) {
+        std::cout << std::fixed << std::setprecision(1) << std::setw(2)
+                  << p.first << ' ' << std::string(p.second/200, '*') << '\n';
+    }
+    */
+    return -2;
 }
 
-
-Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<Position> legalMoves, LogisticSgd classifier, std::vector<int> players, int roundNumber, int playerNumber, std::vector<Position> gamePath, float randomProbability, NRandomDistrib* nRd)
+int NRandomDistrib::getRandomInt(int lowerBound, int upperBound)
 {
-    Tree* mcts_tree;
-    if (tree){
-        mcts_tree = tree->lookUp(gamePath);
-    }
-    else{
-        //mcts_tree = new Tree();
-    }
-
-    int gameQuantity = 800;
-    for (int i = 0; i < gameQuantity; ++i) {
-        int amountPossibleMoves = _gameLogic->getLegalInputs().size();
-        Position move = mcts_tree->getNextMove(amountPossibleMoves, playerNumber);
-        Field* fieldCopy = new Field(*field);
-
-
-        GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber, 0.15, nRd, gamePath);
-        std::vector<Position> path;
-        if (!move.isRandom()){
-            std::vector<Position> moveVector = {move};
-            path = tempGameFlow.runGameFlow({-1, -1}, moveVector);
-        }
-        else{ // play now random
-            path = tempGameFlow.runGameFlow({-1, -1});
-        }
-        /*
-        for (auto i:path){
-            std::cout << i << " ";
-        }
-        std::cout << "< mcts path" << std::endl;
-        */
-
-        if(tempGameFlow.getWinner() != 0){
-            tree->addPathRec(path, tempGameFlow.getWinner());
-        }
-        delete fieldCopy;
-    }
-
-    return mcts_tree->getBestMove(playerNumber);
+    std::uniform_int_distribution<int> randomMoveDistrib(lowerBound, upperBound);
+    return randomMoveDistrib(_rd);
 }

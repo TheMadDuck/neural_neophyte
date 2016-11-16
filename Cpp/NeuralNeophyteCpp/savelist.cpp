@@ -40,7 +40,7 @@ SaveList::SaveList()
     _test = 3;
 }
 
-void SaveList::savePositions(Field field, int color, int roundNumber, int position, bool transposed)
+void SaveList::savePositions(Field field, int color, int roundNumber, Position position, bool transposed)
 {
     std::vector<int> flatField = field.flatten();
     if (color == 1) {
@@ -55,4 +55,14 @@ void SaveList::savePositions(Field field, int color, int roundNumber, int positi
         _playerTwoFields.push_back(flatField);
         _playerTwoPositions.push_back(position);
     }
+}
+
+std::vector<std::vector<int> > SaveList::getField(int player)
+{
+
+}
+
+std::vector<int> SaveList::getPositions(int player)
+{
+
 }

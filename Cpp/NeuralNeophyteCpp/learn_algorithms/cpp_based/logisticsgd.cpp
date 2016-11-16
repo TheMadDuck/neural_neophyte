@@ -41,12 +41,13 @@ LogisticSgd::LogisticSgd()
 
 void LogisticSgd::fit(std::array<SaveList*, 3> dataset, int learning_rate, int n_epochs)
 {
-    SaveList* train_set_x = dataset[0];
+    SaveList* train_set = dataset[0];
+    //std::vector<int> train_set_x = train_set->getField(0);
 }
 
-std::vector<int> LogisticSgd::predict(std::vector<int> field, int player)
+std::vector<Position> LogisticSgd::predict(std::vector<int> field, int player)
 {
-    std::vector<int> a{5,4,3};                    // TODO: IMPLEMENT!!!!!!!!!!!
+    std::vector<Position> a;// a{5,4,3};                    // TODO: IMPLEMENT!!!!!!!!!!!
     //std::cout << "NOT YET IMPLEMENTED!!!!!!!!" << std::endl;
     return a;
 }

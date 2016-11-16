@@ -30,10 +30,11 @@ Install the listed requirements.
 Clone the repository with #git clone https://github.com/TheMadDuck/neural_neophyte.git <yourWorkingDirectory>. 
 (If you do not have git installed: Download the code with the 'Download ZIP'-Button. And extract it in your working directory. But try to use git. It makes your life easy (sort of..))
 
-Go in the neural_neophyte/Cpp/ - repository.
-run: cmake ./NeuralNeophyteCpp/
-run: make
-run the programm with: ./NeuralNeophyteCpp
+- Go in the neural_neophyte/Cpp/ - directory.
+- run: mkdir NeuralNeophyteCpp-build && cd NeuralNeophyteCpp-build
+- run: cmake ../
+- run: make
+- run the programm with: ./NeuralNeophyteCpp
 
 --------------------------------------------------
 

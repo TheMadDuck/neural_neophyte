@@ -37,20 +37,23 @@
 
 #include "field.h"
 #include <vector>
+#include "data_types/position.h"
 
 class SaveList
 {
 public:
     SaveList();
-    void savePositions(Field field, int color, int roundNumber, int position, bool transposed);
+    void savePositions(Field field, int color, int roundNumber, Position position, bool transposed);
+    std::vector<std::vector<int>> getField(int player);
+    std::vector<int> getPositions(int player);
     int _test;
 
 private:
     std::vector<std::vector<int>> _playerOneFields;
-    std::vector<int> _playerOnePositions;
+    std::vector<Position> _playerOnePositions;
 
     std::vector<std::vector<int>> _playerTwoFields;
-    std::vector<int> _playerTwoPositions;
+    std::vector<Position> _playerTwoPositions;
 
 };
 

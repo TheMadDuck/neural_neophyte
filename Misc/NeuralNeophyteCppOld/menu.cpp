@@ -32,58 +32,71 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#include "minmaxpruning.h"
+#include "menu.h"
+
 #include <iostream>
+#include <array>
 
-MinMaxPruning::MinMaxPruning()
+Menu::Menu()
 {
+    NRandomDistrib nRd;
     _gameLogic = new FourInARow();
-}
+    _tree = new Tree();
+    _gameFlow = new GameFlow(_classifier, _gameLogic, nullptr, _tree, 0, 0.15, &nRd); //do we really want 0.15 randomnes?[test this]
+    _gameName = _gameLogic->getName();
+    _numberModels = _modelHandler.loadBestModel(_classifier, _gameName);
 
-MinMaxPruning::~MinMaxPruning()
-{
+    std::cout << "Welcome to NeuralNeophyte! The selected game is: " << _gameName << std::endl;
+    std::cout << "\n";
+    std::cout << "Play a Game (press 1)" << std::endl;
+    std::cout << "Train the AI (press 2)" << std::endl;
+    std::cout << "Sort existing classifiers and rank them (press 3)" << std::endl;
+    std::cout << "\n";
+    std::cin >> _mode;
+    while ((_mode != 1) && (_mode != 2) && (_mode != 3)){
+        std::cout << "your number was: " << _mode << std::endl;
+        std::cout << "press 1, 2 or 3" << std::endl;
+        std::cin >> _mode;
+    }
+
+
+
+
+    if (_mode == 1){
+        std::cout << ("do you want to be player 1 or player 2?") << std::endl;
+        std::cin >> _humanPlayerNumber;
+        while((_humanPlayerNumber != 1) && (_humanPlayerNumber != 2)){
+            std::cout << ("Press 1 or 2!: ") << std::endl;
+            std::cin >> _humanPlayerNumber;
+        }
+        if (_humanPlayerNumber == 1){
+            std::vector<int> player {0, _numberModels};
+            SaveList* saveList = new SaveList();
+            _gameFlow->runGameFlow(player,{}, saveList); //TODO: remove saveList
+            delete saveList;
+        }
+        else{
+            _gameFlow->runGameFlow(std::vector<int>{_numberModels, 0});  //here for testing purposes -2 (for mcts)
+        }
+
+    }
+    //_tree->printTree();
+
+    if (_mode == 2){
+        TrainTestValidate gameTTV;
+        std::array<SaveList*, 3> TTV_Data = gameTTV.run(_gameFlow, 400, 100, 100, _numberModels);
+        std::string bestModelPath = "./best_models" + _gameName + "best_model_" + std::to_string(_numberModels) + ".pkl";
+        _classifier.fit(TTV_Data);
+    }
+
+    if (_mode == 3){
+        std::cout << "How many games should be played?" << std::endl;
+        int amountGames;
+        std::cin >> amountGames;
+        EloRanking eloRanking;
+        eloRanking.turnier(_gameFlow, amountGames, _numberModels, _gameName);
+    }
+    _tree->deleteTree(_tree);
     delete _gameLogic;
-}
-
-
-Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<Position> legalMoves, LogisticSgd classifier, std::vector<int> players, int roundNumber, int playerNumber, std::vector<Position> gamePath, float randomProbability, NRandomDistrib* nRd)
-{
-    Tree* mcts_tree;
-    if (tree){
-        mcts_tree = tree->lookUp(gamePath);
-    }
-    else{
-        //mcts_tree = new Tree();
-    }
-
-    int gameQuantity = 800;
-    for (int i = 0; i < gameQuantity; ++i) {
-        int amountPossibleMoves = _gameLogic->getLegalInputs().size();
-        Position move = mcts_tree->getNextMove(amountPossibleMoves, playerNumber);
-        Field* fieldCopy = new Field(*field);
-
-
-        GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber, 0.15, nRd, gamePath);
-        std::vector<Position> path;
-        if (!move.isRandom()){
-            std::vector<Position> moveVector = {move};
-            path = tempGameFlow.runGameFlow({-1, -1}, moveVector);
-        }
-        else{ // play now random
-            path = tempGameFlow.runGameFlow({-1, -1});
-        }
-        /*
-        for (auto i:path){
-            std::cout << i << " ";
-        }
-        std::cout << "< mcts path" << std::endl;
-        */
-
-        if(tempGameFlow.getWinner() != 0){
-            tree->addPathRec(path, tempGameFlow.getWinner());
-        }
-        delete fieldCopy;
-    }
-
-    return mcts_tree->getBestMove(playerNumber);
+    delete _gameFlow;
 }

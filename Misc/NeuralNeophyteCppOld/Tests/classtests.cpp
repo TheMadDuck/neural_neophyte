@@ -32,58 +32,78 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#include "minmaxpruning.h"
-#include <iostream>
+#include "classtests.h"
 
-MinMaxPruning::MinMaxPruning()
+ClassTests::ClassTests()
 {
-    _gameLogic = new FourInARow();
+    //t_tree();
+    //t_field();
+    t_pointer();
 }
 
-MinMaxPruning::~MinMaxPruning()
+#include "../tree.h"
+bool ClassTests::t_tree()
 {
-    delete _gameLogic;
-}
+    bool t_test = true;
+    Tree* tree = new Tree();
+    std::vector<int> path = {0, 3, 14, 9, 17};
+    std::vector<int> path2 = {0, 3, 66, 6, 6};
+    std::vector<int> path3 = {32, 212, 15, 221, 74, 23, 0, 2};
 
+    int win = 1;
+    int loss = 0;
+    std::cout << "test0";
 
-Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<Position> legalMoves, LogisticSgd classifier, std::vector<int> players, int roundNumber, int playerNumber, std::vector<Position> gamePath, float randomProbability, NRandomDistrib* nRd)
-{
-    Tree* mcts_tree;
-    if (tree){
-        mcts_tree = tree->lookUp(gamePath);
+    tree->addPathRec(path, win);
+    tree->addPathRec(path2, loss);
+    tree->addPathRec(path3, win);
+
+    if(tree->getBestMove(1) != 32){
+        t_test = false;
+    }
+    std::vector<double> a = tree->getProbabilities(1);
+    std::vector<double> b ={0.5, 1};
+    for (int var = 0; var < 2; ++var) {
+        if (a[var] != b[var]){
+            t_test = false;
+        }
+    }
+    if(t_test == false){
+        std::cout << "test failed" << std::endl;
     }
     else{
-        //mcts_tree = new Tree();
+        std::cout << "test passed" << std::endl;
     }
+    std::cout << t_test << std::endl;
+    tree->deleteTree(tree);
 
-    int gameQuantity = 800;
-    for (int i = 0; i < gameQuantity; ++i) {
-        int amountPossibleMoves = _gameLogic->getLegalInputs().size();
-        Position move = mcts_tree->getNextMove(amountPossibleMoves, playerNumber);
-        Field* fieldCopy = new Field(*field);
-
-
-        GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber, 0.15, nRd, gamePath);
-        std::vector<Position> path;
-        if (!move.isRandom()){
-            std::vector<Position> moveVector = {move};
-            path = tempGameFlow.runGameFlow({-1, -1}, moveVector);
-        }
-        else{ // play now random
-            path = tempGameFlow.runGameFlow({-1, -1});
-        }
-        /*
-        for (auto i:path){
-            std::cout << i << " ";
-        }
-        std::cout << "< mcts path" << std::endl;
-        */
-
-        if(tempGameFlow.getWinner() != 0){
-            tree->addPathRec(path, tempGameFlow.getWinner());
-        }
-        delete fieldCopy;
-    }
-
-    return mcts_tree->getBestMove(playerNumber);
+    return t_test;
 }
+
+#include "../field.h"
+
+bool ClassTests::t_field()
+{
+    bool t_test = true;
+    Field a = Field(3,5);
+    Field* fieldPointer = new Field(2, 4);
+    delete fieldPointer;
+
+}
+
+#include "../savelist.h"
+bool ClassTests::t_pointer()
+{
+    SaveList* saveList;
+    t_pointer2(saveList);
+    std::cout << "end" << std::endl;
+}
+
+bool ClassTests::t_pointer2(SaveList *saveList)
+{
+    if (!saveList){
+        std::cout << "i am function 2" << std::endl;
+    }
+}
+
+
