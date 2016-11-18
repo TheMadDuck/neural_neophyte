@@ -41,8 +41,8 @@
 #include "games/fourinarow.h"
 #include "field.h"
 #include "tree.h"
-#include "minmaxpruning.h"
-#include "savelist.h"
+#include "learn_algorithms/conservative/minmaxpruning.h"
+#include "data_types/savelist.h"
 #include "n_random_distrib/nrandomdistrib.h"
 #include "data_types/position.h"
 
@@ -51,10 +51,10 @@ class GameFlow
 public:
     GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field* field = nullptr, Tree* tree = new Tree(), int roundNumber = 0, int amountRandom = 0.15,  NRandomDistrib *nRd = nullptr, std::vector<Position> gamePath = {});
     ~GameFlow();
-    void move(int playerNumber, std::vector<Position> legalMoves, std::vector<int> players, float randomMoveProba);
-    void AI_Move(int playerNumber, std::vector<Position> legalMoves, std::vector<int> players, float randomMoveProba);
-    void Human_Move(std::vector<Position> legalMoves);
-    std::vector<Position> runGameFlow(std::vector<int> player, std::vector<Position> prefixPath = {}, SaveList* saveList = nullptr);
+    void move();
+    void AI_Move();
+    void Human_Move();
+    std::vector<Position> runGameFlow(std::vector<int> players, std::vector<Position> prefixPath = {}, SaveList* saveList = nullptr);
     int getWinner();
     void resetGame();
     int addPrefixPath(std::vector<Position> prefixPath);
@@ -75,8 +75,10 @@ private:
     int _winner;
     std::mt19937 _rd;
     NRandomDistrib* _nRd;
-    Position _nextPosition; // todo: replace position(or move) with _nextPosition array.
-    //int _nextPosition;
+    Position _nextPosition;
+    std::vector<int> _players;
+    std::vector<Position> _legalMoves;
+    int _playerNumber;
 };
 
 #endif // GAMEFLOW_H

@@ -36,7 +36,7 @@
 #define LOGISTICSGD_H
 
 #include <array>
-#include "../../savelist.h"
+#include "../../data_types/savelist.h"
 #include "../../field.h"
 #include "../../data_types/position.h"
 class LogisticSgd

@@ -35,13 +35,13 @@
 #ifndef MINMAXPRUNING_H
 #define MINMAXPRUNING_H
 
-#include "field.h"
-#include "tree.h"
-#include "gameflow.h"
-#include "games/fourinarow.h"
-#include "learn_algorithms/cpp_based/logisticsgd.h"
-#include "n_random_distrib/nrandomdistrib.h"
-#include "data_types/position.h"
+#include "../../field.h"
+#include "../../tree.h"
+#include "../../gameflow.h"
+#include "../../games/fourinarow.h"
+#include "../cpp_based/logisticsgd.h"
+#include "../../n_random_distrib/nrandomdistrib.h"
+#include "../../data_types/position.h"
 
 class MinMaxPruning
 {
@@ -49,10 +49,8 @@ public:
     MinMaxPruning();
     ~MinMaxPruning();
     Position exploited_mcts(Field *field, //TODO: field und tree wirklich pointer?
-                       Tree *tree, //TODO: field und tree wirklich pointer?
-                       std::vector<Position> legalMoves,
+                       Tree *tree,
                        LogisticSgd classifier,
-                       std::vector<int> players,
                        int roundNumber,
                        int playerNumber,
                        std::vector<Position> gamePath,

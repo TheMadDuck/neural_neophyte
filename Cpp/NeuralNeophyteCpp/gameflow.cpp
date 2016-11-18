@@ -52,17 +52,17 @@ GameFlow::~GameFlow()
 }
 
 
-void GameFlow::move(int playerNumber, std::vector<Position> legalMoves, std::vector<int> players, float randomMoveProba)
+void GameFlow::move()
 {
     //int position;
-    if (players[playerNumber - 1] == 0) {
-        Human_Move(legalMoves);
+    if (_players[_playerNumber - 1] == 0) {
+        Human_Move();
     }
     else{
         //_field->showField();
-        AI_Move(playerNumber, legalMoves, players, _amountRandom);
+        AI_Move();
     }
-    _gameLogic->isLegalMove(_field, playerNumber, _nextPosition);
+    _gameLogic->isLegalMove(_field, _playerNumber, _nextPosition);
 
     while((_gameLogic->getSignal() == "unvalid_player")
           || (_gameLogic->getSignal() == "unvalid_position")
@@ -73,80 +73,76 @@ void GameFlow::move(int playerNumber, std::vector<Position> legalMoves, std::vec
             break;
         }
 
-        if (players[playerNumber - 1] == 0) {
+        if (_players[_playerNumber - 1] == 0) {
             std::cout << "this move is not legal, please try again!!" << std::endl;
-            Human_Move(legalMoves);
+            Human_Move();
         }
         else{
-            AI_Move(playerNumber, legalMoves, players, 1.0);
+            AI_Move();
         }
 
-        _gameLogic->isLegalMove(_field, playerNumber, _nextPosition);
+        _gameLogic->isLegalMove(_field, _playerNumber, _nextPosition);
     }
     //return _nextPosition;          // Todo: check speed limitation?
 }
 
 
-void GameFlow::AI_Move(int playerNumber, std::vector<Position> legalMoves, std::vector<int> players, float randomMoveProba)
+void GameFlow::AI_Move()
 {
-
+    /*
+    std::vector<int> tempPlayers = _players;
+    if(_players[0] == 0){
+        std::vector<int> tempPlayers {_players[1], _players[1]};
+    }
+    if(_players[0] == 1){
+        std::vector<int> tempPlayers {_players[0], _players[0]};
+    }
+    */
     std::uniform_real_distribution<float> randomDistrib(0,1);
-    if (randomDistrib(_rd) < randomMoveProba) {
-        _nextPosition = legalMoves[_nRd->getRandomInt(0, legalMoves.size()-1)];
+    if (randomDistrib(_rd) < _amountRandom) {
+        std::cout << "totaly random move !!!" << std::endl;
+        _nextPosition = _legalMoves[_nRd->getRandomInt(0, _legalMoves.size()-1)];
         return;
-        //return legalMoves[_nRd->getRandomInt(0, legnnalMoves.size()-1)];
+        //return _legalMoves[_nRd->getRandomInt(0, legnnalMoves.size()-1)];
     }
 
-    if (players[playerNumber-1] == -1) {
-        _nextPosition = legalMoves[_nRd->getRandomInt(0, legalMoves.size()-1)];
+    if (_players[_playerNumber-1] == -1) {
+        _nextPosition = _legalMoves[_nRd->getRandomInt(0, _legalMoves.size()-1)];
         return;
-        //return legalMoves[_nRd->getRandomInt(0, legalMoves.size()-1)];
+        //return _legalMoves[_nRd->getRandomInt(0, _legalMoves.size()-1)];
     }
 
     std::vector<int> flatField = _field->flatten();
-    flatField.push_back(playerNumber);
+    flatField.push_back(_playerNumber);
     flatField.push_back(_roundNumber);
 
-    if(players[playerNumber-1] == -2){
+    if(_players[_playerNumber-1] == -2){
         MinMaxPruning minMaxPruning;
-
-
-        if (players[0] == 0) {
-            std::vector<int> p {players[1], players[1]};
-            _nextPosition = minMaxPruning.exploited_mcts(_field, _tree, legalMoves, _classifier, p, _roundNumber, playerNumber, _gamePath, 0.2, _nRd);
-            return;
-            //return minMaxPruning.exploited_mcts(_field, _tree, legalMoves, _classifier, p, _roundNumber, playerNumber, _gamePath, 0.2, _nRd);
-        }
-        if (players[1] == 0){
-            std::vector<int> p {players[0], players[0]};
-            _nextPosition = minMaxPruning.exploited_mcts(_field, _tree, legalMoves, _classifier, p, _roundNumber, playerNumber, _gamePath, 0.2, _nRd);
-            return;
-            //return minMaxPruning.exploited_mcts(_field, _tree, legalMoves, _classifier, p, _roundNumber, playerNumber, _gamePath, 0.2, _nRd);
-        }
-        _nextPosition = minMaxPruning.exploited_mcts(_field, _tree, legalMoves, _classifier, players, _roundNumber, playerNumber, _gamePath, 0.2, _nRd);
+        _nextPosition = minMaxPruning.exploited_mcts(_field, _tree, _classifier, _roundNumber, _playerNumber, _gamePath, 0.2, _nRd);
         return;
-        //return minMaxPruning.exploited_mcts(_field, _tree, legalMoves, _classifier, players, _roundNumber, playerNumber, _gamePath, 0.2, _nRd);
+        //return minMaxPruning.exploited_mcts(_field, _tree, _classifier, _players, _roundNumber, _playerNumber, _gamePath, 0.2, _nRd);
     }
-    _nextPosition = _classifier.predict(flatField, players[playerNumber-1]-1)[0];   /// TEST!
-    return;
-    //return _classifier.predict(flatField, players[playerNumber-1]-1)[0];   /// TEST!
+
+    if(_players[_playerNumber-1] == 1){
+        _nextPosition = _classifier.predict(flatField, _players[_playerNumber-1]-1)[0];   /// TEST!
+        return;
+    }
 }
 
 
-void GameFlow::Human_Move(std::vector<Position> legalMoves)
+void GameFlow::Human_Move()
 {
     //int move;
     std::cout << "Which move do you want to make? [";
-    for (Position number : legalMoves) {
+    for (Position number : _legalMoves) {
         number.printPosition();
         std::cout << ",  ";
     }
     std::cout << "]" << std::endl;
     while(true){
-        //std::cin >> _nextPosition;
         _nextPosition.inputPosition();
 
-        for(auto var: legalMoves) {
+        for(auto var: _legalMoves) {
             if (var == _nextPosition) {
                 return;
                 //return _nextPosition;
@@ -154,7 +150,7 @@ void GameFlow::Human_Move(std::vector<Position> legalMoves)
         }
 
         std::cout << "Press ";
-        for (Position number : legalMoves) {
+        for (Position number : _legalMoves) {
             number.printPosition();
             std::cout << ", ";
         }
@@ -163,9 +159,10 @@ void GameFlow::Human_Move(std::vector<Position> legalMoves)
 }
 
 
-// 0= human; negative = random, mcts..; positive= AI-Models
+// 0= human; negative= conservative-AI-Models[random, mcts..]; positive= NN-AI-Models
 std::vector<Position> GameFlow::runGameFlow(std::vector<int> players, std::vector<Position> prefixPath, SaveList *saveList)
 {
+    _players = players;
     if (!prefixPath.empty()) { 
         int preWinner = addPrefixPath(prefixPath);
         if (preWinner != -1) {
@@ -173,7 +170,7 @@ std::vector<Position> GameFlow::runGameFlow(std::vector<int> players, std::vecto
         }
     }
 
-    std::vector<Position> legalMoves = _gameLogic->getLegalInputs();
+    _legalMoves = _gameLogic->getLegalInputs();
     if(_gameLogic->getSignal() != "legal_inputs_initialized"){
         std::cout << "ERROR: legal inputs could not get initialized" << std::endl;
     }
@@ -186,37 +183,36 @@ std::vector<Position> GameFlow::runGameFlow(std::vector<int> players, std::vecto
     }
 
     while((_gameLogic->getSignal() != "we_have_a_winner") || (_gameLogic->getSignal() != "game_is_over")){
-        int playerNumber;
         if (_roundNumber % 2 == 0) {
-            playerNumber = 1;
+            _playerNumber = 1;
         }
         else{
-            playerNumber = 2;
+            _playerNumber = 2;
         }
 
-        move(playerNumber, legalMoves, players, _amountRandom);
+        move();
         if(saveList){
-            saveList->savePositions(*_field, playerNumber, _roundNumber, _nextPosition, false); //reference to _field ??
+            saveList->savePositions(*_field, _playerNumber, _roundNumber, _nextPosition, false); //reference to _field ??
         }
         _gamePath.push_back(_nextPosition);
 
-        _gameLogic->setStone(_field, playerNumber, _nextPosition);
+        _gameLogic->setStone(_field, _playerNumber, _nextPosition);
         if (_gameLogic->getSignal() != "stone_is_set") {
             std::cout << "ERROR: Stone is not saved" << std::endl;
         }
-        if((players[0] == 0) || (players[1] == 0)){// in Human_Move?
+        if((_players[0] == 0) || (_players[1] == 0)){// in Human_Move?
             std::cout << "Last Move: " << std::endl;
             _nextPosition.printPosition();
             std::cout << "\n";
             _field->showField();
         }
-        _winner = _gameLogic->hasAWinner(_field, playerNumber, _nextPosition);
+        _winner = _gameLogic->hasAWinner(_field, _playerNumber, _nextPosition);
         if (_gameLogic->getSignal() == "we_have_a_winner") {
             if (_winner == 0) {
                 std::cout << "ERROR: we could not determine who won!" << std::endl;
             }
-            if((players[0] == 0) || (players[1] == 0)){
-                std::cout << "\n" << "the winner is: " << _winner << std::endl;
+            if((_players[0] == 0) || (_players[1] == 0)){
+                std::cout << "\n" << "The winner is: Player " << _winner << std::endl;
             }
             return _gamePath;
         }
@@ -251,25 +247,25 @@ int GameFlow::addPrefixPath(std::vector<Position> prefixPath)
         if(pathPosition >= prefixPathSize){
             return -1; //if there is no winner -1 is returned
         }
-        int playerNumber;
+
         if(_roundNumber % 2 == 0){
-            playerNumber = 1;
+            _playerNumber = 1;
         }
         else{
-            playerNumber = 2;
+            _playerNumber = 2;
         }
         _nextPosition = prefixPath[pathPosition];
-        _gameLogic->isLegalMove(_field, playerNumber, _nextPosition);
+        _gameLogic->isLegalMove(_field, _playerNumber, _nextPosition);
         while((_gameLogic->getSignal() == "unvalid_player") || (_gameLogic->getSignal() == "unvalid_position") || (_gameLogic->getSignal() == "column_is_full")){
             return -1; //if there is no winner -1 is returned
         }
 
-        _gameLogic->setStone(_field, playerNumber, _nextPosition);
+        _gameLogic->setStone(_field, _playerNumber, _nextPosition);
         _gamePath.push_back(_nextPosition);
         if(_gameLogic->getSignal() != "stone_is_set"){
             std::cout << "ERROR: Stone is not saved" << std::endl;
         }
-        _winner = _gameLogic->hasAWinner(_field, playerNumber, _nextPosition);
+        _winner = _gameLogic->hasAWinner(_field, _playerNumber, _nextPosition);
         if(_gameLogic->getSignal() == "we_have_a_winner"){
             if(_winner == 0){
                 std::cout << "ERROR: We could not determine who won!" << std::endl;

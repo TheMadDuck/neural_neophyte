@@ -93,7 +93,7 @@ bool ClassTests::t_field()
 
 }
 
-#include "../savelist.h"
+#include "../data_types/savelist.h"
 bool ClassTests::t_pointer()
 {
     SaveList* saveList;

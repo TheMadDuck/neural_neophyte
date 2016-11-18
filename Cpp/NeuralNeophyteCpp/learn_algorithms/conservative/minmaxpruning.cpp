@@ -46,7 +46,7 @@ MinMaxPruning::~MinMaxPruning()
 }
 
 
-Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<Position> legalMoves, LogisticSgd classifier, std::vector<int> players, int roundNumber, int playerNumber, std::vector<Position> gamePath, float randomProbability, NRandomDistrib* nRd)
+Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, LogisticSgd classifier, int roundNumber, int playerNumber, std::vector<Position> gamePath, float randomProbability, NRandomDistrib* nRd)
 {
     Tree* mcts_tree;
     if (tree){
@@ -62,8 +62,7 @@ Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<Pos
         Position move = mcts_tree->getNextMove(amountPossibleMoves, playerNumber);
         Field* fieldCopy = new Field(*field);
 
-
-        GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber, 0.15, nRd, gamePath);
+        GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber, randomProbability, nRd, gamePath);
         std::vector<Position> path;
         if (!move.isRandom()){
             std::vector<Position> moveVector = {move};
@@ -72,12 +71,6 @@ Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, std::vector<Pos
         else{ // play now random
             path = tempGameFlow.runGameFlow({-1, -1});
         }
-        /*
-        for (auto i:path){
-            std::cout << i << " ";
-        }
-        std::cout << "< mcts path" << std::endl;
-        */
 
         if(tempGameFlow.getWinner() != 0){
             tree->addPathRec(path, tempGameFlow.getWinner());

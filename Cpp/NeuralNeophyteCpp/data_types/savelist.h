@@ -35,9 +35,9 @@
 #ifndef SAVELIST_H
 #define SAVELIST_H
 
-#include "field.h"
+#include "../field.h"
 #include <vector>
-#include "data_types/position.h"
+#include "position.h"
 
 class SaveList
 {
