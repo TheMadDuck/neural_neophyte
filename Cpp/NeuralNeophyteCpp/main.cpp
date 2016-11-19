@@ -36,38 +36,16 @@
 #include <iostream>
 
 #include "Tests/randomtest.h"
-//#include "n_random_distrib/nrandomdistrib.h"
-//#include "field.h"
 #include "Tests/classtests.h"
+#include "games/game.h"
+#include "games/chess.h"
+#include "games/fourinarow.h"
+
 int main()
 {
-    //NRandomDistrib R;
-    //R.nRand(3);
-
-    /*
-    Field* pField = new Field(3,5);
-    //Field field(3,4);
-    //Field* field2(pField);
-    Field* field2 = new Field(*pField);
-    pField->set(3, 1, 1);
-    pField->showField();
-    //field.showField();
-    field2->showField();
-    delete pField;
-    delete field2;
-    */
-
-/*
-    RandomTest jo;
-    for (int var = 0; var < 22; ++var) {
-        std::cout << jo.getRandom() << std::endl;
-    }
-    RandomTest jo2;
-    for (int var = 0; var < 22; ++var) {
-        std::cout << jo2.getRandom() << std::endl;
-    }
-*/
-
+    //Game* cs;
+    FourInARow* cs = new FourInARow();
+    cs->initField();
     Menu menu;
     //ClassTests ct;
     return 0;

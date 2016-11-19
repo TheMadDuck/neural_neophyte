@@ -60,8 +60,6 @@ Menu::Menu()
     }
 
 
-
-
     if (_mode == 1){
         std::cout << ("do you want to be player 1 or player 2?") << std::endl;
         std::cin >> _humanPlayerNumber;
@@ -80,7 +78,6 @@ Menu::Menu()
         }
 
     }
-    //_tree->printTree();
 
     if (_mode == 2){
         TrainTestValidate gameTTV;

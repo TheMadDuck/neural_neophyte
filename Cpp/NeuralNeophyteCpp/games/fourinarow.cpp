@@ -81,7 +81,7 @@ Field *FourInARow::initField(int height, int width)
     // Game Field is 6 high and 7 wide, but we need a bottom row,
     // so the stones dont fall through the game
 
-    _field = new Field(height +1, width);            // use member _field here?
+    _field = new Field(height +1, width);
 
     for (int i = 0; i < height - 1; ++i) {
         for (int j = 0; j < width; ++j) {

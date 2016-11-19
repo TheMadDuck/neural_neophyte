@@ -36,26 +36,31 @@
 #define CHESS_H
 #include <string>
 #include <vector>
+#include "game.h"
 #include "../field.h"
+#include "../data_types/position.h"
 
-class Chess
+class Chess : public Game
 {
 public:
     //its just the four in a row template
     Chess();
     ~Chess();
-    std::string getSignal();
-    std::string getName();
-    std::vector<int> getLegalInputs();
-    Field* initField(int height = 6, int width = 7);
-    bool isLegalMove(Field *field, int playerNumber, int position);
-    void setStone(Field *field, int color, std::vector<int> position);
-    bool gameStopped(Field *field, int roundNumber);
-    int hasAWinner(Field *field, int color, int position);
+    std::string getSignal() override;
+    std::string getName() override;
+    int positionVectorSize() override;
+    std::vector<Position> getLegalInputs() override;
+    Field* initField(int height = 8, int width = 8) override;
+    bool isLegalMove(Field *field, int playerNumber, Position position) override;
+    void setStone(Field *field, int color, Position position) override;
+    bool gameStopped(Field *field, int roundNumber) override;
+    int hasAWinner(Field *field, int color, Position position) override;
 
 private:
     std::string Signal = "";
     Field* _field;
+    enum Figures {rookB = 1, knightB = 2, bishopB = 3, queenB = 4, kingB =5, pawnB =6,
+                  rookW = 7, knightW = 8, bishopW = 9, queenW = 10, kingW =11, pawnW = 12};
 };
 
 #endif // CHESS_H

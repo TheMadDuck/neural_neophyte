@@ -32,35 +32,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#ifndef FOURINAROW_H
-#define FOURINAROW_H
+#ifndef GAME_H
+#define GAME_H
 #include <string>
 #include <vector>
-#include <array>
-#include "game.h"
 #include "../field.h"
 #include "../data_types/position.h"
-
-
-
-class FourInARow : public Game
+class Game
 {
 public:
-    FourInARow();
-    ~FourInARow();
-    std::string getSignal() override;
-    std::string getName() override;
-    int positionVectorSize() override;
-    std::vector<Position> getLegalInputs() override;
-    Field* initField(int height = 6, int width = 7) override;
-    bool isLegalMove(Field *field, int playerNumber, Position position) override;
-    void setStone(Field *field, int color, Position position) override;
-    bool gameStopped(Field *field, int roundNumber) override;
-    int hasAWinner(Field *field, int color, Position position) override;
+    Game();
+    ~Game();
+    virtual std::string getSignal() =0;
+    virtual std::string getName() =0;
+    virtual int positionVectorSize() =0;
+    virtual std::vector<Position> getLegalInputs() =0;
+    virtual Field* initField(int height = 6, int width = 7) =0;
+    virtual bool isLegalMove(Field *field, int playerNumber, Position position) =0;
+    virtual void setStone(Field *field, int color, Position position) =0;
+    virtual bool gameStopped(Field *field, int roundNumber) =0;
+    virtual int hasAWinner(Field *field, int color, Position position) =0;
 
 private:
     std::string Signal = "";
     Field* _field;
 };
 
-#endif // FOURINAROW_H
+#endif // GAME_H
