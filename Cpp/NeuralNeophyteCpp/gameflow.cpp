@@ -163,6 +163,7 @@ void GameFlow::Human_Move()
 std::vector<Position> GameFlow::runGameFlow(std::vector<int> players, std::vector<Position> prefixPath, SaveList *saveList)
 {
     _players = players;
+
     if (!prefixPath.empty()) { 
         int preWinner = addPrefixPath(prefixPath);
         if (preWinner != -1) {
@@ -170,6 +171,7 @@ std::vector<Position> GameFlow::runGameFlow(std::vector<int> players, std::vecto
         }
     }
 
+    //TODO: getLegalInputs in the while loop, initField in the resetGame().
     _legalMoves = _gameLogic->getLegalInputs();
     if(_gameLogic->getSignal() != "legal_inputs_initialized"){
         std::cout << "ERROR: legal inputs could not get initialized" << std::endl;

@@ -33,6 +33,7 @@
  ***************************************************************************/
 
 #include "position.h"
+#include <math.h>
 
 Position::Position()
 {
@@ -123,4 +124,13 @@ void Position::inputPosition()
     for(int i = 0; i<getVectorSize(); i++){
         std::cin >> _positionVector[i];
     }
+}
+
+int Position::getHash(int base)
+{
+    int hashValue;
+    for (int i = 0; i < _positionVector.size(); ++i) {
+        hashValue += _positionVector[i]*pow(base, i); //test
+    }
+    return hashValue;
 }

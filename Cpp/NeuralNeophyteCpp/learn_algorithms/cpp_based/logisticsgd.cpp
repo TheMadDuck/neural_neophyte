@@ -39,6 +39,11 @@ LogisticSgd::LogisticSgd()
 {
 }
 
+double LogisticSgd::negative_log_likelihood()
+{
+
+}
+
 void LogisticSgd::fit(std::array<SaveList*, 3> dataset, int learning_rate, int n_epochs)
 {
     SaveList* train_set = dataset[0];

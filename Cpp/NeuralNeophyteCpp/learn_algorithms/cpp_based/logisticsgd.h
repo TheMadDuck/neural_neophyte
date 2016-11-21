@@ -43,8 +43,12 @@ class LogisticSgd
 {
 public:
     LogisticSgd();
+    double negative_log_likelihood();
     void fit(std::array<SaveList *, 3> dataset, int learning_rate = 0.13, int n_epochs=1000);
     std::vector<Position> predict(std::vector<int> field, int player);
+private:
+    std::vector<std::vector<double>> _weightMatrix;
+    std::vector<double> _biasVector;
 };
 
 #endif // LOGISTICSGD_H

@@ -62,6 +62,19 @@ int Chess::positionVectorSize()
 std::vector<Position> Chess::getLegalInputs()
 {
     std::vector<Position> legal_inputs;
+    for(int i = 0; i < _field->getHeight(); ++i){
+        for(int j = 0; j < _field->getWidth(); ++i){
+/*            if(_field[i][j] != 0){
+                legal_inputs
+            }
+*/
+            Position newPosition;
+            switch(_field->get(i, j)){
+                case 1: newPosition.setPositionVector({i, j, rookB, /* where to?*/});
+            }
+            legal_inputs.push_back(newPosition);
+        }
+    }
     std::cout << "not yet implemented" << std::endl;
 }
 
@@ -94,7 +107,7 @@ Field *Chess::initField(int height, int width)
     return _field;
 }
 
-bool Chess::isLegalMove(Field *field, int playerNumber, Position position)
+bool Chess::isLegalMove(Field *field, int playerNumber, Position position) // todo realy needed in fourinarow?
 {
 
 }
@@ -115,4 +128,23 @@ bool Chess::gameStopped(Field *field, int roundNumber)
 int Chess::hasAWinner(Field *field, int color, Position position)
 {
 
+}
+
+std::vector<Position> Chess::getPossibleMove(int height, int width, int figure)
+{
+    std::vector<Position> moves;
+    if (figure == rookB){
+//        for (int i = 0; i <8, )
+    }
+    if (figure == pawnB){
+        moves.push_back(Position({height, width, pawnB, height+1, width}));
+        if(height == 1){
+            moves.push_back(Position({height, width, pawnB, height+2, width}));
+        }
+    }
+}
+
+int Chess::getHashDivisor()
+{
+    return 12; // max possible value in the position vector (here width and height are 8, but possible figures are 12)
 }

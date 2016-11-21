@@ -58,9 +58,21 @@ public:
     void setRandomnes(bool random);
     void printPosition();
     void inputPosition();
+    int getHash(int base);
 private:
     std::vector<int> _positionVector;
     bool _isRandom;
 };
-
+/*
+template<class T> class positionHash;
+template<>
+class positionHash<Position>{
+public:
+    size_t operator()(const Position &p) const{
+//        divisor = std::max(_)
+        size_t h1 = std::hash<int>()(p.getPositionVector()[0]); // returns only the begin of the position vector
+        return h1;
+    }
+};
+*/
 #endif // POSITION_H

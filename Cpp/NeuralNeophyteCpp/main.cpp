@@ -40,12 +40,20 @@
 #include "games/game.h"
 #include "games/chess.h"
 #include "games/fourinarow.h"
+#include "data_types/position.h"
 
 int main()
 {
+    /*
+    Position p;
+    p.setPositionVector({4, 3});
+    positionHash<Position> hashP;
+    std::cout << "hash: " << hashP(p) << std::endl;
+
     //Game* cs;
-    FourInARow* cs = new FourInARow();
+    Chess* cs = new Chess();
     cs->initField();
+    */
     Menu menu;
     //ClassTests ct;
     return 0;

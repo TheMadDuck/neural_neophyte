@@ -56,6 +56,9 @@ public:
     bool gameStopped(Field *field, int roundNumber) override;
     int hasAWinner(Field *field, int color, Position position) override;
 
+    std::vector<Position> getPossibleMove(int height, int width, int figure);
+    int getHashDivisor();
+
 private:
     std::string Signal = "";
     Field* _field;
