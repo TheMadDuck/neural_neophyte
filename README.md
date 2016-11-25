@@ -32,7 +32,7 @@ Clone the repository with #git clone https://github.com/TheMadDuck/neural_neophy
 
 - Go in the neural_neophyte/Cpp/ - directory.
 - run: mkdir NeuralNeophyteCpp-build && cd NeuralNeophyteCpp-build
-- run: cmake ../
+- run: cmake ../NeuralNeophyteCpp
 - run: make
 - run the programm with: ./NeuralNeophyteCpp
 
