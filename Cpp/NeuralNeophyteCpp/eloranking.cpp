@@ -38,7 +38,31 @@ EloRanking::EloRanking()
 {
 }
 
-void EloRanking::turnier(GameFlow *gameFlow, int amountGames, int numberModels, std::string gameName)
+void EloRanking::turnier(GameFlow *gameFlow, int amountGames, int amountModels, std::string gameName)
 {
+    double eloRank = 1000 * amountModels;
+    for (int gameNumber = 0; gameNumber < amountModels; ++gameNumber) {
+        NRandomDistrib nRand;
+        int KI_One = nRand.nRand(amountModels);
+        int KI_Two = nRand.nRand(amountModels);
+        gameFlow->resetGame();
+        gameFlow->runGameFlow({KI_One, KI_Two}); //test
+//        newRanking = naiveElo(eloRank[])
+        std::cout << "not yet implemented" << std::endl;
+    }
+}
 
+std::vector<double> EloRanking::naiveElo(double leftValue, double rightValue, int decition)
+{
+    double distance = abs(leftValue - rightValue);
+    double normedDistance = (distance/5 + 0.1);
+    if(decition == 0){ // played a draw
+        return {leftValue, rightValue};
+    }
+    if(decition == 1){
+        normedDistance = -normedDistance; //test
+    }
+    leftValue += normedDistance;
+    rightValue -= normedDistance;
+    return {leftValue, rightValue};
 }

@@ -32,21 +32,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#ifndef ELORANKING_H
-#define ELORANKING_H
+#ifndef NEURALNETWORKBA_H
+#define NEURALNETWORKBA_H
 
-#include "gameflow.h"
-#include "n_random_distrib/nrandomdistrib.h"
 #include <vector>
 #include <math.h>
 
-class EloRanking
+class NeuralNetworkBA
 {
 public:
-    EloRanking();
-    void turnier(GameFlow *gameFlow, int amountGames, int amountModels, std::string gameName);
+    NeuralNetworkBA();
+    NeuralNetworkBA(int numberInput, int numberHidden, int numberOutput, int numberLayer = 0);
+    ~NeuralNetworkBA();
+
+    bool load();
+    bool save();
+    std::vector<int> discretizeOutput(std::vector<double> pattern);
+    double getAccuracy(std::vector<int> set); // do not use int
+
 private:
-    std::vector<double> naiveElo(double leftValue, double rightValue, int decition);
+    void initWeights();
+    double activationFunction(double x);
+    void feedForward(std::vector<double> pattern);
+    int marginHandler(double x);
+    double meanSquareError(std::vector<int> dataSet);
+
+    int _numberInput;
+    int _numberHidden;
+    int _numberOutput;
+    int _numberLayer;
+
+    std::vector<double> _inputNeurons;
+    std::vector<double> _hiddenNeurons;
+    std::vector<double> _outputNeurons;
+
+    std::vector<std::vector<double>> _weightInputHidden;
+    std::vector<std::vector<double>> _weightHiddenOutput;
 };
 
-#endif // ELORANKING_H
+#endif // NEURALNETWORKBA_H
