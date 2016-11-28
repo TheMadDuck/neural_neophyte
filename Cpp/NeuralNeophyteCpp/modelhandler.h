@@ -37,7 +37,7 @@
 #include <string>
 #include <iostream>
 #include <sys/stat.h>
-#include "learn_algorithms/cpp_based/logisticsgd.h"
+#include "learn_algorithms/nn_based/design_1/logisticsgd.h"
 
 class ModelHandler
 {

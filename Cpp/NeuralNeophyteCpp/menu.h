@@ -36,7 +36,7 @@
 #define MENU_H
 #include <string>
 #include "games/fourinarow.h"
-#include "learn_algorithms/cpp_based/logisticsgd.h"
+#include "learn_algorithms/nn_based/design_1/logisticsgd.h"
 #include "gameflow.h"
 #include "modelhandler.h"
 #include "traintestvalidate.h"

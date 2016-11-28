@@ -44,8 +44,9 @@ class EloRanking
 {
 public:
     EloRanking();
-    void turnier(GameFlow *gameFlow, int amountGames, int amountModels, std::string gameName);
+    std::vector<double> turnier(GameFlow *gameFlow, int amountGames, int amountModels, std::string gameName);
 private:
+    std::vector<double> sortModels(std::vector<double> eloRank, std::string gameName);
     std::vector<double> naiveElo(double leftValue, double rightValue, int decition);
 };
 

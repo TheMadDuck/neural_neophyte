@@ -39,7 +39,7 @@
 #include "../../tree.h"
 #include "../../gameflow.h"
 #include "../../games/fourinarow.h"
-#include "../cpp_based/logisticsgd.h"
+#include "../nn_based/design_1/logisticsgd.h"
 #include "../../n_random_distrib/nrandomdistrib.h"
 #include "../../data_types/position.h"
 

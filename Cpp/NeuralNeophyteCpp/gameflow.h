@@ -37,7 +37,7 @@
 #include <array>
 #include <random>
 #include <chrono>
-#include "learn_algorithms/cpp_based/logisticsgd.h" //TODO: here and in next line realy explizit includes or just interfaces??
+#include "learn_algorithms/nn_based/design_1/logisticsgd.h" //TODO: here and in next line realy explizit includes or just interfaces??
 #include "games/fourinarow.h"
 #include "field.h"
 #include "tree.h"

@@ -32,13 +32,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#include "neuralnetworkba.h"
+#include "neuralnetwork.h"
 
-NeuralNetworkBA::NeuralNetworkBA()
+NeuralNetwork::NeuralNetwork()
 {
 }
 
-NeuralNetworkBA::NeuralNetworkBA(int numberInput, int numberHidden, int numberOutput, int numberLayer)
+NeuralNetwork::NeuralNetwork(int numberInput, int numberHidden, int numberOutput, int numberLayer)
 {
     for (int i = 0; i <= numberInput; ++i) {
         _inputNeurons.push_back(0);
@@ -65,22 +65,22 @@ NeuralNetworkBA::NeuralNetworkBA(int numberInput, int numberHidden, int numberOu
     initWeights();
 }
 
-NeuralNetworkBA::~NeuralNetworkBA()
+NeuralNetwork::~NeuralNetwork()
 {
 
 }
 
-bool NeuralNetworkBA::load()
+bool NeuralNetwork::load()
 {
-
+    std::cout << "not yet implemented" << std::endl;
 }
 
-bool NeuralNetworkBA::save()
+bool NeuralNetwork::save()
 {
-
+    std::cout << "not yet implemented" << std::endl;
 }
 
-std::vector<int> NeuralNetworkBA::discretizeOutput(std::vector<double> pattern)
+std::vector<int> NeuralNetwork::discretizeOutput(std::vector<double> pattern)
 {
     feedForward(pattern);
     std::vector<int> results;
@@ -90,15 +90,17 @@ std::vector<int> NeuralNetworkBA::discretizeOutput(std::vector<double> pattern)
     return results;
 }
 
-double NeuralNetworkBA::getAccuracy(std::vector<int> set)
+double NeuralNetwork::getAccuracy(std::vector<DataEntry> dataSet) // in ba other pointer construct
 {
     double wrongResults = 0;
-    int setSize = set.size();
+    int setSize = (int) dataSet.size();
     for (int i = 0; i < setSize; ++i) {
-        //feedForward(set[i]);
+        feedForward(dataSet[i]._pattern);
         bool correctnes = true;
         for (int j = 0; j < _numberOutput; ++j) {
-            //if(marginHandler(_outputNeurons[j]) != set[i])
+            if(marginHandler(_outputNeurons[j]) != dataSet[i]._target[j]){
+                correctnes = false;
+            }
         }
         if(!correctnes){
             wrongResults+= 1;
@@ -107,24 +109,25 @@ double NeuralNetworkBA::getAccuracy(std::vector<int> set)
     return 100 - (wrongResults/setSize * 100);
 }
 
-void NeuralNetworkBA::initWeights()
+void NeuralNetwork::initWeights()
 {
-
+    std::cout << "not yet implemented" << std::endl;
 }
 
-double NeuralNetworkBA::activationFunction(double x) // inline?
+double NeuralNetwork::activationFunction(double x) // inline?
 {
     // return x                 //identity
     // return tanh(x);			// tanH
     // return atan(x);			// arcus tangens
     // return x/1+abs(x);		// Softsign
+    // return (sqrt(pow(x,2)+1)-1)/2; // Bend identity
     // return sin(x);			// Sinusoid
     // return exp(pow(-x, 2));  // Gaussian
 
     return 1/(1+exp(-x));  // sigmoid function
 }
 
-void NeuralNetworkBA::feedForward(std::vector<double> pattern)
+void NeuralNetwork::feedForward(std::vector<double> pattern)
 {
     // todo for (auto layer : Layers):
     // 			for(int origin = 0; origin < layer.size; ++origin)
@@ -150,22 +153,31 @@ void NeuralNetworkBA::feedForward(std::vector<double> pattern)
     }
 }
 
-int NeuralNetworkBA::marginHandler(double x)
+int NeuralNetwork::marginHandler(double x)
 {
     if(x < 0.1){return 0;}
     if(x > 0.9){return 1;}
     return -1;
 }
 
-double NeuralNetworkBA::meanSquareError(std::vector<int> dataSet)
+double NeuralNetwork::meanSquareError(std::vector<DataEntry> dataSet)
 {
     double mse = 0.0;
     int setSize = dataSet.size();
     for (int i = 0; i < setSize; ++i) {
-        //feedForward(set[i]);
+        feedForward(dataSet[i]._pattern);
         for (int j = 0; j < _numberOutput; ++j) {
-            mse += pow((_outputNeurons[j] - dataSet[i]), 2);   // todo set shold be a object with pattern/target pair
+            mse += pow((_outputNeurons[j] - dataSet[i]._target[j]), 2);   // todo set shold be a object with pattern/target pair
         }
     }
     return mse/(_numberOutput * setSize);
+}
+
+//////////////////////////////////////////////////////////////////
+// DataEntry
+
+DataEntry::DataEntry(std::vector<double> p, std::vector<double> t)
+    :_pattern(p), _target(t)
+{
+
 }

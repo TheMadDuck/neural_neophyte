@@ -38,18 +38,34 @@ EloRanking::EloRanking()
 {
 }
 
-void EloRanking::turnier(GameFlow *gameFlow, int amountGames, int amountModels, std::string gameName)
+std::vector<double> EloRanking::turnier(GameFlow *gameFlow, int amountGames, int amountModels, std::string gameName)
 {
-    double eloRank = 1000 * amountModels;
-    for (int gameNumber = 0; gameNumber < amountModels; ++gameNumber) {
+    std::vector<double> eloRank;
+    for (int i = 0; i < amountModels; ++i) {
+        eloRank.push_back(1000);
+    }
+    for (int gameNumber = 0; gameNumber < amountGames; ++gameNumber) {
+        std::cout << " \n todo: valgrind test \n \n" << std::endl;
         NRandomDistrib nRand;
         int KI_One = nRand.nRand(amountModels);
         int KI_Two = nRand.nRand(amountModels);
         gameFlow->resetGame();
         gameFlow->runGameFlow({KI_One, KI_Two}); //test
-//        newRanking = naiveElo(eloRank[])
-        std::cout << "not yet implemented" << std::endl;
+        std::vector<double> newRanking = naiveElo(eloRank[KI_One], eloRank[KI_Two], gameFlow->getWinner());
+        eloRank[KI_One] = newRanking[0];
+        eloRank[KI_Two] = newRanking[1];
     }
+    sortModels(eloRank, gameName);
+    // save model?
+    for(auto rank: eloRank){
+        std::cout << "rank: " << rank << std::endl;
+    }
+    return eloRank;
+}
+
+std::vector<double> EloRanking::sortModels(std::vector<double> eloRank, std::string gameName)
+{
+    std::cout << "not yet implemented" << std::endl;
 }
 
 std::vector<double> EloRanking::naiveElo(double leftValue, double rightValue, int decition)

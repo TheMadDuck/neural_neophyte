@@ -58,6 +58,7 @@ Menu::Menu()
         std::cout << "press 1, 2 or 3" << std::endl;
         std::cin >> _mode;
     }
+    // todo clear screen
 
 
     if (_mode == 1){

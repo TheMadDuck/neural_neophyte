@@ -32,30 +32,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#ifndef NEURALNETWORKBA_H
-#define NEURALNETWORKBA_H
+#ifndef NEURALNETWORK_H
+#define NEURALNETWORK_H
 
+#include <iostream>
 #include <vector>
 #include <math.h>
 
-class NeuralNetworkBA
+class DataEntry; // forward declaration
+
+class NeuralNetwork
 {
 public:
-    NeuralNetworkBA();
-    NeuralNetworkBA(int numberInput, int numberHidden, int numberOutput, int numberLayer = 0);
-    ~NeuralNetworkBA();
+    NeuralNetwork();
+    NeuralNetwork(int numberInput, int numberHidden, int numberOutput, int numberLayer = 0);
+    ~NeuralNetwork();
 
     bool load();
     bool save();
     std::vector<int> discretizeOutput(std::vector<double> pattern);
-    double getAccuracy(std::vector<int> set); // do not use int
+    double getAccuracy(std::vector<DataEntry> dataSet); // do not use int
 
 private:
     void initWeights();
     double activationFunction(double x);
     void feedForward(std::vector<double> pattern);
     int marginHandler(double x);
-    double meanSquareError(std::vector<int> dataSet);
+    double meanSquareError(std::vector<DataEntry> dataSet);
 
     int _numberInput;
     int _numberHidden;
@@ -70,4 +73,12 @@ private:
     std::vector<std::vector<double>> _weightHiddenOutput;
 };
 
-#endif // NEURALNETWORKBA_H
+class DataEntry  // necassary? use dataset from savelist?! (just a prototype)
+{
+public:
+    DataEntry(std::vector<double> p, std::vector<double> t);
+    std::vector<double> _pattern;
+    std::vector<double> _target;
+};
+
+#endif // NEURALNETWORK_H
