@@ -38,6 +38,7 @@
 #include <iostream>
 #include <vector>
 #include <math.h>
+#include "layer.h"
 
 class DataEntry; // forward declaration
 
@@ -65,9 +66,10 @@ private:
     int _numberOutput;
     int _numberLayer;
 
-    std::vector<double> _inputNeurons;
-    std::vector<double> _hiddenNeurons;
-    std::vector<double> _outputNeurons;
+    std::vector<Layer> _layers;
+    Layer _inputNeurons;  // test Layer (=) std::vector<double>
+    Layer _hiddenNeurons;
+    Layer _outputNeurons;
 
     std::vector<std::vector<double>> _weightInputHidden;
     std::vector<std::vector<double>> _weightHiddenOutput;

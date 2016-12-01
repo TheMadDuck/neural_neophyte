@@ -39,8 +39,30 @@ NeuralNetwork::NeuralNetwork()
 {
 }
 
-NeuralNetwork::NeuralNetwork(int numberInput, int numberHidden, int numberOutput, int numberLayer)
+NeuralNetwork::NeuralNetwork(std::vector<std::vector<int> > networkForm)
 {
+    for(std::vector<int> layerForm: networkForm){
+        Layer* layer = new Layer(layerForm[0], layerForm[1]);
+        for (int i = 0; i < layerForm[1]; ++i) {
+            //for (int j = 0; j < layerForm2; ++j) {
+                // init edgeWeights.
+            //}
+
+        }
+        _network.push_back(layer);
+    }
+    for (int numberLayer = 0; numberLayer < networkForm.size(); ++numberLayer) {
+        Layer* layer = new Layer(networkForm[numberLayer][0],  // init layer type
+                                 networkForm[numberLayer][1]); // init layer size
+        if(numberLayer != 0){
+            for (int i = 0; i < networkForm[numberLayer-1][1]; ++i) {
+                for (int j = 0; j < networkForm[numberLayer][1]; ++j) {
+                    _edgeWeights[numberLayer-1][i][j]= 0;
+                }
+            }
+        }
+    }
+    /*
     for (int i = 0; i <= numberInput; ++i) {
         _inputNeurons.push_back(0);
         for (int j = 0; j < numberHidden; ++j) {
@@ -62,6 +84,7 @@ NeuralNetwork::NeuralNetwork(int numberInput, int numberHidden, int numberOutput
     for (int i = 0; i < numberOutput; ++i) {
         _outputNeurons.push_back(0);
     }
+    */
 
     initWeights();
 }
@@ -85,8 +108,11 @@ std::vector<int> NeuralNetwork::discretizeOutput(std::vector<double> pattern)
 {
     feedForward(pattern);
     std::vector<int> results;
+    Layer* outputNeurons = _network.back();
     for (int i = 0; i < _numberOutput; ++i) {
-        results.push_back(marginHandler(_outputNeurons[i]));
+        //results.push_back(marginHandler(_outputNeurons[i]));
+        //double test = outputNeurons->get(i); // why does [i] not work??
+        results.push_back(marginHandler(outputNeurons->get(i)));
     }
     return results;
 }
@@ -95,11 +121,13 @@ double NeuralNetwork::getAccuracy(std::vector<DataEntry> dataSet) // in ba other
 {
     double wrongResults = 0;
     int setSize = (int) dataSet.size();
+    Layer* outputNeurons = _network.back();
     for (int i = 0; i < setSize; ++i) {
         feedForward(dataSet[i]._pattern);
         bool correctnes = true;
         for (int j = 0; j < _numberOutput; ++j) {
-            if(marginHandler(_outputNeurons[j]) != dataSet[i]._target[j]){
+            //if(marginHandler(_outputNeurons[j]) != dataSet[i]._target[j]){
+            if(marginHandler(outputNeurons->get(j)) != dataSet[i]._target[j]){
                 correctnes = false;
             }
         }
@@ -141,6 +169,31 @@ void NeuralNetwork::feedForward(std::vector<double> pattern)
     // 			for(int origin = 0; origin < layer.size; ++origin)
     //              ...
 
+    for (int numberLayer = 0; numberLayer < _network.size(); ++numberLayer) {
+        for (int i = 0; i < _network[numberLayer]->getSize(); ++i) {
+            if(_network[numberLayer]->type() == 1){
+                _network[numberLayer][i] = pattern[i];
+            }
+            else{
+                /*
+                _network[numberLayer][i] = 0; // can we just use a help variable here? ( int sum = 0)
+                for (int j = 0; j < _network[numberLayer-1]->getSize(); ++j) {
+                    _network[numberLayer][i] += _network[numberLayer-1]->get(j) *_edgeWeights[numberLayer-1][j][i]; // TEST!
+                }
+                _network[numberLayer][i] = activationFunction(_network[numberLayer]->get(i));
+                */
+                double sum = 0; // can we just use a help variable here? ( int sum = 0)
+                for (int j = 0; j < _network[numberLayer-1]->getSize(); ++j) {
+                    sum += _network[numberLayer-1]->get(j) *_edgeWeights[numberLayer-1][j][i]; // TEST!
+                }
+                _network[numberLayer][i] = activationFunction(sum);
+
+            }
+        }
+    }
+
+
+    /*
     for (int i = 0; i < _numberInput; ++i) {
         _inputNeurons[i] = pattern[i];
     }
@@ -159,6 +212,7 @@ void NeuralNetwork::feedForward(std::vector<double> pattern)
         }
         _outputNeurons[i] = activationFunction(_outputNeurons[i]);
     }
+    */
 }
 
 int NeuralNetwork::marginHandler(double x)
@@ -172,10 +226,12 @@ double NeuralNetwork::meanSquareError(std::vector<DataEntry> dataSet)
 {
     double mse = 0.0;
     int setSize = dataSet.size();
+    Layer* outputNeurons = _network.back();
     for (int i = 0; i < setSize; ++i) {
         feedForward(dataSet[i]._pattern);
         for (int j = 0; j < _numberOutput; ++j) {
-            mse += pow((_outputNeurons[j] - dataSet[i]._target[j]), 2);   // todo set shold be a object with pattern/target pair
+            //mse += pow((_outputNeurons[j] - dataSet[i]._target[j]), 2);   // todo set shold be a object with pattern/target pair
+            mse += pow((outputNeurons->get(j) - dataSet[i]._target[j]), 2);   // todo set shold be a object with pattern/target pair
         }
     }
     return mse/(_numberOutput * setSize);

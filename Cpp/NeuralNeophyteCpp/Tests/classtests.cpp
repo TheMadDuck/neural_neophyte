@@ -82,7 +82,7 @@ bool ClassTests::t_tree()
     return t_test;
 }
 
-#include "../field.h"
+#include "../data_types/field.h"
 
 bool ClassTests::t_field()
 {

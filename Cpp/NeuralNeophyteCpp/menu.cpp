@@ -51,11 +51,12 @@ Menu::Menu()
     std::cout << "Play a Game (press 1)" << std::endl;
     std::cout << "Train the AI (press 2)" << std::endl;
     std::cout << "Sort existing classifiers and rank them (press 3)" << std::endl;
+    std::cout << "End Program (press 4)" << std::endl;
     std::cout << "\n";
     std::cin >> _mode;
-    while ((_mode != 1) && (_mode != 2) && (_mode != 3)){
+    while ((_mode != 1) && (_mode != 2) && (_mode != 3) && (_mode != 4)){
         std::cout << "your number was: " << _mode << std::endl;
-        std::cout << "press 1, 2 or 3" << std::endl;
+        std::cout << "press 1, 2, 3 or 4" << std::endl;
         std::cin >> _mode;
     }
     // todo clear screen
@@ -93,6 +94,10 @@ Menu::Menu()
         std::cin >> amountGames;
         EloRanking eloRanking;
         eloRanking.turnier(_gameFlow, amountGames, _numberModels, _gameName);
+    }
+
+    if (_mode == 4){
+        return;
     }
     _tree->deleteTree(_tree);
     delete _gameLogic;

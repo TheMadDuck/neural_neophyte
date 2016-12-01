@@ -35,7 +35,7 @@
 #ifndef SAVELIST_H
 #define SAVELIST_H
 
-#include "../field.h"
+#include "field.h"
 #include <vector>
 #include "position.h"
 

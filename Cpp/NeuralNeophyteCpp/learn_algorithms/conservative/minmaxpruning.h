@@ -35,12 +35,12 @@
 #ifndef MINMAXPRUNING_H
 #define MINMAXPRUNING_H
 
-#include "../../field.h"
 #include "../../tree.h"
 #include "../../gameflow.h"
 #include "../../games/fourinarow.h"
 #include "../nn_based/design_1/logisticsgd.h"
 #include "../../n_random_distrib/nrandomdistrib.h"
+#include "../../data_types/field.h"
 #include "../../data_types/position.h"
 
 class MinMaxPruning

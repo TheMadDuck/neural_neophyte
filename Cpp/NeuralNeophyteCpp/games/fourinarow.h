@@ -38,7 +38,7 @@
 #include <vector>
 #include <array>
 #include "game.h"
-#include "../field.h"
+#include "../data_types/field.h"
 #include "../data_types/position.h"
 
 

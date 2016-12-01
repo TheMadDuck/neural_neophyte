@@ -32,53 +32,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#ifndef GAMEFLOW_H
-#define GAMEFLOW_H
-#include <array>
-#include <random>
-#include <chrono>
-#include "learn_algorithms/nn_based/design_1/logisticsgd.h" //TODO: here and in next line realy explizit includes or just interfaces??
-#include "games/fourinarow.h"
-#include "data_types/field.h"
-#include "tree.h"
-#include "learn_algorithms/conservative/minmaxpruning.h"
-#include "data_types/savelist.h"
-#include "n_random_distrib/nrandomdistrib.h"
-#include "data_types/position.h"
+#ifndef NEURALNETWORK_H
+#define NEURALNETWORK_H
 
-class GameFlow
+#include <iostream>
+#include <vector>
+#include <math.h>
+#include "layer.h"
+
+class DataEntry; // forward declaration
+
+class NeuralNetwork
 {
 public:
-    GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field* field = nullptr, Tree* tree = new Tree(), int roundNumber = 0, int amountRandom = 0.15,  NRandomDistrib *nRd = nullptr, std::vector<Position> gamePath = {});
-    ~GameFlow();
-    void move();
-    void AI_Move();
-    void Human_Move();
-    std::vector<Position> runGameFlow(std::vector<int> players, std::vector<Position> prefixPath = {}, SaveList* saveList = nullptr);
-    int getWinner();
-    void resetGame();
-    int addPrefixPath(std::vector<Position> prefixPath);
+    NeuralNetwork();
+    NeuralNetwork(std::vector<std::vector<int>> networkForm); // network form := [0][0] first layers type, [0][1] first layers size, [1][0] second layers type,...
+    ~NeuralNetwork();
 
-    void test();
-    void test2();
+    bool load();
+    bool save();
+    std::vector<int> discretizeOutput(std::vector<double> pattern);
+    double getAccuracy(std::vector<DataEntry> dataSet); // do not use int
+
 private:
-    std::random_device seed;
+    void initWeights();
+    double activationFunction(double x);
+    void feedForward(std::vector<double> pattern);
+    int marginHandler(double x);
+    double meanSquareError(std::vector<DataEntry> dataSet);
 
-    //SaveList* saveList; // check this (realy a pointer?)
-    std::vector<Position> _gamePath;
-    LogisticSgd _classifier;
-    FourInARow *_gameLogic;
-    Field *_field;
-    int _roundNumber;
-    float _amountRandom;
-    Tree *_tree;
-    int _winner;
-    std::mt19937 _rd;
-    NRandomDistrib* _nRd;
-    Position _nextPosition;
-    std::vector<int> _players;
-    std::vector<Position> _legalMoves;
-    int _playerNumber;
+    int _numberInput;
+    int _numberHidden;
+    int _numberOutput;
+    int _numberLayer;
+
+    std::vector<Layer*> _network;  // layer Pointer???
+    //Layer _inputNeurons;  // test Layer (=) std::vector<double>
+    //Layer _hiddenNeurons;
+    //Layer _outputNeurons;
+
+    std::vector<std::vector<std::vector<double>>> _edgeWeights; // performance?
+//    std::vector<std::vector<double>> _weightInputHidden;
+//    std::vector<std::vector<double>> _weightHiddenOutput;
 };
 
-#endif // GAMEFLOW_H
+class DataEntry  // necassary? use dataset from savelist?! (just a prototype)
+{
+public:
+    DataEntry(std::vector<double> p, std::vector<double> t);
+    std::vector<double> _pattern;
+    std::vector<double> _target;
+};
+
+#endif // NEURALNETWORK_H

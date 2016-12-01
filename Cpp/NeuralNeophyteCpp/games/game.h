@@ -36,7 +36,7 @@
 #define GAME_H
 #include <string>
 #include <vector>
-#include "../field.h"
+#include "../data_types/field.h"
 #include "../data_types/position.h"
 class Game
 {

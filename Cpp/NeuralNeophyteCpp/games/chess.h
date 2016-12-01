@@ -37,7 +37,7 @@
 #include <string>
 #include <vector>
 #include "game.h"
-#include "../field.h"
+#include "../data_types/field.h"
 #include "../data_types/position.h"
 
 class Chess : public Game
