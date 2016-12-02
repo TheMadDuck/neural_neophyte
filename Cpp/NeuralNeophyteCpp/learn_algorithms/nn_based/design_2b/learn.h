@@ -32,59 +32,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#ifndef NEURALNETWORK_H
-#define NEURALNETWORK_H
+#ifndef LEARN_H
+#define LEARN_H
 
-#include <iostream>
 #include <vector>
-#include <math.h>
-#include "layer.h"
+#include "neuralnetwork.h"
 
-class DataEntry; // forward declaration
-
-class NeuralNetwork
+class Learn
 {
-    friend class Learn; // Realy??
+    friend class NeuralNetwork; //realy???
 public:
-    NeuralNetwork();
-    NeuralNetwork(std::vector<std::vector<int>> networkForm); // network form := [0][0] first layers type, [0][1] first layers size, [1][0] second layers type,...
-    ~NeuralNetwork();
-
-    bool load();
-    bool save();
-    std::vector<int> discretizeOutput(std::vector<double> pattern);
-    double getAccuracy(std::vector<DataEntry> dataSet); // do not use int
-    int getNumberLayer();
-    std::vector<std::vector<int> > getForm();
-    Layer *getOutput();
+    Learn(NeuralNetwork nn,
+          double learningRate = 0.2,
+          double momentum = 0.2,
+          int maxEpochs = 100,
+          double desiredAccuracy = 0.7,
+          bool batch = false,
+          double trainAccuracy = 0,
+          double validateAccuracy = 0,
+          double trainMSE = 0,
+          double validateMSE = 0);
+    void setLearningRate(double learningRate);
+    void setMomentum(double momentum);
+    void setDesiredAccuracy(double desiredAccuracy);
+    void setMaxEpochs(int maxEpochs);
+    void setBatchMode(bool batch);
+    void learn();
 
 private:
-    void initWeights();
-    double activationFunction(double x);
-    void feedForward(std::vector<double> pattern);
-    int marginHandler(double x);
-    double meanSquareError(std::vector<DataEntry> dataSet);
+    double getErrorGradient(int layer, double desiredValue, double ouputValue);
+    void runEpoch(std::vector<int> trainingSet); // do not use int
+    void backpropagation(std::vector<double> desiredOutputs); // double pointer?
+    void updateWeights();
 
-    //Todo include _networkForm (instead of the _number... variables)
-    std::vector<std::vector<int>> _networkForm;
-    //int _numberLayer; should be used ?!
 
-    std::vector<Layer*> _network;  // layer Pointer???
-    //Layer _inputNeurons;  // test Layer (=) std::vector<double>
-    //Layer _hiddenNeurons;
-    //Layer _outputNeurons;
+    NeuralNetwork _nn;
+    std::vector<std::vector<std::vector<double>>> _deltaWeights;
+    std::vector<std::vector<double>> _errorGradients;
 
-    std::vector<std::vector<std::vector<double>>> _edgeWeights; // performance?
-//    std::vector<std::vector<double>> _weightInputHidden;
-//    std::vector<std::vector<double>> _weightHiddenOutput;
+    double _learningRate;
+    double _momentum;
+    int _epoch; // maybe long?
+    int _maxEpochs;
+    double _desiredAccuracy;
+    bool _batchLearning;
+
+    double _trainingAccuracy;
+    double _validationAccuracy; //needed?
+    double _trainingMSE;
+    double _validationMSE;
+
+
+
 };
 
-class DataEntry  // necassary? use dataset from savelist?! (just a prototype)
-{
-public:
-    DataEntry(std::vector<double> p, std::vector<double> t);
-    std::vector<double> _pattern;
-    std::vector<double> _target;
-};
-
-#endif // NEURALNETWORK_H
+#endif // LEARN_H
