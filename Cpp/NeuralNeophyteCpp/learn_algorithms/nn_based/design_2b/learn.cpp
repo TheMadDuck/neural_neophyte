@@ -50,9 +50,9 @@ Learn::Learn(NeuralNetwork nn,
       _maxEpochs(maxEpochs),
       _desiredAccuracy(desiredAccuracy),
       _batchLearning(batch),
-      _trainingAccuracy(trainAccuracy),
+      _trainAccuracy(trainAccuracy),
       _validationAccuracy(validateAccuracy),
-      _trainingMSE(trainMSE),
+      _trainMSE(trainMSE),
       _validationMSE(validateMSE)
 {
     for (int layer = 1; layer < nn.getNumberLayer(); ++layer) {
@@ -97,7 +97,12 @@ void Learn::setBatchMode(bool batch)
 
 void Learn::learn()
 {
-
+    _epoch = 0;
+    while((_trainAccuracy < _desiredAccuracy /* || _general < desired acc */) && _epoch < _maxEpochs){
+        double prevTrainAccuracy = _trainAccuracy;
+//        double prevGenerAccuracy =
+//        runEpoch();
+    }
 }
 
 double Learn::getErrorGradient(int layer, double desiredValue, double ouputValue)
@@ -105,8 +110,30 @@ double Learn::getErrorGradient(int layer, double desiredValue, double ouputValue
 
 }
 
-void Learn::runEpoch(std::vector<int> trainingSet)
+void Learn::runEpoch(std::vector<DataEntry> trainingSet)
 {
+    double falsePattern = 0;
+    double mse = 0;
+
+    for (int pattern = 0; pattern < trainingSet.size(); ++pattern) {
+        _nn.feedForward(trainingSet[pattern]._pattern);
+        backpropagation(trainingSet[pattern]._target);
+        bool correctPattern = true;
+        for (int i = 0; i < _nn.getOutput()->getSize(); ++i) {
+            if(_nn.marginHandler(_nn.getOutput()->get(i)) != trainingSet[pattern]._target[i]){
+                correctPattern = false;
+            }
+            mse += pow((_nn.getOutput()->get(i) - trainingSet[pattern]._target[i]), 2);
+        }
+        if(!correctPattern){
+            falsePattern += 1;
+        }
+    }
+    if(_batchLearning){
+        updateWeights();
+    }
+    _trainAccuracy = 100 - (falsePattern / trainingSet.size()*100);
+    _trainMSE = mse/(_nn.getForm().back()[1] * trainingSet.size());
 
 }
 

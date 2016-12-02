@@ -61,7 +61,7 @@ public:
 
 private:
     double getErrorGradient(int layer, double desiredValue, double ouputValue);
-    void runEpoch(std::vector<int> trainingSet); // do not use int
+    void runEpoch(std::vector<DataEntry> trainingSet); // do not use int
     void backpropagation(std::vector<double> desiredOutputs); // double pointer?
     void updateWeights();
 
@@ -77,9 +77,9 @@ private:
     double _desiredAccuracy;
     bool _batchLearning;
 
-    double _trainingAccuracy;
+    double _trainAccuracy;
     double _validationAccuracy; //needed?
-    double _trainingMSE;
+    double _trainMSE;
     double _validationMSE;
 
 
