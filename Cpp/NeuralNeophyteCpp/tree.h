@@ -70,7 +70,7 @@ private:
     int _depth = 0;
     std::vector<int> _numberWon = {0, 0}; // todo: make alloc dynamic.
     int _numberPlayed = 0;
-    std::vector<Tree*> _childs = {};
+    std::vector<Tree*> _childs = {};  // use std::map [ordered with key, value pairs]?? //test speedup
 };
 
 #endif // TREE_H
