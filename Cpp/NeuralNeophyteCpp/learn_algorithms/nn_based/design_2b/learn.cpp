@@ -105,9 +105,21 @@ void Learn::learn()
     }
 }
 
-double Learn::getErrorGradient(int layer, double desiredValue, double ouputValue)
+double Learn::getErrorGradient(int layer, double desiredValue, double outputValue) // check whole function
 {
-
+    if(layer== _nn.getNumberLayer()-1){ // TEST!
+        return outputValue * (1- outputValue) * (desiredValue - outputValue);
+    }
+    std::cout << "not yet implemented" << std::endl;
+    /*
+    if(layer > 0){
+        double weightedSum = 0; //double?
+        for (int i = 0; i < _nn.getForm().back()[1]; ++i) {
+            weightedSum += _nn._edgeWeights[layer][i] * _errorGradients[i]; //Test!
+        }
+        return _nn._network[layer] * (1 - _nn._network[layer]) * weightedSum; // works only for one hidden layer?!
+    }
+    */
 }
 
 void Learn::runEpoch(std::vector<DataEntry> trainingSet)
