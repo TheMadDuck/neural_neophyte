@@ -102,6 +102,11 @@ void Learn::learn()
         double prevTrainAccuracy = _trainAccuracy;
 //        double prevGenerAccuracy =
 //        runEpoch();
+        std::cout << "not yet implemented" << std::endl;
+
+
+
+        _epoch += 1;
     }
 }
 
