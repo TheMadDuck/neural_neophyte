@@ -46,7 +46,7 @@ MinMaxPruning::~MinMaxPruning()
 }
 
 
-Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, LogisticSgd classifier, int roundNumber, int playerNumber, std::vector<Position> gamePath, float randomProbability, NRandomDistrib* nRd)
+Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, LogisticSgd classifier, int roundNumber, int playerNumber, std::vector<Position> gamePath, float randomProbability, NRandomDistrib* nRd, int amountPossibleMoves)
 {
     Tree* mcts_tree;
     if (tree){
@@ -58,7 +58,7 @@ Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, LogisticSgd cla
 
     int gameQuantity = 800;
     for (int i = 0; i < gameQuantity; ++i) {
-        int amountPossibleMoves = _gameLogic->getLegalInputs().size();
+        //int amountPossibleMoves = _gameLogic->getLegalInputs().size();
         Position move = mcts_tree->getNextMove(amountPossibleMoves, playerNumber);
         Field* fieldCopy = new Field(*field);
 

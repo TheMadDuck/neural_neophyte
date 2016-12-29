@@ -57,12 +57,13 @@ void GameFlow::move()
     //int position;
     if (_players[_playerNumber - 1] == 0) {
         Human_Move();
+        //if (std::find(_legalMoves.begin(), _legalMoves.end(), _nextPosition) != _legalMoves.end()){ // already tested in human_move, but nice algo
+        //}
     }
     else{
         //_field->showField();
         AI_Move();
     }
-    _gameLogic->isLegalMove(_field, _playerNumber, _nextPosition);
 
     while((_gameLogic->getSignal() == "unvalid_player")
           || (_gameLogic->getSignal() == "unvalid_position")
@@ -81,7 +82,6 @@ void GameFlow::move()
             AI_Move();
         }
 
-        _gameLogic->isLegalMove(_field, _playerNumber, _nextPosition);
     }
     //return _nextPosition;          // Todo: check speed limitation?
 }
@@ -118,7 +118,7 @@ void GameFlow::AI_Move()
 
     if(_players[_playerNumber-1] == -2){
         MinMaxPruning minMaxPruning;
-        _nextPosition = minMaxPruning.exploited_mcts(_field, _tree, _classifier, _roundNumber, _playerNumber, _gamePath, 0.2, _nRd);
+        _nextPosition = minMaxPruning.exploited_mcts(_field, _tree, _classifier, _roundNumber, _playerNumber, _gamePath, 0.2, _nRd, _legalMoves.size());
         return;
         //return minMaxPruning.exploited_mcts(_field, _tree, _classifier, _players, _roundNumber, _playerNumber, _gamePath, 0.2, _nRd);
     }
@@ -172,10 +172,6 @@ std::vector<Position> GameFlow::runGameFlow(std::vector<int> players, std::vecto
     }
 
     //TODO: getLegalInputs in the while loop, initField in the resetGame().
-    _legalMoves = _gameLogic->getLegalInputs();
-    if(_gameLogic->getSignal() != "legal_inputs_initialized"){
-        std::cout << "ERROR: legal inputs could not get initialized" << std::endl;
-    }
 
     if(!_field){
         _field = _gameLogic->initField();
@@ -185,11 +181,17 @@ std::vector<Position> GameFlow::runGameFlow(std::vector<int> players, std::vecto
     }
 
     while((_gameLogic->getSignal() != "we_have_a_winner") || (_gameLogic->getSignal() != "game_is_over")){
+
         if (_roundNumber % 2 == 0) {
             _playerNumber = 1;
         }
         else{
             _playerNumber = 2;
+        }
+
+        _legalMoves = _gameLogic->getLegalInputs(_field);
+        if(_gameLogic->getSignal() != "legal_inputs_initialized"){
+            std::cout << "ERROR: legal inputs could not get initialized" << std::endl;
         }
 
         move();
@@ -225,7 +227,6 @@ std::vector<Position> GameFlow::runGameFlow(std::vector<int> players, std::vecto
         }
     }
     return _gamePath;
-
 }
 
 int GameFlow::getWinner()
@@ -257,10 +258,12 @@ int GameFlow::addPrefixPath(std::vector<Position> prefixPath)
             _playerNumber = 2;
         }
         _nextPosition = prefixPath[pathPosition];
+        /*
         _gameLogic->isLegalMove(_field, _playerNumber, _nextPosition);
         while((_gameLogic->getSignal() == "unvalid_player") || (_gameLogic->getSignal() == "unvalid_position") || (_gameLogic->getSignal() == "column_is_full")){
             return -1; //if there is no winner -1 is returned
         }
+        */
 
         _gameLogic->setStone(_field, _playerNumber, _nextPosition);
         _gamePath.push_back(_nextPosition);

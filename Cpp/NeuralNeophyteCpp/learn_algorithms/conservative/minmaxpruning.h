@@ -55,7 +55,8 @@ public:
                        int playerNumber,
                        std::vector<Position> gamePath,
                        float randomProbability,
-                       NRandomDistrib* nRd);
+                       NRandomDistrib* nRd,
+                       int amountPossibleMoves);
 private:
     FourInARow* _gameLogic;
 };

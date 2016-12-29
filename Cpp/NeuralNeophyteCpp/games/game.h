@@ -46,9 +46,9 @@ public:
     virtual std::string getSignal() =0;
     virtual std::string getName() =0;
     virtual int positionVectorSize() =0;
-    virtual std::vector<Position> getLegalInputs() =0;
+    virtual std::vector<Position> getLegalInputs(Field* field) =0;
     virtual Field* initField(int height = 6, int width = 7) =0;
-    virtual bool isLegalMove(Field *field, int playerNumber, Position position) =0;
+    //virtual bool isLegalMove(Field *field, int playerNumber, Position position) =0;
     virtual void setStone(Field *field, int color, Position position) =0;
     virtual bool gameStopped(Field *field, int roundNumber) =0;
     virtual int hasAWinner(Field *field, int color, Position position) =0;

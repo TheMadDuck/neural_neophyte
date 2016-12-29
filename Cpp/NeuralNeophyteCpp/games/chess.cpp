@@ -36,12 +36,12 @@
 
 Chess::Chess()
 {
-    _field = nullptr;
+    //_field = nullptr;
 }
 
 Chess::~Chess()
 {
-    delete _field;
+    //delete _field;
 }
 
 std::string Chess::getSignal()
@@ -59,20 +59,22 @@ int Chess::positionVectorSize()
     return 6; // 2 from 1 kindOf 1 color 2 to
 }
 
-std::vector<Position> Chess::getLegalInputs()
+std::vector<Position> Chess::getLegalInputs(Field* field) // work with field (not with _field). field should exist only extern in gameflow!
 {
-    std::vector<Position> legal_inputs;
-    for(int i = 0; i < _field->getHeight(); ++i){
-        for(int j = 0; j < _field->getWidth(); ++i){
+    _field = field;
+    //std::vector<Position> legal_inputs;
+    _legal_inputs.clear();  // deletes Positions  (mayby use vector of pointers to positions??)
+    for(int i = 0; i < field->getHeight(); ++i){
+        for(int j = 0; j < field->getWidth(); ++i){
 /*            if(_field[i][j] != 0){
                 legal_inputs
             }
 */
-            Position newPosition;
-            switch(_field->get(i, j)){
-                case 1: newPosition.setPositionVector({i, j, rookB, /* where to?*/});
+            //Position newPosition;
+            switch(field->get(i, j)){
+                case rookB: addRookMoves(i, j); // if(newPosition.setPositionVector({i, j, rookB, /* where to?*/});
             }
-            legal_inputs.push_back(newPosition);
+            //legal_inputs.push_back(newPosition);
         }
     }
     std::cout << "not yet implemented" << std::endl;
@@ -80,37 +82,33 @@ std::vector<Position> Chess::getLegalInputs()
 
 Field *Chess::initField(int height, int width)
 {
-    _field = new Field(height, width);
-    _field->set(rookB, 0, 0);
-    _field->set(knightB, 0, 1);
-    _field->set(bishopB, 0, 2);
-    _field->set(queenB, 0, 3);
-    _field->set(kingB, 0, 4);
-    _field->set(bishopB, 0, 5);
-    _field->set(knightB, 0, 6);
-    _field->set(rookB, 0, 7);
+    Field* field = new Field(height, width);
+    field->set(rookB, 0, 0);
+    field->set(knightB, 0, 1);
+    field->set(bishopB, 0, 2);
+    field->set(queenB, 0, 3);
+    field->set(kingB, 0, 4);
+    field->set(bishopB, 0, 5);
+    field->set(knightB, 0, 6);
+    field->set(rookB, 0, 7);
 
-    _field->set(rookW, 7, 0);
-    _field->set(knightW, 7, 1);
-    _field->set(bishopW, 7, 2);
-    _field->set(queenW, 7, 3);
-    _field->set(kingW, 7, 4);
-    _field->set(bishopW, 7, 5);
-    _field->set(knightW, 7, 6);
-    _field->set(rookW, 7, 7);
+    field->set(rookW, 7, 0);
+    field->set(knightW, 7, 1);
+    field->set(bishopW, 7, 2);
+    field->set(queenW, 7, 3);
+    field->set(kingW, 7, 4);
+    field->set(bishopW, 7, 5);
+    field->set(knightW, 7, 6);
+    field->set(rookW, 7, 7);
     for(int i = 0; i < 8; ++i){
-        _field->set(pawnB, 1, i);
-        _field->set(pawnW, 6, i);
+        field->set(pawnB, 1, i);
+        field->set(pawnW, 6, i);
     }
 
     Signal = "field_initialized";
-    return _field;
+    return field;
 }
 
-bool Chess::isLegalMove(Field *field, int playerNumber, Position position) // todo realy needed in fourinarow?
-{
-
-}
 
 void Chess::setStone(Field *field, int color, Position position)
 {
@@ -144,7 +142,21 @@ std::vector<Position> Chess::getPossibleMove(int height, int width, int figure)
     }
 }
 
+void Chess::addRookMoves(int i, int j)
+{
+    int tempPosition = 0;
+    int temp = 1;
+    while(tempPosition == 0){  // TODO: Test
+        tempPosition = _field->get(i + temp, j);
+        Position newPosition;
+        newPosition.setPositionVector({i, j, rookB, i + temp, j});
+        _legal_inputs.push_back(newPosition);
+        temp += 1;
+    }
+}
+
 int Chess::getHashDivisor()
 {
     return 12; // max possible value in the position vector (here width and height are 8, but possible figures are 12)
 }
+

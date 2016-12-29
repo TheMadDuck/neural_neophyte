@@ -43,12 +43,12 @@
 
 FourInARow::FourInARow()
 {
-    _field = nullptr;
+    //_field = nullptr;
 }
 
 FourInARow::~FourInARow()
 {
-    delete _field;
+    //delete _field;
 }
 
 std::string FourInARow::getSignal()
@@ -66,11 +66,17 @@ int FourInARow::positionVectorSize()
     return 1;
 }
 
-std::vector<Position> FourInARow::getLegalInputs()
+std::vector<Position> FourInARow::getLegalInputs(Field *field)
 {
     std::vector<Position> legal_inputs;// = {0, 1, 2, 3, 4, 5, 6}; /Todo: speed limitation?
     for (int i = 0; i< 7 ; i++){
-        legal_inputs.push_back(Position({i}));
+//        std::cout << "testA0" << std::endl;
+//        _field->showField();
+        if(field->get(0, i) == 0){
+//            std::cout << "testA1" << std::endl;
+            legal_inputs.push_back(Position({i}));
+        }
+//        std::cout << "testA2" << std::endl;
     }
     Signal = "legal_inputs_initialized";
     return legal_inputs;
@@ -81,6 +87,7 @@ Field *FourInARow::initField(int height, int width)
     // Game Field is 6 high and 7 wide, but we need a bottom row,
     // so the stones dont fall through the game
 
+    /*
     _field = new Field(height +1, width);
 
     for (int i = 0; i < height - 1; ++i) {
@@ -97,8 +104,26 @@ Field *FourInARow::initField(int height, int width)
 
     Signal = "field_initialized";
     return _field;
-}
+    */
 
+    Field* field = new Field(height +1, width);
+
+    for (int i = 0; i < height - 1; ++i) {
+        for (int j = 0; j < width; ++j) {
+            field->set(0,i,j);
+        }
+    }
+
+    // fill the bottom line with threes.
+    for (int j = 0; j < width; ++j) {
+        field->set(3,height,j);
+    }
+
+
+    Signal = "field_initialized";
+    return field;
+}
+/*
 bool FourInARow::isLegalMove(Field *field, int playerNumber, Position position)
 {
     // wrong player number -> False
@@ -122,7 +147,7 @@ bool FourInARow::isLegalMove(Field *field, int playerNumber, Position position)
     Signal = "move_is_legal";
     return true;
 }
-
+*/
 void FourInARow::setStone(Field *field, int color, Position position)
 {
     for (int i = 0; i < field->getHeight(); ++i) {
