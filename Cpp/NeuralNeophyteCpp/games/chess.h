@@ -56,14 +56,19 @@ public:
     bool gameStopped(Field *field, int roundNumber) override;
     int hasAWinner(Field *field, int color, Position position) override;
 
-    std::vector<Position> getPossibleMove(int height, int width, int figure);
     int getHashDivisor();
-
-    void addRookMoves(int i, int j);
-
+    bool checkSides(int i, int j, int figure, int topDown, int leftRight); // topDown and leftRight are int in range -1, 0, 1
+    bool isInField(int i, int j);
+    void addRookMoves(int i, int j, int color);
+    void addKnightMoves(int i, int j, int color);
+    void addKingMoves(int i, int j, int color);
+    void addBishopMoves(int i, int j, int color);
+    void addQueenMoves(int i, int j, int color);
+    void addPawnMoves(int i, int j, int color);
 private:
     std::string Signal = "";
     Field* _field;
+    bool _turnedField;
     enum Figures {rookB = 1, knightB = 2, bishopB = 3, queenB = 4, kingB =5, pawnB =6,
                   rookW = 7, knightW = 8, bishopW = 9, queenW = 10, kingW =11, pawnW = 12};
     std::vector<Position> _legal_inputs;
