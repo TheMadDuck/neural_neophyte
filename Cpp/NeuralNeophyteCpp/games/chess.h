@@ -55,9 +55,11 @@ public:
     void setStone(Field *field, int color, Position position) override;
     bool gameStopped(Field *field, int roundNumber) override;
     int hasAWinner(Field *field, int color, Position position) override;
+    int numberPlayers() override;
 
     int getHashDivisor();
-    bool checkSides(int i, int j, int figure, int topDown, int leftRight); // topDown and leftRight are int in range -1, 0, 1
+    void observeSides(int i, int j, int figure, int topDown, int leftRight); // topDown and leftRight are int in range -1, 0, 1
+    bool kingCheckSides(int i, int j, int figure, int topDown, int leftRight); // topDown and leftRight are int in range -1, 0, 1
     bool isInField(int i, int j);
     void addRookMoves(int i, int j, int color);
     void addKnightMoves(int i, int j, int color);
@@ -65,6 +67,10 @@ public:
     void addBishopMoves(int i, int j, int color);
     void addQueenMoves(int i, int j, int color);
     void addPawnMoves(int i, int j, int color);
+    std::vector<int> getFigurePosition(int figure);
+    bool inCheck(int color);
+    bool inCheckMate(int color);
+
 private:
     std::string Signal = "";
     Field* _field;

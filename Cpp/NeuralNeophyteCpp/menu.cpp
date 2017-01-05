@@ -36,11 +36,39 @@
 
 #include <iostream>
 #include <array>
+#include "games/fourinarow.h"
+#include "games/chess.h"
+#include "games/pegsolitaire.h"
 
 Menu::Menu()
 {
     NRandomDistrib nRd;
-    _gameLogic = new FourInARow();
+    std::cout << "What game do you want to play?" << std::endl;
+    std::cout << "Play FourInARow (press 1)" << std::endl;
+    std::cout << "Play Chess (press 2)" << std::endl;
+    std::cout << "Play Peg Solitaire (press 3)" << std::endl;
+    std::cout << "End Program (press 4)" << std::endl;
+    std::cout << "\n";
+    std::cin >> _mode;
+    while ((_mode != 1) && (_mode != 2) && (_mode != 3) && (_mode != 4)){
+        std::cout << "your number was: " << _mode << std::endl;
+        std::cout << "press 1, 2, 3 or 4" << std::endl;
+        std::cin >> _mode;
+    }
+    if(_mode == 1){
+        _gameLogic = new FourInARow();
+    }
+    if(_mode == 2){
+        _gameLogic = new Chess();
+    }
+    if(_mode == 3){
+        _gameLogic = new PegSolitaire();
+    }
+    if(_mode == 4){
+        return;
+    }
+
+    //_gameLogic = new FourInARow();
     _tree = new Tree();
     _gameFlow = new GameFlow(_classifier, _gameLogic, nullptr, _tree, 0, 0.15, &nRd); //do we really want 0.15 randomnes?[test this]
     _gameName = _gameLogic->getName();

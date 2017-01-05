@@ -52,6 +52,7 @@ public:
     virtual void setStone(Field *field, int color, Position position) =0;
     virtual bool gameStopped(Field *field, int roundNumber) =0;
     virtual int hasAWinner(Field *field, int color, Position position) =0;
+    virtual int numberPlayers() =0;
 
 private:
     std::string Signal = "";

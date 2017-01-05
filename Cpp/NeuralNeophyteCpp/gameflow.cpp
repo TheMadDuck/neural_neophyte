@@ -34,9 +34,10 @@
 
 #include "gameflow.h"
 #include <iostream>
+#include <assert.h>
 //#include "Tests/randomtest.h"
 
-GameFlow::GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field *field, Tree *tree, int roundNumber, int amountRandom, NRandomDistrib *nRd, std::vector<Position> gamePath)
+GameFlow::GameFlow(LogisticSgd classifier, Game *gameLogic, Field *field, Tree *tree, int roundNumber, int amountRandom, NRandomDistrib *nRd, std::vector<Position> gamePath)
     :_classifier(classifier), _gameLogic(gameLogic), _field(field), _roundNumber(roundNumber), _amountRandom(amountRandom), _tree(tree), _nRd(nRd), _gamePath(gamePath)
 {
     //_rd.seed(std::time(NULL));
@@ -117,7 +118,7 @@ void GameFlow::AI_Move()
     flatField.push_back(_roundNumber);
 
     if(_players[_playerNumber-1] == -2){
-        MinMaxPruning minMaxPruning;
+        MinMaxPruning minMaxPruning(_gameLogic->getName());
         _nextPosition = minMaxPruning.exploited_mcts(_field, _tree, _classifier, _roundNumber, _playerNumber, _gamePath, 0.2, _nRd, _legalMoves.size());
         return;
         //return minMaxPruning.exploited_mcts(_field, _tree, _classifier, _players, _roundNumber, _playerNumber, _gamePath, 0.2, _nRd);
@@ -171,7 +172,7 @@ std::vector<Position> GameFlow::runGameFlow(std::vector<int> players, std::vecto
         }
     }
 
-    //TODO: getLegalInputs in the while loop, initField in the resetGame().
+    //TODO: initField in the resetGame()?!
 
     if(!_field){
         _field = _gameLogic->initField();
@@ -181,14 +182,10 @@ std::vector<Position> GameFlow::runGameFlow(std::vector<int> players, std::vecto
     }
 
     while((_gameLogic->getSignal() != "we_have_a_winner") || (_gameLogic->getSignal() != "game_is_over")){
+        //set active player
+        _playerNumber = (_roundNumber % _gameLogic->numberPlayers()) + 1;
 
-        if (_roundNumber % 2 == 0) {
-            _playerNumber = 1;
-        }
-        else{
-            _playerNumber = 2;
-        }
-
+        //get _legalMoves
         _legalMoves = _gameLogic->getLegalInputs(_field);
         if(_gameLogic->getSignal() != "legal_inputs_initialized"){
             std::cout << "ERROR: legal inputs could not get initialized" << std::endl;

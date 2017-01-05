@@ -46,6 +46,7 @@ public:
     Field(Field&& other); //move constructor
     Field& operator=(const Field& other); //copy assignment
     Field& operator=(Field&& other); //move assignment
+    Field(std::vector<std::vector<int>> other);
     int get(int i, int j);
     void set(int value, int i, int j);
     int getHeight();

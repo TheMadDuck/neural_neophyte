@@ -35,12 +35,12 @@
 #include "menu.h"
 #include <iostream>
 
-#include "Tests/randomtest.h"
-#include "Tests/classtests.h"
-#include "games/game.h"
-#include "games/chess.h"
-#include "games/fourinarow.h"
-#include "data_types/position.h"
+//#include "Tests/randomtest.h"
+//#include "Tests/classtests.h"
+//#include "games/game.h"
+//#include "games/chess.h"
+//#include "games/fourinarow.h"
+//#include "data_types/position.h"
 
 int main()
 {

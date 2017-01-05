@@ -54,7 +54,7 @@ public:
     void printTree();
     std::vector<Position> getPreOrder(std::vector<Position> preOrderList = {});
     //void addPath(std::vector<int> path, int winOrLoss);
-    void addPathRec(std::vector<Position> path, int winner);
+    void addPathRec(std::vector<Position> path, int winner, double score = 1);
     Position getBestMove(int player);
     Position getNextMove(int amountPosslibleMoves, int player);
     std::vector<double> getProbabilities(int player);

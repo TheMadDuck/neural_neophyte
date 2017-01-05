@@ -39,7 +39,8 @@
 #include <chrono>
 //#include <algorithm>
 #include "learn_algorithms/nn_based/design_1/logisticsgd.h" //TODO: here and in next line realy explizit includes or just interfaces??
-#include "games/fourinarow.h"
+//#include "games/fourinarow.h"
+#include "games/game.h"
 #include "data_types/field.h"
 #include "tree.h"
 #include "learn_algorithms/conservative/minmaxpruning.h"
@@ -50,7 +51,7 @@
 class GameFlow
 {
 public:
-    GameFlow(LogisticSgd classifier, FourInARow *gameLogic, Field* field = nullptr, Tree* tree = new Tree(), int roundNumber = 0, int amountRandom = 0.15,  NRandomDistrib *nRd = nullptr, std::vector<Position> gamePath = {});
+    GameFlow(LogisticSgd classifier, Game *gameLogic, Field* field = nullptr, Tree* tree = new Tree(), int roundNumber = 0, int amountRandom = 0.15,  NRandomDistrib *nRd = nullptr, std::vector<Position> gamePath = {});
     ~GameFlow();
     void move();
     void AI_Move();
@@ -68,7 +69,8 @@ private:
     //SaveList* saveList; // check this (realy a pointer?)
     std::vector<Position> _gamePath;
     LogisticSgd _classifier;
-    FourInARow *_gameLogic;
+    //FourInARow *_gameLogic;
+    Game *_gameLogic;
     Field *_field;
     int _roundNumber;
     float _amountRandom;

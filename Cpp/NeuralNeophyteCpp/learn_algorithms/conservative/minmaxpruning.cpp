@@ -34,10 +34,21 @@
 
 #include "minmaxpruning.h"
 #include <iostream>
+#include "../../games/fourinarow.h"  // todo remove include here
+#include "../../games/chess.h" // todo remove include here
+#include "../../games/pegsolitaire.h"
 
-MinMaxPruning::MinMaxPruning()
+MinMaxPruning::MinMaxPruning(std::string gameName)  // todo if the argument is not the game-name but the GameLogic itself: here a copy should be made with all the (game-)internal information(or without??)
 {
-    _gameLogic = new FourInARow();
+    if(gameName == "four_in_a_row"){
+        _gameLogic = new FourInARow();
+    }
+    if(gameName == "chess"){
+        _gameLogic = new Chess();
+    }
+    if(gameName == "pet_solitaire"){
+        _gameLogic = new PegSolitaire();
+    }
 }
 
 MinMaxPruning::~MinMaxPruning()

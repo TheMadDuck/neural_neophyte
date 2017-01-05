@@ -35,9 +35,11 @@
 #ifndef MINMAXPRUNING_H
 #define MINMAXPRUNING_H
 
+#include <string>
 #include "../../tree.h"
 #include "../../gameflow.h"
-#include "../../games/fourinarow.h"
+//#include "../../games/fourinarow.h"
+#include "../../games/game.h"
 #include "../nn_based/design_1/logisticsgd.h"
 #include "../../n_random_distrib/nrandomdistrib.h"
 #include "../../data_types/field.h"
@@ -46,7 +48,7 @@
 class MinMaxPruning
 {
 public:
-    MinMaxPruning();
+    MinMaxPruning(std::string gameName);
     ~MinMaxPruning();
     Position exploited_mcts(Field *field, //TODO: field und tree wirklich pointer?
                        Tree *tree,
@@ -58,7 +60,8 @@ public:
                        NRandomDistrib* nRd,
                        int amountPossibleMoves);
 private:
-    FourInARow* _gameLogic;
+    //FourInARow* _gameLogic;
+    Game* _gameLogic;
 };
 
 #endif // MINMAXPRUNING_H

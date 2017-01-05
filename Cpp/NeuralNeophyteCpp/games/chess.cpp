@@ -141,66 +141,17 @@ int Chess::hasAWinner(Field *field, int color, Position position)
     std::vector<std::vector<int>> enemyKingRange;
 }
 
+int Chess::numberPlayers()
+{
+    return 2;
+}
+
 void Chess::addRookMoves(int i, int j, int color)
 {
-    /*
-    int tempPosition = 0;
-    int temp = 1;
-    while(tempPosition == 0){  // TODO: Test
-        if(!isInField(i + temp, j)){
-            break;
-        }
-        tempPosition = _field->get(i + temp, j);
-        Position newPosition;
-        newPosition.setPositionVector({i, j, figure, i + temp, j});
-        _legal_inputs.push_back(newPosition);
-        temp += 1;
-    }
-    */
-    /*
-    bool up, down, left, right = true;
-    for(int temp = 1; temp < 8; ++temp){
-        if(isInField(i + temp, j) && down){
-            Position newPosition;
-            newPosition.setPositionVector({i, j, color, i+temp, j});
-            _legal_inputs.push_back(newPosition);
-            if (_field->get(i + temp, j) != 0){
-                down = false;
-            }
-        }
-
-        if(isInField(i - temp, j) && up){
-            Position newPosition;
-            newPosition.setPositionVector({i, j, color, i-temp, j});
-            _legal_inputs.push_back(newPosition);
-            if (_field->get(i - temp, j) != 0){
-                up = false;
-            }
-        }
-
-        if(isInField(i, j + temp) && right){
-            Position newPosition;
-            newPosition.setPositionVector({i, j, color, i, j+temp});
-            _legal_inputs.push_back(newPosition);
-            if (_field->get(i, j + temp) != 0){
-                right = false;
-            }
-        }
-
-        if(isInField(i, j - temp) && left){
-            Position newPosition;
-            newPosition.setPositionVector({i, j, color, i, j-temp});
-            _legal_inputs.push_back(newPosition);
-            if (_field->get(i, j - temp) != 0){
-                left = false;
-            }
-        }
-    }
-    */
-    checkSides(i, j, color, 1, 0);
-    checkSides(i, j, color, -1, 0);
-    checkSides(i, j, color, 0, -1);
-    checkSides(i, j, color, 0, 1);
+    observeSides(i, j, color, 1, 0);
+    observeSides(i, j, color, -1, 0);
+    observeSides(i, j, color, 0, -1);
+    observeSides(i, j, color, 0, 1);
 }
 
 void Chess::addKnightMoves(int i, int j, int color)
@@ -229,23 +180,23 @@ void Chess::addKingMoves(int i, int j, int color)
 
 void Chess::addBishopMoves(int i, int j, int color)
 {
-    checkSides(i, j, color, 1, 1);
-    checkSides(i, j, color, 1, -1);
-    checkSides(i, j, color, -1, 1);
-    checkSides(i, j, color, -1, -1);
+    observeSides(i, j, color, 1, 1);
+    observeSides(i, j, color, 1, -1);
+    observeSides(i, j, color, -1, 1);
+    observeSides(i, j, color, -1, -1);
 }
 
 void Chess::addQueenMoves(int i, int j, int color)
 {
-    checkSides(i, j, color, 1, 0);
-    checkSides(i, j, color, -1, 0);
-    checkSides(i, j, color, 0, -1);
-    checkSides(i, j, color, 0, 1);
+    observeSides(i, j, color, 1, 0);
+    observeSides(i, j, color, -1, 0);
+    observeSides(i, j, color, 0, -1);
+    observeSides(i, j, color, 0, 1);
 
-    checkSides(i, j, color, 1, 1);
-    checkSides(i, j, color, 1, -1);
-    checkSides(i, j, color, -1, 1);
-    checkSides(i, j, color, -1, -1);
+    observeSides(i, j, color, 1, 1);
+    observeSides(i, j, color, 1, -1);
+    observeSides(i, j, color, -1, 1);
+    observeSides(i, j, color, -1, -1);
 }
 
 void Chess::addPawnMoves(int i, int j, int color)
@@ -286,12 +237,64 @@ void Chess::addPawnMoves(int i, int j, int color)
     }
 }
 
+std::vector<int> Chess::getFigurePosition(int figure) // RETURNS ONLY THE FIRST FIGURE!!! SHOULD RETURN POSITION OF EVERY FIGURE
+{
+    for(int i = 0; i < _field->getHeight(); ++i){
+        for(int j = 0; j < _field->getWidth(); ++i){
+            if(_field->get(i, j) == figure){
+                return {i, j};
+            }
+        }
+    }
+}
+
+bool Chess::inCheck(int color)
+{
+    std::vector<int> coordinates = getFigurePosition(color);
+    std::vector<std::vector<int>> directions = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+    for(std::vector<int> direction : directions){
+        if(kingCheckSides(coordinates[0], coordinates[1], color, direction[0], direction[1])){
+            return true;
+        }
+    }
+
+    directions = {{2, 1}, {2, -1}, {1, 2}, {1,-2}, {-1, 2}, {-1, -2}, {-2, 1}, {-2, -1} };
+    for(std::vector<int> direction : directions){
+        if (isInField(coordinates[0] + direction[0], coordinates[1] + direction[1])){ // necessary?
+
+            // ugly?!
+            if(color == kingB && _field->get(coordinates[0] + direction[0], coordinates[1] + direction[1]) == knightW){
+                return true;
+            }
+            if(color == kingW && _field->get(coordinates[0] + direction[0], coordinates[1] + direction[1]) == knightB){
+                return true;
+            }
+        }
+    }
+    /*
+    kingCheckSides(coordinates[0], coordinates[1], color, 1, 0); // if one of those returns true, return true
+    kingCheckSides(coordinates[0], coordinates[1], color, -1, 0);
+    kingCheckSides(coordinates[0], coordinates[1], color, 0, -1);
+    kingCheckSides(coordinates[0], coordinates[1], color, 0, 1);
+    kingCheckSides(coordinates[0], coordinates[1], color, 1, 1);
+    kingCheckSides(coordinates[0], coordinates[1], color, 1, -1);
+    kingCheckSides(coordinates[0], coordinates[1], color, -1, 1);
+    kingCheckSides(coordinates[0], coordinates[1], color, -1, -1);
+    */
+
+}
+
+bool Chess::inCheckMate(int color)
+{
+
+}
+
 int Chess::getHashDivisor()
 {
     return 12; // max possible value in the position vector (here width and height are 8, but possible figures are 12)
 }
 
-bool Chess::checkSides(int i, int j, int figure, int topDown, int leftRight)
+void Chess::observeSides(int i, int j, int figure, int topDown, int leftRight)  // rename to:traverse sides
 {
     int iNew = i + topDown;
     int jNew = j + leftRight;
@@ -300,12 +303,37 @@ bool Chess::checkSides(int i, int j, int figure, int topDown, int leftRight)
         if(_field->get(iNew, jNew) != 0){
             freeSpace = false;
         }
+
         Position newPosition;
         newPosition.setPositionVector({i, j, figure, iNew, jNew});
         _legal_inputs.push_back(newPosition);
+
         iNew+=topDown;
         jNew+=leftRight;
     }
+}
+
+bool Chess::kingCheckSides(int i, int j, int figure, int topDown, int leftRight)
+{
+    int iNew = i + topDown;
+    int jNew = j + leftRight;
+    bool freeSpace = true;
+    while (isInField(iNew, jNew)){
+        int position = _field->get(iNew, jNew);
+        if (position == 0){
+            continue;
+        }
+        if(figure == kingB && (position == bishopW || position == rookW || position == queenW)){
+            return true;
+        }
+        if(figure == kingW && (position == bishopB || position == rookB || position == queenB)){
+            return true;
+        }
+
+        iNew+=topDown;
+        jNew+=leftRight;
+    }
+    return false;
 }
 
 bool Chess::isInField(int i, int j)

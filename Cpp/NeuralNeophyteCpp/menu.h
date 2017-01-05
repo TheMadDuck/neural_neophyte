@@ -35,7 +35,8 @@
 #ifndef MENU_H
 #define MENU_H
 #include <string>
-#include "games/fourinarow.h"
+//#include "games/fourinarow.h"
+#include "games/game.h"
 #include "learn_algorithms/nn_based/design_1/logisticsgd.h"
 #include "gameflow.h"
 #include "modelhandler.h"
@@ -53,7 +54,7 @@ private:
     int _numberModels;
     int _humanPlayerNumber;
 
-    FourInARow *_gameLogic;
+    Game *_gameLogic;
     GameFlow *_gameFlow;
     Tree* _tree;
 

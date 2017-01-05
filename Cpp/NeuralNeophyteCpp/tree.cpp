@@ -167,12 +167,10 @@ void Tree::addPath(std::vector<int> path, int winOrLoss)
     }
 }
 */
-void Tree::addPathRec(std::vector<Position> path, int winner)
+void Tree::addPathRec(std::vector<Position> path, int winner, double score)
 {
-
-
     _numberPlayed += 1;
-    _numberWon[winner-1] += 1;
+    _numberWon[winner-1] += score;
 
     if (path.empty()){
         return;

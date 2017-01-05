@@ -87,6 +87,13 @@ Field &Field::operator=(Field &&other)
     return *this;
 }
 
+Field::Field(std::vector<std::vector<int> > other)
+{
+    _field = other;
+    _height = other.size();
+    _width = other[0].size();
+}
+
 
 int Field::get(int i, int j)
 {

@@ -252,6 +252,11 @@ int FourInARow::hasAWinner(Field* field, int color, Position position)
     return 0;
 }
 
+int FourInARow::numberPlayers()
+{
+    return 2;
+}
+
 
 
 

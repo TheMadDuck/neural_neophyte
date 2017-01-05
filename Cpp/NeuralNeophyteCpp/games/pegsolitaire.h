@@ -32,22 +32,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    *
  ***************************************************************************/
 
-#ifndef FOURINAROW_H
-#define FOURINAROW_H
+#ifndef PEGSOLITAIRE_H
+#define PEGSOLITAIRE_H
+
+#include "game.h"
 #include <string>
 #include <vector>
-#include <array>
-#include "game.h"
-#include "../data_types/field.h"
-#include "../data_types/position.h"
-
-
-
-class FourInARow : public Game
+class PegSolitaire : public Game
 {
 public:
-    FourInARow();
-    ~FourInARow();
+    PegSolitaire();
+    ~PegSolitaire();
     std::string getSignal() override;
     std::string getName() override;
     int positionVectorSize() override;
@@ -60,8 +55,12 @@ public:
     int numberPlayers() override;
 
 private:
-    std::string Signal = "";
-    //Field* _field;
+    std::string Signal = ""; // define Signal in Game.h ??
+    std::vector<Position> _legal_inputs;
+    Field* _field;
+
+    addDirection(int i, int j);
+    bool isInField(int i, int j);
 };
 
-#endif // FOURINAROW_H
+#endif // PEGSOLITAIRE_H
