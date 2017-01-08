@@ -63,12 +63,14 @@ std::vector<Position> PegSolitaire::getLegalInputs(Field *field)
     _field = field;
     _legal_inputs.clear();
     for(int i = 0; i < field->getHeight(); ++i){
-        for(int j = 0; i < field->getWidth(); ++j){
+        for(int j = 0; j < field->getWidth(); ++j){
             if (field->get(i, j) == 1){
                 addDirection(i, j);
             }
         }
     }
+    Signal = "legal_inputs_initialized";
+    return _legal_inputs;
 }
 
 Field *PegSolitaire::initField(int height, int width)
@@ -82,16 +84,35 @@ Field *PegSolitaire::initField(int height, int width)
                             {3, 3, 3, 1, 1, 1, 3, 3, 3},
                             {3, 3, 3, 1, 1, 1, 3, 3, 3},
                             {3, 3, 3, 1, 1, 1, 3, 3, 3}});
+    Signal = "field_initialized";
+    return field;
 }
 
 void PegSolitaire::setStone(Field *field, int color, Position position)
 {
-
+    field->set(0 ,position[0], position[1]);
+    switch(position[2]){
+    case up: field->set(0, position[0]-1, position[1]);
+        field->set(1, position[0]-2, position[1]);
+        break;
+    case down: field->set(0, position[0]+1, position[1]);
+        field->set(1, position[0]+2, position[1]);
+        break;
+    case left: field->set(0, position[0], position[1]-1);
+        field->set(1, position[0], position[1]-2);
+        break;
+    case right: field->set(0, position[0], position[1]+1);
+        field->set(1, position[0], position[1]+2);
+        break;
+    }
+    Signal = "stone_is_set";
 }
 
 bool PegSolitaire::gameStopped(Field *field, int roundNumber)
 {
+    getLegalInputs(field);
     if(_legal_inputs.empty()){
+        Signal = "game_is_over";
         return true;
     }
     return false;
@@ -99,12 +120,22 @@ bool PegSolitaire::gameStopped(Field *field, int roundNumber)
 
 int PegSolitaire::hasAWinner(Field *field, int color, Position position)
 {
-
+    getLegalInputs(field);
+    if(_legal_inputs.empty()){
+        Signal = "we_have_a_winner";
+        return 1;
+    }
+    return 0;
 }
 
 int PegSolitaire::numberPlayers()
 {
     return 1;
+}
+
+std::vector<double> PegSolitaire::getPlayerScore(Field *field)
+{
+
 }
 
 PegSolitaire::addDirection(int i, int j)
@@ -114,7 +145,7 @@ PegSolitaire::addDirection(int i, int j)
             if(isInField(i+2, j)){
                 if(_field->get(i+2,j) == 0){
                     Position newPosition;
-                    newPosition.setPositionVector({i, j, 0});
+                    newPosition.setPositionVector({i, j, down});
                     _legal_inputs.push_back(newPosition);
                 }
             }
@@ -125,7 +156,7 @@ PegSolitaire::addDirection(int i, int j)
             if(isInField(i-2, j)){
                 if(_field->get(i-2,j) == 0){
                     Position newPosition;
-                    newPosition.setPositionVector({i, j, 0});
+                    newPosition.setPositionVector({i, j, up});
                     _legal_inputs.push_back(newPosition);
                 }
             }
@@ -136,7 +167,7 @@ PegSolitaire::addDirection(int i, int j)
             if(isInField(i, j+2)){
                 if(_field->get(i,j+2) == 0){
                     Position newPosition;
-                    newPosition.setPositionVector({i, j, 0});
+                    newPosition.setPositionVector({i, j, right});
                     _legal_inputs.push_back(newPosition);
                 }
             }
@@ -147,7 +178,7 @@ PegSolitaire::addDirection(int i, int j)
             if(isInField(i, j-2)){
                 if(_field->get(i,j-2) == 0){
                     Position newPosition;
-                    newPosition.setPositionVector({i, j, 0});
+                    newPosition.setPositionVector({i, j, left});
                     _legal_inputs.push_back(newPosition);
                 }
             }
@@ -157,7 +188,8 @@ PegSolitaire::addDirection(int i, int j)
 
 bool PegSolitaire::isInField(int i, int j)
 {
-    if(i >= 0 && i <= 8 && j>= 0 && i <= 8){
+    /*
+    if(i >= 0 && i <= 8 && j>= 0 && j <= 8){
         if(i <= 2 && j <= 2){
             return false;
         }
@@ -170,6 +202,12 @@ bool PegSolitaire::isInField(int i, int j)
         if(i >= 6 && j >= 6){
             return false;
         }
+        return true;
+    }
+    return false;
+    */
+
+    if(i >= 0 && i <= 8 && j>= 0 && j <= 8 && _field->get(i, j) != 3){
         return true;
     }
     return false;

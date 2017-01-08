@@ -108,6 +108,7 @@ void GameFlow::AI_Move()
     }
 
     if (_players[_playerNumber-1] == -1) {
+        //std::cout << "legalMoves.size:" << _legalMoves.size() << std::endl;
         _nextPosition = _legalMoves[_nRd->getRandomInt(0, _legalMoves.size()-1)];
         return;
         //return _legalMoves[_nRd->getRandomInt(0, _legalMoves.size()-1)];
@@ -118,6 +119,7 @@ void GameFlow::AI_Move()
     flatField.push_back(_roundNumber);
 
     if(_players[_playerNumber-1] == -2){
+        std::cout << "new min max step" << std::endl;
         MinMaxPruning minMaxPruning(_gameLogic->getName());
         _nextPosition = minMaxPruning.exploited_mcts(_field, _tree, _classifier, _roundNumber, _playerNumber, _gamePath, 0.2, _nRd, _legalMoves.size());
         return;

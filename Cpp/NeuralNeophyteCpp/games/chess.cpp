@@ -146,6 +146,11 @@ int Chess::numberPlayers()
     return 2;
 }
 
+std::vector<double> Chess::getPlayerScore(Field *field)
+{
+
+}
+
 void Chess::addRookMoves(int i, int j, int color)
 {
     observeSides(i, j, color, 1, 0);

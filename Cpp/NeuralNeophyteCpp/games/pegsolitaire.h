@@ -53,6 +53,7 @@ public:
     bool gameStopped(Field *field, int roundNumber) override;
     int hasAWinner(Field *field, int color, Position position) override;
     int numberPlayers() override;
+    std::vector<double> getPlayerScore(Field *field) override;
 
 private:
     std::string Signal = ""; // define Signal in Game.h ??
@@ -61,6 +62,8 @@ private:
 
     addDirection(int i, int j);
     bool isInField(int i, int j);
+
+    enum directions {up = 1, down = 2, left = 3, right = 4};
 };
 
 #endif // PEGSOLITAIRE_H

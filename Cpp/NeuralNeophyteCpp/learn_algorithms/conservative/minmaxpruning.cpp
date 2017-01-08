@@ -46,7 +46,7 @@ MinMaxPruning::MinMaxPruning(std::string gameName)  // todo if the argument is n
     if(gameName == "chess"){
         _gameLogic = new Chess();
     }
-    if(gameName == "pet_solitaire"){
+    if(gameName == "peg_solitaire"){
         _gameLogic = new PegSolitaire();
     }
 }
@@ -72,7 +72,6 @@ Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, LogisticSgd cla
         //int amountPossibleMoves = _gameLogic->getLegalInputs().size();
         Position move = mcts_tree->getNextMove(amountPossibleMoves, playerNumber);
         Field* fieldCopy = new Field(*field);
-
         GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber, randomProbability, nRd, gamePath);
         std::vector<Position> path;
         if (!move.isRandom()){
@@ -88,6 +87,5 @@ Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, LogisticSgd cla
         }
         delete fieldCopy;
     }
-
     return mcts_tree->getBestMove(playerNumber);
 }

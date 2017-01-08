@@ -257,6 +257,16 @@ int FourInARow::numberPlayers()
     return 2;
 }
 
+std::vector<double> FourInARow::getPlayerScore(Field *field)
+{
+    std::vector<double> playerScore;
+    for(int i = 0; i < numberPlayers(); ++i){
+        playerScore.push_back(0);
+    }
+    std::cout << "not yet implemented" << std::endl;
+    // find winner and replace playerscore with 1;  hasAWinner-code in this function ??
+}
+
 
 
 

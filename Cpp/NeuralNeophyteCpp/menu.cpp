@@ -91,21 +91,23 @@ Menu::Menu()
 
 
     if (_mode == 1){
-        std::cout << ("do you want to be player 1 or player 2?") << std::endl;
+        std::cout << "do you want to be player 1 or player 2?" << std::endl;
+        std::cout << "which player do you want to be? bewteen 1 and " << _gameLogic->numberPlayers() << " (0 for only computer)" << std::endl;
         std::cin >> _humanPlayerNumber;
-        while((_humanPlayerNumber != 1) && (_humanPlayerNumber != 2)){
-            std::cout << ("Press 1 or 2!: ") << std::endl;
+
+        while(_humanPlayerNumber < 0 || _humanPlayerNumber > _gameLogic->numberPlayers()){
+            std::cout << "Press Number from 1 to " << _gameLogic->numberPlayers() << " !: " << std::endl;
             std::cin >> _humanPlayerNumber;
         }
-        if (_humanPlayerNumber == 1){
-            std::vector<int> player {0, _numberModels};
-            SaveList* saveList = new SaveList();
-            _gameFlow->runGameFlow(player,{}, saveList); //TODO: remove saveList
-            delete saveList;
+        std::vector<int> player;
+        for(int i = 0; i < _gameLogic->numberPlayers(); ++i){
+            player.push_back(_numberModels); // here for testing purpose -2 (for mcts)
         }
-        else{
-            _gameFlow->runGameFlow(std::vector<int>{_numberModels, 0});  //here for testing purposes -2 (for mcts)
+        if(_humanPlayerNumber != 0){
+            player[_humanPlayerNumber-1] = 0;
         }
+        _gameFlow->runGameFlow(player);
+
 
     }
 
