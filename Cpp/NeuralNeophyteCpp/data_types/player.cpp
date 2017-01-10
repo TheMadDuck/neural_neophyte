@@ -37,3 +37,18 @@
 Player::Player()
 {
 }
+
+Player::isOver()
+{
+
+}
+
+int Player::getPlayerModel(int playerNumber)
+{
+    return _player[playerNumber]._playerModel;
+}
+
+double Player::getPlayerScore(int playerNumber)
+{
+    return _player[playerNumber]._playerScore;
+}

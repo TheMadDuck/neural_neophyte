@@ -42,6 +42,7 @@
 //#include "games/fourinarow.h"
 #include "games/game.h"
 #include "data_types/field.h"
+#include "data_types/player.h"
 #include "tree.h"
 #include "learn_algorithms/conservative/minmaxpruning.h"
 #include "data_types/savelist.h"
@@ -82,6 +83,7 @@ private:
     std::vector<int> _players;
     std::vector<Position> _legalMoves;
     int _playerNumber;
+    Player player;
 };
 
 #endif // GAMEFLOW_H

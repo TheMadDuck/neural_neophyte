@@ -34,13 +34,37 @@
 
 #ifndef PLAYER_H
 #define PLAYER_H
+#include <vector>
 
+class PlayerInformation; //forward declaration
 class Player
 {
 public:
     Player();
+    isOver();
+    int getPlayerModel(int playerNumber);
+    double getPlayerScore(int playerNumber);
+    getActivePlayer(); // or getNextPlayer();?
+    getActiveModel();
+    nextPlayer();
 private:
+    std::vector<PlayerInformation> _player;
+    int amountPlayers;
+    int activePlayer;
+    bool _gameOver;
+};
 
+class PlayerInformation
+{
+    friend class Player;
+private:
+    int _playerModel;
+    double _playerScore;
+    bool _removed;
+    // team
+    // internal information (e.g. card information in poker)
+    // % of random moves (mistakes)
+    // ...
 };
 
 #endif // PLAYER_H

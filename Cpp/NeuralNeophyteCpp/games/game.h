@@ -53,7 +53,7 @@ public:
     virtual bool gameStopped(Field *field, int roundNumber) =0;
     virtual int hasAWinner(Field *field, int color, Position position) =0;
     virtual int numberPlayers() =0;
-    virtual std::vector<double> getPlayerScore(Field *field) =0; // 0:= player lost. 1:= player won. between 0-1: bad to god. (could replace hasAWinner)
+    virtual std::vector<double> getPlayerScore(Field *field, int color, Position position) =0; // 0:= player lost. 1:= player won. between 0-1: bad to god. (could replace hasAWinner) First entry in array for GameFinishedYet.
 private:
     std::string Signal = "";
     Field* _field;

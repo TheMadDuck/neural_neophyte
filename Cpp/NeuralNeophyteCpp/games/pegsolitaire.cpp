@@ -133,7 +133,7 @@ int PegSolitaire::numberPlayers()
     return 1;
 }
 
-std::vector<double> PegSolitaire::getPlayerScore(Field *field)
+std::vector<double> PegSolitaire::getPlayerScore(Field *field, int color, Position position)
 {
 
 }

@@ -146,7 +146,7 @@ int Chess::numberPlayers()
     return 2;
 }
 
-std::vector<double> Chess::getPlayerScore(Field *field)
+std::vector<double> Chess::getPlayerScore(Field *field, int color, Position position)
 {
 
 }

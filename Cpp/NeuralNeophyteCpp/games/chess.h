@@ -56,7 +56,7 @@ public:
     bool gameStopped(Field *field, int roundNumber) override;
     int hasAWinner(Field *field, int color, Position position) override;
     int numberPlayers() override;
-    std::vector<double> getPlayerScore(Field *field) override;
+    std::vector<double> getPlayerScore(Field *field, int color, Position position) override;
 
     int getHashDivisor();
     void observeSides(int i, int j, int figure, int topDown, int leftRight); // topDown and leftRight are int in range -1, 0, 1

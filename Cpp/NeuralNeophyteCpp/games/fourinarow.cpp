@@ -257,14 +257,101 @@ int FourInARow::numberPlayers()
     return 2;
 }
 
-std::vector<double> FourInARow::getPlayerScore(Field *field)
+std::vector<double> FourInARow::getPlayerScore(Field *field, int color, Position position)
 {
     std::vector<double> playerScore;
-    for(int i = 0; i < numberPlayers(); ++i){
+    for(int i = 0; i <= numberPlayers(); ++i){
         playerScore.push_back(0);
     }
-    std::cout << "not yet implemented" << std::endl;
-    // find winner and replace playerscore with 1;  hasAWinner-code in this function ??
+
+
+    int longestLine = 0;
+    //check depth of the new stone
+    int depth = 0;
+    for (int i = 0; i < field->getHeight(); ++i) {
+        if (field->get(i, position[0]) == 0) {
+            depth += 1;
+        }
+        else {
+            break;
+        }
+    }
+    //column check:
+    for (int i = 0; i < field->getHeight(); ++i) {
+        if (field->get(i,position[0]) == 0) {
+            continue; /*TODO: Testen*/
+        }
+        if (field->get(i,position[0]) == color) {
+            longestLine += 1;
+        }
+        else{
+            break;
+        }
+
+    }
+    if (longestLine >= 4) {
+        Signal = "we_have_a_winner";
+        playerScore[0] = 1; // 0 variable is for gameFinishedYet (make own type?)
+        playerScore[color] = 1;
+        return playerScore;
+    }
+
+    //row check:
+    longestLine = 0;
+    for (int i = 0; i < field->getWidth(); ++i) {
+        if(field->get(depth, i) == color){
+            longestLine += 1;
+        }
+        else {
+            longestLine = 0;
+        }
+        if (longestLine >= 4){
+            Signal = "we_have_a_winner";
+            playerScore[0] = 1;
+            playerScore[color] = 1;
+            return playerScore;
+        }
+    }
+
+    //diagonal check:
+    int longestLineUp = 0;
+    int longestLineDown = 0;
+    int topLeftStart = depth - position[0];
+    int bottomLeftStart = depth + position[0];
+    for (int i = 0; i < field->getWidth(); ++i) {
+        if ((topLeftStart >= 0) && (topLeftStart < field->getHeight())) {
+            if (field->get(topLeftStart, i) == color){
+                longestLineUp += 1;
+            }
+            else{
+                longestLineUp = 0;
+            }
+            if (longestLineUp >= 4){
+                Signal = "we_have_a_winner";
+                playerScore[0] = 1;
+                playerScore[color] = 1;
+                return playerScore;
+            }
+        }
+        topLeftStart += 1;
+
+        if((bottomLeftStart >= 0) && (bottomLeftStart < field->getHeight())){
+            if (field->get(bottomLeftStart, i) == color) {
+                longestLineDown += 1;
+            }
+            else{
+                longestLineDown = 0;
+            }
+            if (longestLineDown >= 4) {
+                Signal = "we_have_a_winner";
+                playerScore[0] = 1;
+                playerScore[1] = 1;
+                return playerScore;
+            }
+        }
+        bottomLeftStart -= 1;
+    }
+    return playerScore;
 }
 
 
