@@ -51,7 +51,8 @@ SaveList* TrainTestValidate::provideGameLists(GameFlow *gameFlow, int numberGame
         int KI_Two = _nRand.nRand(numberModels);
 
         gameFlow->resetGame();
-        std::vector<int> players{KI_One, KI_Two};
+        //std::vector<int> players{KI_One, KI_Two};
+        Player players({KI_One, KI_Two});
         gameFlow->runGameFlow(players, {}, winnersList);
 //        gameFlow->runGameFlow(std::vector<int> {KI_One, KI_Two},{}, winnersTrain); //TODO look for savelist
 

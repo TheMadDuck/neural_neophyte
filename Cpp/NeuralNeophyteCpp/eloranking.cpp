@@ -49,8 +49,9 @@ std::vector<double> EloRanking::turnier(GameFlow *gameFlow, int amountGames, int
         NRandomDistrib nRand;
         int KI_One = nRand.nRand(amountModels);
         int KI_Two = nRand.nRand(amountModels);
+        Player player({KI_One, KI_Two});  //pointer??
         gameFlow->resetGame();
-        gameFlow->runGameFlow({KI_One, KI_Two}); //test
+        gameFlow->runGameFlow(player); //test
         std::vector<double> newRanking = naiveElo(eloRank[KI_One], eloRank[KI_Two], gameFlow->getWinner());
         eloRank[KI_One] = newRanking[0];
         eloRank[KI_Two] = newRanking[1];

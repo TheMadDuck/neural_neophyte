@@ -34,21 +34,114 @@
 
 #include "player.h"
 
-Player::Player()
+Player::Player(int roundNumber)
 {
+    _amountPlayers = 0;
+    _onlyComputerPlayer = true; // same definitions in Player(std::vector)
+    _activePlayer = 0;
+   // std::cout << "was geht 00" << std::endl;
+   // _activePlayer = roundNumber % _amountPlayers;
+   // std::cout << "was geht 01" << std::endl;
 }
 
-Player::isOver()
+Player::Player(std::vector<int> models, int roundNumber)
 {
-
+    _amountPlayers = 0;
+//    _activePlayer = 0;
+    _onlyComputerPlayer = true;
+    //int index = 1;                 // start counting at 0 or 1 ( see nextPlayer() function)
+    for(int model : models){
+        PlayerInformation player;  // pointer??
+        player._playerModel = model;
+        player._playerNumber = _amountPlayers;
+        //index += 1;
+        _players.push_back(player);
+        _amountPlayers += 1;
+        if(model == 0){
+            _onlyComputerPlayer = false;
+        }
+    }
+    _activePlayer = roundNumber % _amountPlayers;
 }
 
-int Player::getPlayerModel(int playerNumber)
+void Player::addPlayer(int model)
 {
-    return _player[playerNumber]._playerModel;
+    if(model == 0){
+        _onlyComputerPlayer = false;
+    }
+    PlayerInformation player;
+    player._playerModel = model;
+    player._playerNumber = _amountPlayers; // if we count players at 0 then this line one up!
+    _players.push_back(player);
+    _amountPlayers += 1;
 }
 
-double Player::getPlayerScore(int playerNumber)
+void Player::changePlayer(int number, int model)
 {
-    return _player[playerNumber]._playerScore;
+    if(model == 0){
+        _onlyComputerPlayer = false;
+    }
+    PlayerInformation player;
+    player._playerModel = model;
+    player._playerNumber = number;
+    _players[number] = player;
+}
+
+bool Player::isOver()
+{
+    std::cout << "not yet implemented" << std::endl;
+}
+
+int Player::amountPlayer()
+{
+    return _amountPlayers;
+}
+
+PlayerInformation Player::getActivePlayer()
+{
+    return _players[_activePlayer];
+}
+
+int Player::getActivePlayerNumber()
+{
+    return _players[_activePlayer]._playerNumber;
+}
+
+int Player::getActiveModel()
+{
+    return _players[_activePlayer]._playerModel;
+}
+
+double Player::getActiveScore()
+{
+    return _players[_activePlayer]._playerScore;
+}
+
+bool Player::onlyComputerPlayer()
+{
+    return _onlyComputerPlayer;
+}
+
+void Player::nextPlayer()
+{
+    _activePlayer+=1;
+    if (_activePlayer >= _amountPlayers){  // start counting at 0 or 1 ???
+        _activePlayer = 0;
+    }
+}
+
+void Player::resetGame()
+{
+    _activePlayer = 0;
+}
+
+
+////////////////////////////////////////////////////////
+/// \brief PlayerInformation::PlayerInformation
+///
+
+PlayerInformation::PlayerInformation()
+{
+    _playerScore = 0;  // add _playerNumber and score?
+    _removed = false;
 }

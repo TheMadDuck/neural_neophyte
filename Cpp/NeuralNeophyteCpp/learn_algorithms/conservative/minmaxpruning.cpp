@@ -74,15 +74,16 @@ Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, LogisticSgd cla
         Field* fieldCopy = new Field(*field);
         GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber, randomProbability, nRd, gamePath);
         std::vector<Position> path;
+        Player player({-1, -1}, roundNumber);
         if (!move.isRandom()){
             std::vector<Position> moveVector = {move};
-            path = tempGameFlow.runGameFlow({-1, -1}, moveVector);
+            path = tempGameFlow.runGameFlow(player, moveVector);
         }
         else{ // play now random
-            path = tempGameFlow.runGameFlow({-1, -1});
+            path = tempGameFlow.runGameFlow(player);
         }
 
-        if(tempGameFlow.getWinner() != 0){
+        if(tempGameFlow.getWinner() != -1){
             tree->addPathRec(path, tempGameFlow.getWinner());
         }
         delete fieldCopy;

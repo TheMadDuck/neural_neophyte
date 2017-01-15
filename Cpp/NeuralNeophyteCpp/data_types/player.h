@@ -34,30 +34,43 @@
 
 #ifndef PLAYER_H
 #define PLAYER_H
+#include <iostream>
 #include <vector>
 
 class PlayerInformation; //forward declaration
 class Player
 {
 public:
-    Player();
-    isOver();
-    int getPlayerModel(int playerNumber);
-    double getPlayerScore(int playerNumber);
-    getActivePlayer(); // or getNextPlayer();?
-    getActiveModel();
-    nextPlayer();
+    Player(int roundNumber = 0);
+    Player(std::vector<int> models, int roundNumber = 0); // vector of scroes?
+    void addPlayer(int model); // necessary ?
+    void changePlayer(int number, int model);
+    bool isOver();
+    int amountPlayer();
+    //int getPlayerModel(int playerNumber);
+    //double getPlayerScore(int playerNumber);
+    PlayerInformation getActivePlayer();
+    int getActivePlayerNumber();
+    int getActiveModel();
+    double getActiveScore();
+    bool onlyComputerPlayer();
+    void nextPlayer();
+    void resetGame();
 private:
-    std::vector<PlayerInformation> _player;
-    int amountPlayers;
-    int activePlayer;
+    std::vector<PlayerInformation> _players;
+    int _amountPlayers;
+    int _activePlayer;
+    bool _onlyComputerPlayer;
     bool _gameOver;
 };
 
 class PlayerInformation
 {
     friend class Player;
+public:
+    PlayerInformation();
 private:
+    int _playerNumber;
     int _playerModel;
     double _playerScore;
     bool _removed;

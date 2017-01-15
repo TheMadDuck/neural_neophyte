@@ -94,7 +94,7 @@ Tree &Tree::operator=(Tree &&other)
 
 int Tree::getNumberWon(int player)
 {
-    return _numberWon[player -1];
+    return _numberWon[player ];
 }
 
 int Tree::getNumberPlayed()
@@ -170,7 +170,7 @@ void Tree::addPath(std::vector<int> path, int winOrLoss)
 void Tree::addPathRec(std::vector<Position> path, int winner, double score)
 {
     _numberPlayed += 1;
-    _numberWon[winner-1] += score;
+    _numberWon[winner] += score;
 
     if (path.empty()){
         return;
@@ -203,7 +203,7 @@ Position Tree::getBestMove(int player)
             win_ratio = 0;
         }
         else {
-            win_ratio = (double)child->_numberWon[player-1] / (double)child->_numberPlayed;
+            win_ratio = (double)child->_numberWon[player] / (double)child->_numberPlayed;
         }
 
         if (win_ratio >= win_probability) {
@@ -228,7 +228,7 @@ Position Tree::getNextMove(int amountPosslibleMoves, int player)
             return nextMove;
         }
         else{
-            next_ratio = ((double)child->_numberWon[player-1] /(double)child->_numberPlayed) + (c * (double)sqrt((double)log(_numberPlayed)/(double)child->_numberPlayed));
+            next_ratio = ((double)child->_numberWon[player] /(double)child->_numberPlayed) + (c * (double)sqrt((double)log(_numberPlayed)/(double)child->_numberPlayed));
             nextMove.setRandomnes(false);
             //std::cout << "Win-Probability: " << next_ratio << " - move: " << child->_move << std::endl;
         }
@@ -244,12 +244,12 @@ Position Tree::getNextMove(int amountPosslibleMoves, int player)
 std::vector<double> Tree::getProbabilities(int player)
 {
     std::vector<double> probabilities;
-    int index = 0;
+    //int index = 0;
     for(Tree* child: _childs){
-        index += 1;
+      //  index += 1;
         double win_ratio = 0;
         if(child->_numberPlayed != 0){
-            win_ratio = (double)child->_numberWon[player-1] / (double)child->_numberPlayed;
+            win_ratio = (double)child->_numberWon[player] / (double)child->_numberPlayed;
         }
 
         probabilities.push_back(win_ratio);

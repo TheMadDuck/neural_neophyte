@@ -99,14 +99,19 @@ Menu::Menu()
             std::cout << "Press Number from 1 to " << _gameLogic->numberPlayers() << " !: " << std::endl;
             std::cin >> _humanPlayerNumber;
         }
-        std::vector<int> player;
+//        std::vector<int> player;
+        Player players;
         for(int i = 0; i < _gameLogic->numberPlayers(); ++i){
-            player.push_back(_numberModels); // here for testing purpose -2 (for mcts)
+            //player.push_back(_numberModels); // here for testing purpose -2 (for mcts)
+            players.addPlayer(_numberModels);
         }
-        if(_humanPlayerNumber != 0){
-            player[_humanPlayerNumber-1] = 0;
+        if(_humanPlayerNumber != 0){ // 0 for only computer
+            //player[_humanPlayerNumber-1] = 0;
+            players.changePlayer(_humanPlayerNumber-1, 0);
         }
-        _gameFlow->runGameFlow(player);
+        std::cout << "debug 0" << std::endl;
+        _gameFlow->runGameFlow(players);
+        std::cout << "debug 1" << std::endl;
 
 
     }

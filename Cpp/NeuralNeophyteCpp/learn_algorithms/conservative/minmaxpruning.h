@@ -44,6 +44,7 @@
 #include "../../n_random_distrib/nrandomdistrib.h"
 #include "../../data_types/field.h"
 #include "../../data_types/position.h"
+#include "../../data_types/player.h"
 
 class MinMaxPruning
 {

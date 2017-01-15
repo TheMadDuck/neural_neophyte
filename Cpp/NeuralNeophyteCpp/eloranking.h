@@ -37,6 +37,7 @@
 
 #include "gameflow.h"
 #include "n_random_distrib/nrandomdistrib.h"
+#include "data_types/player.h"
 #include <vector>
 #include <math.h>
 

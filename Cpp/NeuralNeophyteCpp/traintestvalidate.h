@@ -38,6 +38,7 @@
 #include <array>
 #include "gameflow.h"
 #include "n_random_distrib/nrandomdistrib.h"
+#include "data_types/player.h"
 
 class TrainTestValidate
 {

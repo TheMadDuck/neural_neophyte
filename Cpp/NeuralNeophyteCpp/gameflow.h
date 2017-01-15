@@ -57,7 +57,7 @@ public:
     void move();
     void AI_Move();
     void Human_Move();
-    std::vector<Position> runGameFlow(std::vector<int> players, std::vector<Position> prefixPath = {}, SaveList* saveList = nullptr);
+    std::vector<Position> runGameFlow(Player players, std::vector<Position> prefixPath = {}, SaveList* saveList = nullptr);
     int getWinner();
     void resetGame();
     int addPrefixPath(std::vector<Position> prefixPath);
@@ -80,10 +80,10 @@ private:
     std::mt19937 _rd;
     NRandomDistrib* _nRd;
     Position _nextPosition;
-    std::vector<int> _players;
+    //std::vector<int> _players;
     std::vector<Position> _legalMoves;
-    int _playerNumber;
-    Player player;
+    //int _playerNumber;
+    Player _players;
 };
 
 #endif // GAMEFLOW_H

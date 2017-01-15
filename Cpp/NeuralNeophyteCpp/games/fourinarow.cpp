@@ -150,6 +150,7 @@ bool FourInARow::isLegalMove(Field *field, int playerNumber, Position position)
 */
 void FourInARow::setStone(Field *field, int color, Position position)
 {
+    color += 1; // players start with 0. clear field is marked with 0, too. change that?
     for (int i = 0; i < field->getHeight(); ++i) {
         if(field->get(i,position[0]) != 0){   // replace position[0] with getX()?
             field->set(color, i-1, position[0]);
@@ -171,6 +172,7 @@ bool FourInARow::gameStopped(Field *field, int roundNumber)
 
 int FourInARow::hasAWinner(Field* field, int color, Position position)
 {
+    color += 1;
     int longestLine = 0;
     //check depth of the new stone
     int depth = 0;
@@ -197,7 +199,7 @@ int FourInARow::hasAWinner(Field* field, int color, Position position)
     }
     if (longestLine >= 4) {
         Signal = "we_have_a_winner";
-        return color;
+        return color -1;
     }
 
     //row check:
@@ -211,7 +213,7 @@ int FourInARow::hasAWinner(Field* field, int color, Position position)
         }
         if (longestLine >= 4){
             Signal = "we_have_a_winner";
-            return color;
+            return color -1;
         }
     }
 
@@ -230,7 +232,7 @@ int FourInARow::hasAWinner(Field* field, int color, Position position)
             }
             if (longestLineUp >= 4){
                 Signal = "we_have_a_winner";
-                return color;
+                return color -1;
             }
         }
         topLeftStart += 1;
@@ -244,12 +246,12 @@ int FourInARow::hasAWinner(Field* field, int color, Position position)
             }
             if (longestLineDown >= 4) {
                 Signal = "we_have_a_winner";
-                return color;
+                return color-1;
             }
         }
         bottomLeftStart -= 1;
     }
-    return 0;
+    return -1;
 }
 
 int FourInARow::numberPlayers()
@@ -259,6 +261,7 @@ int FourInARow::numberPlayers()
 
 std::vector<double> FourInARow::getPlayerScore(Field *field, int color, Position position)
 {
+    color += 1;
     std::vector<double> playerScore;
     for(int i = 0; i <= numberPlayers(); ++i){
         playerScore.push_back(0);
@@ -292,7 +295,7 @@ std::vector<double> FourInARow::getPlayerScore(Field *field, int color, Position
     if (longestLine >= 4) {
         Signal = "we_have_a_winner";
         playerScore[0] = 1; // 0 variable is for gameFinishedYet (make own type?)
-        playerScore[color] = 1;
+        playerScore[color-1] = 1;
         return playerScore;
     }
 
@@ -308,7 +311,7 @@ std::vector<double> FourInARow::getPlayerScore(Field *field, int color, Position
         if (longestLine >= 4){
             Signal = "we_have_a_winner";
             playerScore[0] = 1;
-            playerScore[color] = 1;
+            playerScore[color-1] = 1;
             return playerScore;
         }
     }
@@ -328,8 +331,8 @@ std::vector<double> FourInARow::getPlayerScore(Field *field, int color, Position
             }
             if (longestLineUp >= 4){
                 Signal = "we_have_a_winner";
-                playerScore[0] = 1;
-                playerScore[color] = 1;
+                //playerScore[0] = 1;
+                playerScore[color-1] = 1;
                 return playerScore;
             }
         }
@@ -344,8 +347,9 @@ std::vector<double> FourInARow::getPlayerScore(Field *field, int color, Position
             }
             if (longestLineDown >= 4) {
                 Signal = "we_have_a_winner";
-                playerScore[0] = 1;
-                playerScore[1] = 1;
+                //playerScore[0] = 1;
+                //playerScore[1] = 1;
+                playerScore[color -1] = 1;
                 return playerScore;
             }
         }
