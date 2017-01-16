@@ -263,7 +263,7 @@ std::vector<double> FourInARow::getPlayerScore(Field *field, int color, Position
 {
     color += 1;
     std::vector<double> playerScore;
-    for(int i = 0; i <= numberPlayers(); ++i){
+    for(int i = 0; i < numberPlayers(); ++i){
         playerScore.push_back(0);
     }
 
@@ -294,8 +294,8 @@ std::vector<double> FourInARow::getPlayerScore(Field *field, int color, Position
     }
     if (longestLine >= 4) {
         Signal = "we_have_a_winner";
-        playerScore[0] = 1; // 0 variable is for gameFinishedYet (make own type?)
-        playerScore[color-1] = 1;
+        //playerScore[0] = 1;
+        playerScore[color-1] = 1; // 0 variable is for gameFinishedYet (make own type?)
         return playerScore;
     }
 
@@ -310,7 +310,7 @@ std::vector<double> FourInARow::getPlayerScore(Field *field, int color, Position
         }
         if (longestLine >= 4){
             Signal = "we_have_a_winner";
-            playerScore[0] = 1;
+        //    playerScore[0] = 1;
             playerScore[color-1] = 1;
             return playerScore;
         }

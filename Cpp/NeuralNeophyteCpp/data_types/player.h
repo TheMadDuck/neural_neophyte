@@ -43,8 +43,10 @@ class Player
 public:
     Player(int roundNumber = 0);
     Player(std::vector<int> models, int roundNumber = 0); // vector of scroes?
+    void setScore(std::vector<double> score);
     void addPlayer(int model); // necessary ?
     void changePlayer(int number, int model);
+    int getWinner();
     bool isOver();
     int amountPlayer();
     //int getPlayerModel(int playerNumber);

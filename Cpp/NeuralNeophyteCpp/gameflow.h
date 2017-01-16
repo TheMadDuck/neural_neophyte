@@ -39,7 +39,6 @@
 #include <chrono>
 //#include <algorithm>
 #include "learn_algorithms/nn_based/design_1/logisticsgd.h" //TODO: here and in next line realy explizit includes or just interfaces??
-//#include "games/fourinarow.h"
 #include "games/game.h"
 #include "data_types/field.h"
 #include "data_types/player.h"
@@ -70,19 +69,18 @@ private:
     //SaveList* saveList; // check this (realy a pointer?)
     std::vector<Position> _gamePath;
     LogisticSgd _classifier;
-    //FourInARow *_gameLogic;
     Game *_gameLogic;
     Field *_field;
     int _roundNumber;
     float _amountRandom;
     Tree *_tree;
-    int _winner;
+    std::vector<double> _winner;
+    //int _winner;
     std::mt19937 _rd;
     NRandomDistrib* _nRd;
     Position _nextPosition;
     //std::vector<int> _players;
     std::vector<Position> _legalMoves;
-    //int _playerNumber;
     Player _players;
 };
 

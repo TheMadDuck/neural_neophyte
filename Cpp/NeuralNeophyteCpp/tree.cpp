@@ -244,9 +244,7 @@ Position Tree::getNextMove(int amountPosslibleMoves, int player)
 std::vector<double> Tree::getProbabilities(int player)
 {
     std::vector<double> probabilities;
-    //int index = 0;
     for(Tree* child: _childs){
-      //  index += 1;
         double win_ratio = 0;
         if(child->_numberPlayed != 0){
             win_ratio = (double)child->_numberWon[player] / (double)child->_numberPlayed;
@@ -263,6 +261,7 @@ std::vector<double> Tree::getProbabilities(int player)
 
 void Tree::mergeTrees(Tree)
 {
+    std::cout << "not yet implemented" << std::endl;
     return;
 }
 

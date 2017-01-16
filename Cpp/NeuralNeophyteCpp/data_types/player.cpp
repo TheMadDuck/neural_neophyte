@@ -34,27 +34,25 @@
 
 #include "player.h"
 
+/*
+ * Handels the information about the player (KI-Model, playersNumber, players internal
+ * information (cards in his hand etc). Also the class returns who is active in the moment
+ */
 Player::Player(int roundNumber)
 {
     _amountPlayers = 0;
     _onlyComputerPlayer = true; // same definitions in Player(std::vector)
     _activePlayer = 0;
-   // std::cout << "was geht 00" << std::endl;
-   // _activePlayer = roundNumber % _amountPlayers;
-   // std::cout << "was geht 01" << std::endl;
 }
 
 Player::Player(std::vector<int> models, int roundNumber)
 {
     _amountPlayers = 0;
-//    _activePlayer = 0;
     _onlyComputerPlayer = true;
-    //int index = 1;                 // start counting at 0 or 1 ( see nextPlayer() function)
     for(int model : models){
         PlayerInformation player;  // pointer??
         player._playerModel = model;
         player._playerNumber = _amountPlayers;
-        //index += 1;
         _players.push_back(player);
         _amountPlayers += 1;
         if(model == 0){
@@ -64,6 +62,19 @@ Player::Player(std::vector<int> models, int roundNumber)
     _activePlayer = roundNumber % _amountPlayers;
 }
 
+void Player::setScore(std::vector<double> score)
+{
+    if(score.size() != _players.size()){
+        std::cout << "ERROR ERROR ERROR !!!" << std::endl;
+    }
+    // make a playerScore list in Player(not PlayerInformation). so this function has only to replace that score-vector!!!
+    int index = 0;
+    for(double playerScore : score){
+        _players[index]._playerScore = playerScore;
+        index += 1;
+    }
+}
+
 void Player::addPlayer(int model)
 {
     if(model == 0){
@@ -71,7 +82,7 @@ void Player::addPlayer(int model)
     }
     PlayerInformation player;
     player._playerModel = model;
-    player._playerNumber = _amountPlayers; // if we count players at 0 then this line one up!
+    player._playerNumber = _amountPlayers;
     _players.push_back(player);
     _amountPlayers += 1;
 }
@@ -85,6 +96,16 @@ void Player::changePlayer(int number, int model)
     player._playerModel = model;
     player._playerNumber = number;
     _players[number] = player;
+}
+
+int Player::getWinner()
+{
+    for(PlayerInformation player: _players){
+        if(player._playerScore == 1){
+            return player._playerNumber;
+        }
+    }
+    return -1;
 }
 
 bool Player::isOver()
@@ -125,7 +146,7 @@ bool Player::onlyComputerPlayer()
 void Player::nextPlayer()
 {
     _activePlayer+=1;
-    if (_activePlayer >= _amountPlayers){  // start counting at 0 or 1 ???
+    if (_activePlayer >= _amountPlayers){
         _activePlayer = 0;
     }
 }

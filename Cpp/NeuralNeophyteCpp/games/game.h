@@ -51,7 +51,7 @@ public:
     //virtual bool isLegalMove(Field *field, int playerNumber, Position position) =0;
     virtual void setStone(Field *field, int color, Position position) =0;
     virtual bool gameStopped(Field *field, int roundNumber) =0;
-    virtual int hasAWinner(Field *field, int color, Position position) =0;
+    virtual int hasAWinner(Field *field, int color, Position position) =0; // make parameter const?!
     virtual int numberPlayers() =0;
     virtual std::vector<double> getPlayerScore(Field *field, int color, Position position) =0; // 0:= player lost. 1:= player won. between 0-1: bad to god. (could replace hasAWinner) First entry in array for GameFinishedYet.
 private:
