@@ -46,7 +46,8 @@ public:
     void setScore(std::vector<double> score);
     void addPlayer(int model); // necessary ?
     void changePlayer(int number, int model);
-    int getWinner();
+    int getWinnerNumber();
+    double getWinnerScore();
     bool isOver();
     int amountPlayer();
     //int getPlayerModel(int playerNumber);
@@ -64,6 +65,7 @@ private:
     int _activePlayer;
     bool _onlyComputerPlayer;
     bool _gameOver;
+    PlayerInformation* _winner;
 };
 
 class PlayerInformation
@@ -74,7 +76,7 @@ public:
 private:
     int _playerNumber;
     int _playerModel;
-    double _playerScore;
+    double _playerScore;  //rename in _playerFitnes?
     bool _removed;
     // team
     // internal information (e.g. card information in poker)

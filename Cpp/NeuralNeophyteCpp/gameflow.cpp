@@ -56,7 +56,7 @@ GameFlow::~GameFlow()
 
 void GameFlow::move()
 {
-    if (_players.getActiveModel() == 0){
+    if (_players->getActiveModel() == 0){
         Human_Move();
         //if (std::find(_legalMoves.begin(), _legalMoves.end(), _nextPosition) != _legalMoves.end()){ // already tested in human_move, but nice algo
         //}
@@ -75,7 +75,7 @@ void GameFlow::move()
             break;
         }
 
-        if(_players.getActiveModel() == 0){
+        if(_players->getActiveModel() == 0){
             std::cout << "this move is not legal, please try again!!" << std::endl;
             Human_Move();
         }
@@ -98,26 +98,26 @@ void GameFlow::AI_Move()
         //return _legalMoves[_nRd->getRandomInt(0, legnnalMoves.size()-1)];
     }
 
-    if(_players.getActiveModel() == -1){
+    if(_players->getActiveModel() == -1){
         _nextPosition = _legalMoves[_nRd->getRandomInt(0, _legalMoves.size()-1)];
         return;
         //return _legalMoves[_nRd->getRandomInt(0, _legalMoves.size()-1)];
     }
 
     std::vector<int> flatField = _field->flatten();
-    flatField.push_back(_players.getActivePlayerNumber());
+    flatField.push_back(_players->getActivePlayerNumber());
     flatField.push_back(_roundNumber);
 
-    if(_players.getActiveModel() == -2){
+    if(_players->getActiveModel() == -2){
         std::cout << "new min max step" << std::endl;
         MinMaxPruning minMaxPruning(_gameLogic->getName());
-        _nextPosition = minMaxPruning.exploited_mcts(_field, _tree, _classifier, _roundNumber, _players.getActivePlayerNumber(), _gamePath, 0.2, _nRd, _legalMoves.size());
+        _nextPosition = minMaxPruning.exploited_mcts(_field, _tree, _classifier, _roundNumber, _players->getActivePlayerNumber(), _gamePath, 0.2, _nRd, _legalMoves.size());
         return;
         //return minMaxPruning.exploited_mcts(_field, _tree, _classifier, _players, _roundNumber, _playerNumber, _gamePath, 0.2, _nRd);
     }
 
-    if(_players.getActiveModel() == 1){
-        _nextPosition = _classifier.predict(flatField, _players.getActiveModel()-1)[0];   /// TEST! really -1 or just getActiveNumber?
+    if(_players->getActiveModel() == 1){
+        _nextPosition = _classifier.predict(flatField, _players->getActiveModel()-1)[0];   /// TEST! really -1 or just getActiveNumber?
         return;
     }
 }
@@ -153,7 +153,7 @@ void GameFlow::Human_Move()
 
 
 // 0= human; negative= conservative-AI-Models[random, mcts..]; positive= NN-AI-Models
-std::vector<Position> GameFlow::runGameFlow(Player players, std::vector<Position> prefixPath, SaveList *saveList)
+std::vector<Position> GameFlow::runGameFlow(Player *players, std::vector<Position> prefixPath, SaveList *saveList)
 {
     _players = players;
 
@@ -179,32 +179,32 @@ std::vector<Position> GameFlow::runGameFlow(Player players, std::vector<Position
         }
         move();
         if(saveList){
-            saveList->savePositions(*_field, _players.getActivePlayerNumber(), _roundNumber, _nextPosition, false); //reference to _field ??
+            saveList->savePositions(*_field, _players->getActivePlayerNumber(), _roundNumber, _nextPosition, false); //reference to _field ??
         }
         _gamePath.push_back(_nextPosition);
 
-        _gameLogic->setStone(_field, _players.getActivePlayerNumber(), _nextPosition);
+        _gameLogic->setStone(_field, _players->getActivePlayerNumber(), _nextPosition);
         if (_gameLogic->getSignal() != "stone_is_set") {
             std::cout << "ERROR: Stone is not saved" << std::endl;
         }
-        if(!_players.onlyComputerPlayer()){// in Human_Move?
+        if(!_players->onlyComputerPlayer()){// in Human_Move?
             std::cout << "Last Move: " << std::endl;
             _nextPosition.printPosition();
             std::cout << "\n";
             _field->showField();
         }
 //        _winner = _gameLogic->hasAWinner(_field, _players.getActivePlayerNumber(), _nextPosition);
-        _players.setScore(_gameLogic->getPlayerScore(_field, _players.getActivePlayerNumber(), _nextPosition));
+        _players->setScore(_gameLogic->getPlayerScore(_field, _players->getActivePlayerNumber(), _nextPosition));
         if (_gameLogic->getSignal() == "we_have_a_winner") {
-            if (_players.getWinner() == -1) {
+            if (_players->getWinnerNumber() == -1) {
                 std::cout << "ERROR: we could not determine who won!" << std::endl;
             }
-            if(!_players.onlyComputerPlayer()){
-                std::cout << "\n" << "The winner is: Player " << _players.getWinner() +1 << std::endl;
+            if(!_players->onlyComputerPlayer()){
+                std::cout << "\n" << "The winner is: Player " << _players->getWinnerNumber() +1 << std::endl;
             }
             return _gamePath;
         }
-        _players.nextPlayer();
+        _players->nextPlayer();
         _roundNumber += 1;
         _gameLogic->gameStopped(_field, _roundNumber);
         if(_gameLogic->getSignal() == "game_is_over"){
@@ -217,7 +217,7 @@ std::vector<Position> GameFlow::runGameFlow(Player players, std::vector<Position
 int GameFlow::getWinner()
 {
 //    return _winner;
-    _players.getWinner();
+    _players->getWinnerNumber();
 }
 
 void GameFlow::resetGame()
@@ -226,7 +226,7 @@ void GameFlow::resetGame()
     _roundNumber = 0;
     //_winner = -1;
     _gamePath = {};
-    _players.resetGame();
+    _players->resetGame();
 }
 
 int GameFlow::addPrefixPath(std::vector<Position> prefixPath)
@@ -240,15 +240,15 @@ int GameFlow::addPrefixPath(std::vector<Position> prefixPath)
 
         _nextPosition = prefixPath[pathPosition];
 
-        _gameLogic->setStone(_field, _players.getActivePlayerNumber(), _nextPosition);
+        _gameLogic->setStone(_field, _players->getActivePlayerNumber(), _nextPosition);
         _gamePath.push_back(_nextPosition);
         if(_gameLogic->getSignal() != "stone_is_set"){
             std::cout << "ERROR: Stone is not saved" << std::endl;
         }
         //_winner = _gameLogic->hasAWinner(_field, _players.getActivePlayerNumber(), _nextPosition);
-        _players.setScore(_gameLogic->getPlayerScore(_field, _players.getActivePlayerNumber(), _nextPosition));
+        _players->setScore(_gameLogic->getPlayerScore(_field, _players->getActivePlayerNumber(), _nextPosition));
         if(_gameLogic->getSignal() == "we_have_a_winner"){
-            if(_players.getWinner() == -1){
+            if(_players->getWinnerNumber() == -1){
                 std::cout << "ERROR: We could not determine who won!" << std::endl;
             }
             return getWinner();
@@ -257,7 +257,7 @@ int GameFlow::addPrefixPath(std::vector<Position> prefixPath)
         if (_gameLogic->getSignal() == "game_is_over"){
             return getWinner();
         }
-        _players.nextPlayer();
+        _players->nextPlayer();
         _roundNumber += 1;
         pathPosition += 1;
     }

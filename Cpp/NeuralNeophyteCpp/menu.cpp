@@ -100,14 +100,14 @@ Menu::Menu()
             std::cin >> _humanPlayerNumber;
         }
 //        std::vector<int> player;
-        Player players;
+        Player* players = new Player();
         for(int i = 0; i < _gameLogic->numberPlayers(); ++i){
             //player.push_back(_numberModels); // here for testing purpose -2 (for mcts)
-            players.addPlayer(_numberModels);
+            players->addPlayer(_numberModels);
         }
         if(_humanPlayerNumber != 0){ // 0 for only computer
             //player[_humanPlayerNumber-1] = 0;
-            players.changePlayer(_humanPlayerNumber-1, 0);
+            players->changePlayer(_humanPlayerNumber-1, 0);
         }
         std::cout << "debug 0" << std::endl;
         _gameFlow->runGameFlow(players);

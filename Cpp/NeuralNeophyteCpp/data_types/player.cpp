@@ -40,6 +40,7 @@
  */
 Player::Player(int roundNumber)
 {
+    _gameOver = false;
     _amountPlayers = 0;
     _onlyComputerPlayer = true; // same definitions in Player(std::vector)
     _activePlayer = 0;
@@ -47,12 +48,14 @@ Player::Player(int roundNumber)
 
 Player::Player(std::vector<int> models, int roundNumber)
 {
+    _gameOver = false;
     _amountPlayers = 0;
     _onlyComputerPlayer = true;
     for(int model : models){
         PlayerInformation player;  // pointer??
         player._playerModel = model;
         player._playerNumber = _amountPlayers;
+        player._playerScore = 0;
         _players.push_back(player);
         _amountPlayers += 1;
         if(model == 0){
@@ -83,6 +86,7 @@ void Player::addPlayer(int model)
     PlayerInformation player;
     player._playerModel = model;
     player._playerNumber = _amountPlayers;
+    player._playerScore = 0;
     _players.push_back(player);
     _amountPlayers += 1;
 }
@@ -95,17 +99,33 @@ void Player::changePlayer(int number, int model)
     PlayerInformation player;
     player._playerModel = model;
     player._playerNumber = number;
+    player._playerScore = 0;
     _players[number] = player;
 }
 
-int Player::getWinner()
+int Player::getWinnerNumber() // return tuple or PlayerInformation?
 {
     for(PlayerInformation player: _players){
-        if(player._playerScore == 1){
-            return player._playerNumber;
+        //std::cout << "playerScore: " << player._playerScore << std::endl;
+        if(player._playerScore >= 1){     // do we always have a winner if score >= 1?
+        //    std::cout << "#########" << std::endl;
+            _winner = &player;            // check reference handling
+            _gameOver = true;
+//            std::cout << "we have a winner" << std::endl;
+            return player._playerNumber;	//only return playerNumber? what about score??
         }
     }
     return -1;
+}
+
+double Player::getWinnerScore()
+{
+    if (_gameOver){
+        return _winner->_playerScore;
+    }
+    else{
+        std::cout << " game not finished! Assert this!" << std::endl;
+    }
 }
 
 bool Player::isOver()
@@ -153,7 +173,11 @@ void Player::nextPlayer()
 
 void Player::resetGame()
 {
+    _gameOver = false;  // test this?
     _activePlayer = 0;
+    for(PlayerInformation player : _players){
+        player._playerScore = 0;
+    }
 }
 
 
