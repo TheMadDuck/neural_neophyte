@@ -59,10 +59,16 @@ void SaveList::savePositions(Field field, int color, int roundNumber, Position p
 
 std::vector<std::vector<int> > SaveList::getField(int player)
 {
-
+//    return _
 }
 
 std::vector<int> SaveList::getPositions(int player)
 {
 
+}
+
+void SaveList::printProgress()
+{
+//	for ()
+    std::cout << "not yet implemented (saveList.cpp)" << std::endl;
 }

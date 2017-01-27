@@ -45,7 +45,7 @@ ClassTests::ClassTests()
 bool ClassTests::t_tree()
 {
     bool t_test = true;
-    Tree* tree = new Tree();
+    Tree* tree = new Tree(2);
     std::vector<int> path = {0, 3, 14, 9, 17};
     std::vector<int> path2 = {0, 3, 66, 6, 6};
     std::vector<int> path3 = {32, 212, 15, 221, 74, 23, 0, 2};

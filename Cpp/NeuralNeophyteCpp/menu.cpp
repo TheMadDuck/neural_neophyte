@@ -69,7 +69,7 @@ Menu::Menu()
     }
 
     //_gameLogic = new FourInARow();
-    _tree = new Tree();
+    _tree = new Tree(_gameLogic->numberPlayers());
     _gameFlow = new GameFlow(_classifier, _gameLogic, nullptr, _tree, 0, 0.15, &nRd); //do we really want 0.15 randomnes?[test this]
     _gameName = _gameLogic->getName();
     _numberModels = _modelHandler.loadBestModel(_classifier, _gameName);
@@ -109,8 +109,21 @@ Menu::Menu()
             //player[_humanPlayerNumber-1] = 0;
             players->changePlayer(_humanPlayerNumber-1, 0);
         }
+        //return;
         std::cout << "debug 0" << std::endl;
-        _gameFlow->runGameFlow(players);
+        SaveList* saveList = new SaveList();
+        std::vector<Position> a = _gameFlow->runGameFlow(players, {}, saveList);
+        saveList->printProgress();
+
+        for (Position x: a){
+            for(int y : x.getPositionVector()){
+                std::cout << y << " ";
+            }
+            std::cout << std::endl;
+        }
+
+//        _gameFlow->runGameFlow(players);
+        std::cout << "player " << players->getWinnerNumber() << " won with a score of " << players->getWinnerScore() << std::endl;
         std::cout << "debug 1" << std::endl;
 
 
@@ -120,7 +133,7 @@ Menu::Menu()
         TrainTestValidate gameTTV;
         std::array<SaveList*, 3> TTV_Data = gameTTV.run(_gameFlow, 400, 100, 100, _numberModels);
         std::string bestModelPath = "./best_models" + _gameName + "best_model_" + std::to_string(_numberModels) + ".pkl";
-        _classifier.fit(TTV_Data);
+        _classifier->learn(TTV_Data);
     }
 
     if (_mode == 3){

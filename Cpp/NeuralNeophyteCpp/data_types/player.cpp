@@ -38,12 +38,13 @@
  * Handels the information about the player (KI-Model, playersNumber, players internal
  * information (cards in his hand etc). Also the class returns who is active in the moment
  */
-Player::Player(int roundNumber)
+Player::Player()
 {
     _gameOver = false;
     _amountPlayers = 0;
     _onlyComputerPlayer = true; // same definitions in Player(std::vector)
     _activePlayer = 0;
+    //_activePlayer = roundNumber % _amountPlayers;
 }
 
 Player::Player(std::vector<int> models, int roundNumber)
@@ -67,6 +68,7 @@ Player::Player(std::vector<int> models, int roundNumber)
 
 void Player::setScore(std::vector<double> score)
 {
+    //std::cout << "score.size(): " << score.size() << " _player.size(): " << _players.size() << std::endl;
     if(score.size() != _players.size()){
         std::cout << "ERROR ERROR ERROR !!!" << std::endl;
     }
@@ -91,6 +93,11 @@ void Player::addPlayer(int model)
     _amountPlayers += 1;
 }
 
+void Player::setActivePlayerByRoundNumber(int roundNumber)
+{
+    _activePlayer = roundNumber % _amountPlayers;
+}
+
 void Player::changePlayer(int number, int model)
 {
     if(model == 0){
@@ -106,12 +113,9 @@ void Player::changePlayer(int number, int model)
 int Player::getWinnerNumber() // return tuple or PlayerInformation?
 {
     for(PlayerInformation player: _players){
-        //std::cout << "playerScore: " << player._playerScore << std::endl;
         if(player._playerScore >= 1){     // do we always have a winner if score >= 1?
-        //    std::cout << "#########" << std::endl;
             _winner = &player;            // check reference handling
             _gameOver = true;
-//            std::cout << "we have a winner" << std::endl;
             return player._playerNumber;	//only return playerNumber? what about score??
         }
     }
@@ -121,6 +125,7 @@ int Player::getWinnerNumber() // return tuple or PlayerInformation?
 double Player::getWinnerScore()
 {
     if (_gameOver){
+        //std::cout << "winner Score: " << _winner->_playerScore << std::endl;
         return _winner->_playerScore;
     }
     else{

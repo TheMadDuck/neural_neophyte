@@ -46,10 +46,11 @@ public:
     void savePositions(Field field, int color, int roundNumber, Position position, bool transposed);
     std::vector<std::vector<int>> getField(int player);
     std::vector<int> getPositions(int player);
+    void printProgress();
     int _test;
 
 private:
-    std::vector<std::vector<int>> _playerOneFields;
+    std::vector<std::vector<int>> _playerOneFields; // add vector of players (with playerOne/Two fields
     std::vector<Position> _playerOnePositions;
 
     std::vector<std::vector<int>> _playerTwoFields;

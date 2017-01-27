@@ -37,14 +37,15 @@
 #include <string>
 #include <iostream>
 #include <sys/stat.h>
-#include "learn_algorithms/nn_based/design_1/logisticsgd.h"
+//#include "learn_algorithms/nn_based/design_1/logisticsgd.h"
+#include "learn_algorithms/classifier.h"
 
 class ModelHandler
 {
 public:
     ModelHandler();
     std::vector<std::string> folderHandler(std::string gameName);
-    int loadBestModel(LogisticSgd classifier, std::string gameName); //TODO: see the todo in gameFlow.h
+    int loadBestModel(Classifier* classifier, std::string gameName); //TODO: see the todo in gameFlow.h
 };
 
 #endif // MODELHANDLER_H

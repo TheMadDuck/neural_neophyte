@@ -135,7 +135,19 @@ int PegSolitaire::numberPlayers()
 
 std::vector<double> PegSolitaire::getPlayerScore(Field *field, int color, Position position)
 {
-
+    std::vector<double> fitnessVector;
+    double fitness = 0;
+    for(int i = 0; i < field->getHeight(); ++i){
+        for(int j = 0; j < field->getWidth(); ++j){
+            if (field->get(i, j) == 0){
+                fitness += 1;
+            }
+        }
+    }
+//    std::cout << " should try to norm the fitness" << std::endl;
+    fitness /= 45; //realy norm fitness between 0-1 ?
+    fitnessVector.push_back(fitness);
+    return fitnessVector;
 }
 
 PegSolitaire::addDirection(int i, int j)

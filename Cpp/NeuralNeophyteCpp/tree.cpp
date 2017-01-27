@@ -42,11 +42,15 @@ Tree::Tree()
     _move = -1, _depth = 0, _numberWon = 0, _numberPlayed = 0, _childs = {};
 }
 */
-Tree::Tree(int depth, int numberWon, int numberPlayed, std::vector<Tree *> childs)
-    :_depth(depth), _numberWon(numberWon), _numberPlayed(numberPlayed), _childs(childs)
+
+Tree::Tree(int amountPlayer, int depth, std::vector<double> numberWon, int numberPlayed, std::vector<Tree *> childs)
+    :_amountPlayer(amountPlayer), _depth(depth), _numberWon(numberWon), _numberPlayed(numberPlayed), _childs(childs)
 {
-    _numberWon = {0, 0};  // why?
+    for(int i = 0; i < amountPlayer; ++i){
+       _numberWon.push_back(0);  // why?
+    }
 }
+
 
 Tree::~Tree()
 {
@@ -92,7 +96,7 @@ Tree &Tree::operator=(Tree &&other)
     return *this;
 }
 
-int Tree::getNumberWon(int player)
+double Tree::getNumberWon(int player)
 {
     return _numberWon[player ];
 }
@@ -183,7 +187,7 @@ void Tree::addPathRec(std::vector<Position> path, int winner, double score)
             return;
         }
     }
-    Tree* newChild = new Tree();
+    Tree* newChild = new Tree(_amountPlayer);
     newChild->_move = path[0];
     newChild->_depth = _depth + 1;
     _childs.push_back(newChild);
@@ -318,7 +322,7 @@ bool Tree::Test()
     int player1 = 1;
     int player2 = 2;
 
-    Tree* tree = new Tree(); // test as obj and test as pointer.
+    Tree* tree = new Tree(2); // test as obj and test as pointer.
     /*tree->addPathRec(path, player2);
     tree->addPathRec(path2, player1);
     tree->addPathRec(path3, player2);

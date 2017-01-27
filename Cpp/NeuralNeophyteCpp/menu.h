@@ -37,7 +37,9 @@
 #include <string>
 //#include "games/fourinarow.h"
 #include "games/game.h"
-#include "learn_algorithms/nn_based/design_1/logisticsgd.h"
+//#include "learn_algorithms/nn_based/design_1/logisticsgd.h"
+//#include "learn_algorithms/nn_based/design_2b/neuralnetwork.h"
+#include "learn_algorithms/classifier.h"
 #include "gameflow.h"
 #include "modelhandler.h"
 #include "traintestvalidate.h"
@@ -59,7 +61,8 @@ private:
     Tree* _tree;
 
     ModelHandler _modelHandler; //pointer?
-    LogisticSgd _classifier; //pointer?
+    //LogisticSgd _classifier; //pointer?
+    Classifier* _classifier; //pointer?
 };
 
 #endif // MENU_H

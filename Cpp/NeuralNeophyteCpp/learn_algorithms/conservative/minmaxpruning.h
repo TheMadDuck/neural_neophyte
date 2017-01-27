@@ -41,6 +41,7 @@
 //#include "../../games/fourinarow.h"
 #include "../../games/game.h"
 #include "../nn_based/design_1/logisticsgd.h"
+#include "../nn_based/design_2b/neuralnetwork.h"
 #include "../../n_random_distrib/nrandomdistrib.h"
 #include "../../data_types/field.h"
 #include "../../data_types/position.h"
@@ -53,7 +54,7 @@ public:
     ~MinMaxPruning();
     Position exploited_mcts(Field *field, //TODO: field und tree wirklich pointer?
                        Tree *tree,
-                       LogisticSgd classifier,
+                       Classifier* classifier,
                        int roundNumber,
                        int playerNumber,
                        std::vector<Position> gamePath,

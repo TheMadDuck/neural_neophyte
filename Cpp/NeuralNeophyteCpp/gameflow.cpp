@@ -37,7 +37,7 @@
 #include <assert.h>
 //#include "Tests/randomtest.h"
 
-GameFlow::GameFlow(LogisticSgd classifier, Game *gameLogic, Field *field, Tree *tree, int roundNumber, int amountRandom, NRandomDistrib *nRd, std::vector<Position> gamePath)
+GameFlow::GameFlow(Classifier* classifier, Game *gameLogic, Field *field, Tree *tree, int roundNumber, int amountRandom, NRandomDistrib *nRd, std::vector<Position> gamePath)
     :_classifier(classifier), _gameLogic(gameLogic), _field(field), _roundNumber(roundNumber), _amountRandom(amountRandom), _tree(tree), _nRd(nRd), _gamePath(gamePath)
 {
     //_rd.seed(std::time(NULL));
@@ -117,7 +117,26 @@ void GameFlow::AI_Move()
     }
 
     if(_players->getActiveModel() == 1){
-        _nextPosition = _classifier.predict(flatField, _players->getActiveModel()-1)[0];   /// TEST! really -1 or just getActiveNumber?
+        // possibility 1
+        /*
+        int oldScore = 0;
+        for(auto move: _legalMoves){
+            copy field;
+            _gameLogic->setStone(_field, _players->getActivePlayerNumber(), move);
+            newScore = _classifier->predict(flatField, _players->getActiveModel()-1);
+            if (newScore >= oldScore){
+                _nextPosition = move;
+            }
+        }
+        */
+
+        //possibility 2
+//        double thisPlayersScore = _classifier->predict(flatField, _players->getActiveModel()-1);
+//        _players->setScore(thisPlayersScore, 1- thisPlayersScore, ...);
+//        _players->gameIsOver();
+
+        //possibility 3
+        //_nextPosition = _classifier->predict(flatField, _players->getActiveModel()-1)[0];   /// TEST! really -1 or just getActiveNumber?
         return;
     }
 }

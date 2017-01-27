@@ -41,10 +41,11 @@ class PlayerInformation; //forward declaration
 class Player
 {
 public:
-    Player(int roundNumber = 0);
+    Player();
     Player(std::vector<int> models, int roundNumber = 0); // vector of scroes?
     void setScore(std::vector<double> score);
-    void addPlayer(int model); // necessary ?
+    void addPlayer(int model); // necessary?
+    void setActivePlayerByRoundNumber(int roundNumber);  //better name?
     void changePlayer(int number, int model);
     int getWinnerNumber();
     double getWinnerScore();

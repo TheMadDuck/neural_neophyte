@@ -81,7 +81,7 @@ std::vector<std::string> ModelHandler::folderHandler(std::string gameName)
 
 }
 
-int ModelHandler::loadBestModel(LogisticSgd classifier, std::string gameName)
+int ModelHandler::loadBestModel(Classifier *classifier, std::string gameName)
 {
     return -2;  // only for testing purpose. should be removed!
     std::vector<std::string> filePaths = folderHandler(gameName);
