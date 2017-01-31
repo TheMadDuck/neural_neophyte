@@ -110,7 +110,6 @@ Menu::Menu()
             players->changePlayer(_humanPlayerNumber-1, 0);
         }
         //return;
-        std::cout << "debug 0" << std::endl;
         SaveList* saveList = new SaveList();
         std::vector<Position> a = _gameFlow->runGameFlow(players, {}, saveList);
         saveList->printProgress();
@@ -124,7 +123,6 @@ Menu::Menu()
 
 //        _gameFlow->runGameFlow(players);
         std::cout << "player " << players->getWinnerNumber() << " won with a score of " << players->getWinnerScore() << std::endl;
-        std::cout << "debug 1" << std::endl;
 
 
     }

@@ -53,10 +53,8 @@ public:
     int positionVectorSize() override;
     std::vector<Position> getLegalInputs(Field* field) override;
     Field* initField(int height = 6, int width = 7) override;
-    //bool isLegalMove(Field *field, int playerNumber, Position position) override;
     void setStone(Field *field, int color, Position position) override;
     bool gameStopped(Field *field, int roundNumber) override;
-    int hasAWinner(Field *field, int color, Position position) override;
     int numberPlayers() override;
     std::vector<double> getPlayerScore(Field *field, int color, Position position) override;
 

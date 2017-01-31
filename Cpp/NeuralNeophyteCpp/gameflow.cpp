@@ -191,7 +191,7 @@ std::vector<Position> GameFlow::runGameFlow(Player *players, std::vector<Positio
             std::cout << "ERROR: Field could not get initialized" << std::endl;
         }
     }
-    while((_gameLogic->getSignal() != "we_have_a_winner") || (_gameLogic->getSignal() != "game_is_over")){
+    while(true){
         _legalMoves = _gameLogic->getLegalInputs(_field);
         if(_gameLogic->getSignal() != "legal_inputs_initialized"){
             std::cout << "ERROR: legal inputs could not get initialized" << std::endl;
@@ -212,9 +212,9 @@ std::vector<Position> GameFlow::runGameFlow(Player *players, std::vector<Positio
             std::cout << "\n";
             _field->showField();
         }
-//        _winner = _gameLogic->hasAWinner(_field, _players.getActivePlayerNumber(), _nextPosition);
         _players->setScore(_gameLogic->getPlayerScore(_field, _players->getActivePlayerNumber(), _nextPosition));
-        if (_gameLogic->getSignal() == "we_have_a_winner") {
+        if (_gameLogic->getSignal() == "game_is_over") {
+            _players->endGame();
             if (_players->getWinnerNumber() == -1) {
                 std::cout << "ERROR: we could not determine who won!" << std::endl;
             }
@@ -227,9 +227,11 @@ std::vector<Position> GameFlow::runGameFlow(Player *players, std::vector<Positio
         _roundNumber += 1;
         _gameLogic->gameStopped(_field, _roundNumber);
         if(_gameLogic->getSignal() == "game_is_over"){
+            _players->endGame();
             return _gamePath;
         }
     }
+    _players->endGame();
     return _gamePath;
 }
 
@@ -252,7 +254,7 @@ int GameFlow::addPrefixPath(std::vector<Position> prefixPath)
 {
     int prefixPathSize = prefixPath.size();
     int pathPosition = 0;
-    while((_gameLogic->getSignal() != "we_have_a_winner") || (_gameLogic->getSignal() != "game_is_over")){
+    while(true){
         if(pathPosition >= prefixPathSize){
             return -1; //if there is no winner -1 is returned
         }
@@ -264,9 +266,9 @@ int GameFlow::addPrefixPath(std::vector<Position> prefixPath)
         if(_gameLogic->getSignal() != "stone_is_set"){
             std::cout << "ERROR: Stone is not saved" << std::endl;
         }
-        //_winner = _gameLogic->hasAWinner(_field, _players.getActivePlayerNumber(), _nextPosition);
         _players->setScore(_gameLogic->getPlayerScore(_field, _players->getActivePlayerNumber(), _nextPosition));
-        if(_gameLogic->getSignal() == "we_have_a_winner"){
+        if(_gameLogic->getSignal() == "game_is_over"){
+            _players->endGame();
             if(_players->getWinnerNumber() == -1){
                 std::cout << "ERROR: We could not determine who won!" << std::endl;
             }
@@ -274,12 +276,14 @@ int GameFlow::addPrefixPath(std::vector<Position> prefixPath)
         }
         _gameLogic->gameStopped(_field, _roundNumber);
         if (_gameLogic->getSignal() == "game_is_over"){
+            _players->endGame();
             return getWinner();
         }
         _players->nextPlayer();
         _roundNumber += 1;
         pathPosition += 1;
     }
+    _players->endGame();
     return getWinner();
 
 }

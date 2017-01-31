@@ -49,6 +49,7 @@ public:
     void changePlayer(int number, int model);
     int getWinnerNumber();
     double getWinnerScore();
+    void endGame();
     bool isOver();
     int amountPlayer();
     //int getPlayerModel(int playerNumber);

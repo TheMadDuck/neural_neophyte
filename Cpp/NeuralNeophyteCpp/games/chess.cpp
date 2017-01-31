@@ -134,13 +134,13 @@ bool Chess::gameStopped(Field *field, int roundNumber)
 {
     //check for draw
 }
-
+/*
 int Chess::hasAWinner(Field *field, int color, Position position)
 {
     // oh shit
     std::vector<std::vector<int>> enemyKingRange;
 }
-
+*/
 int Chess::numberPlayers()
 {
     return 2;
@@ -148,7 +148,8 @@ int Chess::numberPlayers()
 
 std::vector<double> Chess::getPlayerScore(Field *field, int color, Position position)
 {
-
+    // oh shit
+    std::vector<std::vector<int>> enemyKingRange;
 }
 
 void Chess::addRookMoves(int i, int j, int color)

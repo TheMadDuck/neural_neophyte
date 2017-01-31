@@ -122,7 +122,7 @@ std::vector<Tree*> Tree::getChilds()
 
 void Tree::printTree()
 {
-    std::cout << "move: " << _move[0]  // TODO: print whole vector!
+    std::cout //<< "move: " << _move[0]  // TODO: print whole vector!
               << " depth: " << _depth
               << " numberPlayed: " << _numberPlayed;
     for (auto i : _numberWon){

@@ -112,11 +112,30 @@ void Player::changePlayer(int number, int model)
 
 int Player::getWinnerNumber() // return tuple or PlayerInformation?
 {
+    /*
     for(PlayerInformation player: _players){
-        if(player._playerScore >= 1){     // do we always have a winner if score >= 1?
+        //if(player._playerScore >= 1){     // do we always have a winner if score >= 1?
+        if(_gameOver){
             _winner = &player;            // check reference handling
             _gameOver = true;
+            std::cout << "yolo " << std::endl;
             return player._playerNumber;	//only return playerNumber? what about score??
+        }
+    }
+    return -1;
+    */
+//    std::cout << "test this!" << std::endl;
+    double highScore = 0;
+    if(_gameOver){
+        for(PlayerInformation& player: _players){
+            if(player._playerScore > highScore){
+                _winner = &player;            // check reference handling // probably points to garbage after for-iteration.
+//                _gameOver = true;
+                highScore = player._playerScore;
+            }
+        }
+        if(highScore > 0){
+            return _winner->_playerNumber;
         }
     }
     return -1;
@@ -131,6 +150,11 @@ double Player::getWinnerScore()
     else{
         std::cout << " game not finished! Assert this!" << std::endl;
     }
+}
+
+void Player::endGame()
+{
+    _gameOver = true;
 }
 
 bool Player::isOver()

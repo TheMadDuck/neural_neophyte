@@ -89,13 +89,11 @@ Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, Classifier *cla
         }
 
         if(tempGameFlow.getWinner() != -1){
-//            std::cout << "getWinnerNumber: " << player->getWinnerNumber() << "getWinnerScore " << player->getWinnerScore() << std::endl;
+//            std::cout << "getWinnerNumber: " << player->getWinnerNumber() << std::endl;
+//            std::cout << "getWinnerScore " << player->getWinnerScore() << std::endl;
             tree->addPathRec(path, player->getWinnerNumber(), player->getWinnerScore()); // get winner and score from player or from tempGameFlor?
         }
         delete fieldCopy;
     }
-    std::cout << "test 0" << std::endl;
-    mcts_tree->getBestMove(playerNumber).printPosition();
-    std::cout << "test 1" << std::endl;
     return mcts_tree->getBestMove(playerNumber);
 }

@@ -117,7 +117,7 @@ bool PegSolitaire::gameStopped(Field *field, int roundNumber)
     }
     return false;
 }
-
+/*
 int PegSolitaire::hasAWinner(Field *field, int color, Position position)
 {
     getLegalInputs(field);
@@ -127,7 +127,7 @@ int PegSolitaire::hasAWinner(Field *field, int color, Position position)
     }
     return 0;
 }
-
+*/
 int PegSolitaire::numberPlayers()
 {
     return 1;
@@ -147,6 +147,7 @@ std::vector<double> PegSolitaire::getPlayerScore(Field *field, int color, Positi
 //    std::cout << " should try to norm the fitness" << std::endl;
     fitness /= 45; //realy norm fitness between 0-1 ?
     fitnessVector.push_back(fitness);
+    //Signal = "game_is_over";
     return fitnessVector;
 }
 
