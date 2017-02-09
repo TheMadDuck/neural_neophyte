@@ -33,6 +33,7 @@
  ***************************************************************************/
 
 #include "player.h"
+#include <assert.h>
 
 /*
  * Handels the information about the player (KI-Model, playersNumber, players internal
@@ -42,6 +43,7 @@ Player::Player()
 {
     _gameOver = false;
     _amountPlayers = 0;
+    _draw = false;
     _onlyComputerPlayer = true; // same definitions in Player(std::vector)
     _activePlayer = 0;
     //_activePlayer = roundNumber % _amountPlayers;
@@ -51,6 +53,7 @@ Player::Player(std::vector<int> models, int roundNumber)
 {
     _gameOver = false;
     _amountPlayers = 0;
+    _draw = false;
     _onlyComputerPlayer = true;
     for(int model : models){
         PlayerInformation player;  // pointer??
@@ -118,15 +121,18 @@ int Player::getWinnerNumber() // return tuple or PlayerInformation?
         if(_gameOver){
             _winner = &player;            // check reference handling
             _gameOver = true;
-            std::cout << "yolo " << std::endl;
             return player._playerNumber;	//only return playerNumber? what about score??
         }
     }
     return -1;
     */
+    /*
 //    std::cout << "test this!" << std::endl;
     double highScore = 0;
     if(_gameOver){
+        //if(_winner){             // test this
+        //    return _winner->_playerNumber;
+        //}
         for(PlayerInformation& player: _players){
             if(player._playerScore > highScore){
                 _winner = &player;            // check reference handling // probably points to garbage after for-iteration.
@@ -139,22 +145,50 @@ int Player::getWinnerNumber() // return tuple or PlayerInformation?
         }
     }
     return -1;
+    */
+    //if (_winner->playerScore < 0){
+    assert(_gameOver);
+    if(_winner){
+        return _winner->_playerNumber;
+    }
+    else{
+        _draw = true;
+        std::cout << "what happens if we reach a draw?" << std::endl;
+        return -1;
+    }
 }
 
 double Player::getWinnerScore()
 {
-    if (_gameOver){
+    assert(_gameOver);
+    if (_winner){
         //std::cout << "winner Score: " << _winner->_playerScore << std::endl;
         return _winner->_playerScore;
     }
     else{
-        std::cout << " game not finished! Assert this!" << std::endl;
+        _draw = true;
+        std::cout << "what happens if we reach a draw?" << std::endl;
+        return 0;
     }
 }
 
 void Player::endGame()
 {
     _gameOver = true;
+    double highScore = 0;
+//    if(_gameOver){
+        for(PlayerInformation& player: _players){
+            if(player._playerScore > highScore){
+                _winner = &player;            // check reference handling // probably points to garbage after for-iteration.
+//                _gameOver = true;
+                highScore = player._playerScore;
+            }
+        }
+        if(highScore > 0){
+        //    return _winner->_playerNumber;
+        }
+//    }
+    //return -1;
 }
 
 bool Player::isOver()
@@ -203,6 +237,7 @@ void Player::nextPlayer()
 void Player::resetGame()
 {
     _gameOver = false;  // test this?
+    _draw = false;
     _activePlayer = 0;
     for(PlayerInformation player : _players){
         player._playerScore = 0;

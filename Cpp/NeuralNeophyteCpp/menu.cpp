@@ -122,7 +122,10 @@ Menu::Menu()
         }
 
 //        _gameFlow->runGameFlow(players);
-        std::cout << "player " << players->getWinnerNumber() << " won with a score of " << players->getWinnerScore() << std::endl;
+        std::cout << "debug 0" << std::endl;
+        //std::cout << "player " << players->getWinnerNumber() << " won with a score of " << players->getWinnerScore() << std::endl; // does only work in two seperate lines?!
+        std::cout << "player " << players->getWinnerNumber() << std::endl;
+        std::cout << " won with a score of " << players->getWinnerScore() << std::endl;
 
 
     }

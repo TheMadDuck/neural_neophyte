@@ -74,7 +74,6 @@ Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, Classifier *cla
         Field* fieldCopy = new Field(*field);
         GameFlow tempGameFlow(classifier, _gameLogic, fieldCopy, nullptr, roundNumber, randomProbability, nRd, gamePath);
         std::vector<Position> path;
-//        Player *player = new Player({-1, -1}, roundNumber);
         Player *player = new Player();
         for(int i = 0; i < _gameLogic->numberPlayers(); ++i){
             player->addPlayer(-1);
@@ -89,8 +88,7 @@ Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, Classifier *cla
         }
 
         if(tempGameFlow.getWinner() != -1){
-//            std::cout << "getWinnerNumber: " << player->getWinnerNumber() << std::endl;
-//            std::cout << "getWinnerScore " << player->getWinnerScore() << std::endl;
+            player->endGame();
             tree->addPathRec(path, player->getWinnerNumber(), player->getWinnerScore()); // get winner and score from player or from tempGameFlor?
         }
         delete fieldCopy;

@@ -67,7 +67,8 @@ private:
     int _activePlayer;
     bool _onlyComputerPlayer;
     bool _gameOver;
-    PlayerInformation* _winner;
+    bool _draw;   // not used at the moment
+    PlayerInformation* _winner = nullptr;
 };
 
 class PlayerInformation

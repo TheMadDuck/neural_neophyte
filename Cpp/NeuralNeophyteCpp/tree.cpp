@@ -173,6 +173,9 @@ void Tree::addPath(std::vector<int> path, int winOrLoss)
 */
 void Tree::addPathRec(std::vector<Position> path, int winner, double score)
 {
+    if(winner == -1){
+        return;
+    }
     _numberPlayed += 1;
     _numberWon[winner] += score;
 
@@ -227,6 +230,7 @@ Position Tree::getNextMove(int amountPosslibleMoves, int player)
         double next_ratio;
 
         //TODO what to do if the game reaches a draw?
+        // amountPossibleMoves / _child.size() ratio can give information about the tree-coverage!!?!
         if (amountPosslibleMoves > _childs.size()){  // return -1 for random move
             nextMove.setRandomnes(true);
             return nextMove;
