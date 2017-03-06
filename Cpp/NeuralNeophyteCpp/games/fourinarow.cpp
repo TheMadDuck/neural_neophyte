@@ -66,7 +66,7 @@ int FourInARow::positionVectorSize()
     return 1;
 }
 
-std::vector<Position> FourInARow::getLegalInputs(Field *field)
+std::vector<Position> FourInARow::getLegalInputs(Field *field, int activePlayer)
 {
     std::vector<Position> legal_inputs;// = {0, 1, 2, 3, 4, 5, 6}; /Todo: speed limitation?
     for (int i = 0; i< 7 ; i++){
@@ -138,7 +138,7 @@ void FourInARow::setStone(Field *field, int color, Position position)
     /*return field; //realy????*/
 }
 
-bool FourInARow::gameStopped(Field *field, int roundNumber)
+bool FourInARow::gameStopped(Field *field, int roundNumber, std::vector<Position> legal_inputs)
 {
     Signal = "game_not_over";  // probably not needed
     if(roundNumber == (field->getSizeField())){

@@ -46,17 +46,16 @@ public:
     std::string getSignal() override;
     std::string getName() override;
     int positionVectorSize() override;
-    std::vector<Position> getLegalInputs(Field* field) override;
+    std::vector<Position> getLegalInputs(Field* field, int activePlayer = 0) override;
     Field* initField(int height = 6, int width = 7) override;
     //bool isLegalMove(Field *field, int playerNumber, Position position) override;
     void setStone(Field *field, int color, Position position) override;
-    bool gameStopped(Field *field, int roundNumber) override;
+    bool gameStopped(Field *field, int roundNumber, std::vector<Position> legal_inputs) override;
     //int hasAWinner(Field *field, int color, Position position) override;
     int numberPlayers() override;
     std::vector<double> getPlayerScore(Field *field, int color, Position position) override;
 
 private:
-    std::string Signal = ""; // define Signal in Game.h ??
     std::vector<Position> _legal_inputs;
     Field* _field;
 

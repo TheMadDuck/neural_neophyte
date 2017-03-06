@@ -70,7 +70,7 @@ void GameFlow::move()
           || (_gameLogic->getSignal() == "unvalid_position")
           || (_gameLogic->getSignal() == "column_is_full")){
 
-        _gameLogic->gameStopped(_field, _roundNumber);
+        _gameLogic->gameStopped(_field, _roundNumber, _legalMoves);
         if(_gameLogic->getSignal() == "game_is_over"){
             break;
         }
@@ -192,7 +192,7 @@ std::vector<Position> GameFlow::runGameFlow(Player *players, std::vector<Positio
         }
     }
     while(true){
-        _legalMoves = _gameLogic->getLegalInputs(_field);
+        _legalMoves = _gameLogic->getLegalInputs(_field, _players->getActivePlayerNumber());
         if(_gameLogic->getSignal() != "legal_inputs_initialized"){
             std::cout << "ERROR: legal inputs could not get initialized" << std::endl;
         }
@@ -225,7 +225,7 @@ std::vector<Position> GameFlow::runGameFlow(Player *players, std::vector<Positio
         }
         _players->nextPlayer();
         _roundNumber += 1;
-        _gameLogic->gameStopped(_field, _roundNumber);
+        _gameLogic->gameStopped(_field, _roundNumber, _legalMoves);
         if(_gameLogic->getSignal() == "game_is_over"){
             _players->endGame();
             return _gamePath;
@@ -256,9 +256,9 @@ int GameFlow::addPrefixPath(std::vector<Position> prefixPath)
     int pathPosition = 0;
     while(true){
         if(pathPosition >= prefixPathSize){
-            return -1; //if there is no winner -1 is returned
+            return -1; //if there is no winner -1 is return
         }
-
+        _legalMoves = _gameLogic->getLegalInputs(_field, _players->getActivePlayerNumber()); // necessary only for gameStopped(). maybe gameStopped could use only activePlayer(and in game.kalaha.gameStopped() the getLegalInput function can be used?!)
         _nextPosition = prefixPath[pathPosition];
 
         _gameLogic->setStone(_field, _players->getActivePlayerNumber(), _nextPosition);
@@ -274,7 +274,7 @@ int GameFlow::addPrefixPath(std::vector<Position> prefixPath)
             }
             return getWinner();
         }
-        _gameLogic->gameStopped(_field, _roundNumber);
+        _gameLogic->gameStopped(_field, _roundNumber, _legalMoves);
         if (_gameLogic->getSignal() == "game_is_over"){
             _players->endGame();
             return getWinner();

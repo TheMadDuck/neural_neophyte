@@ -59,7 +59,7 @@ int Chess::positionVectorSize()
     return 6; // 2 from 1 kindOf 1 color 2 to
 }
 
-std::vector<Position> Chess::getLegalInputs(Field* field) // work with field (not with _field). field should exist only extern in gameflow!
+std::vector<Position> Chess::getLegalInputs(Field* field, int activePlayer) // work with field (not with _field). field should exist only extern in gameflow!
 {
     _field = field;
     //std::vector<Position> legal_inputs;
@@ -130,7 +130,7 @@ void Chess::setStone(Field *field, int color, Position position)
     std::cout << "not yet implemented" << std::endl;
 }
 
-bool Chess::gameStopped(Field *field, int roundNumber)
+bool Chess::gameStopped(Field *field, int roundNumber, std::vector<Position> legal_inputs)
 {
     //check for draw
 }

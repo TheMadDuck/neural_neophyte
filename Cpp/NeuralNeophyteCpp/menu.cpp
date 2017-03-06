@@ -39,6 +39,7 @@
 #include "games/fourinarow.h"
 #include "games/chess.h"
 #include "games/pegsolitaire.h"
+#include "games/kalaha.h"
 
 Menu::Menu()
 {
@@ -47,12 +48,13 @@ Menu::Menu()
     std::cout << "Play FourInARow (press 1)" << std::endl;
     std::cout << "Play Chess (press 2)" << std::endl;
     std::cout << "Play Peg Solitaire (press 3)" << std::endl;
-    std::cout << "End Program (press 4)" << std::endl;
+    std::cout << "Play Kalaha (press 4)" << std::endl;
+    std::cout << "End Program (press 5)" << std::endl;
     std::cout << "\n";
     std::cin >> _mode;
-    while ((_mode != 1) && (_mode != 2) && (_mode != 3) && (_mode != 4)){
+    while ((_mode != 1) && (_mode != 2) && (_mode != 3) && (_mode != 4) && (_mode != 5)){
         std::cout << "your number was: " << _mode << std::endl;
-        std::cout << "press 1, 2, 3 or 4" << std::endl;
+        std::cout << "press 1, 2, 3, 4 or 5" << std::endl;
         std::cin >> _mode;
     }
     if(_mode == 1){
@@ -65,6 +67,9 @@ Menu::Menu()
         _gameLogic = new PegSolitaire();
     }
     if(_mode == 4){
+        _gameLogic = new Kalaha();
+    }
+    if(_mode == 5){
         return;
     }
 
@@ -91,7 +96,6 @@ Menu::Menu()
 
 
     if (_mode == 1){
-        std::cout << "do you want to be player 1 or player 2?" << std::endl;
         std::cout << "which player do you want to be? bewteen 1 and " << _gameLogic->numberPlayers() << " (0 for only computer)" << std::endl;
         std::cin >> _humanPlayerNumber;
 

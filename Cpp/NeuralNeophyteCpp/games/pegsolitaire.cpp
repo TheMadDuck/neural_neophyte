@@ -58,7 +58,7 @@ int PegSolitaire::positionVectorSize()
     return 3;
 }
 
-std::vector<Position> PegSolitaire::getLegalInputs(Field *field)
+std::vector<Position> PegSolitaire::getLegalInputs(Field *field, int activePlayer)
 {
     _field = field;
     _legal_inputs.clear();
@@ -108,10 +108,10 @@ void PegSolitaire::setStone(Field *field, int color, Position position)
     Signal = "stone_is_set";
 }
 
-bool PegSolitaire::gameStopped(Field *field, int roundNumber)
+bool PegSolitaire::gameStopped(Field *field, int roundNumber, std::vector<Position> legal_inputs)
 {
-    getLegalInputs(field);
-    if(_legal_inputs.empty()){
+    //getLegalInputs(field);
+    if(legal_inputs.empty()){
         Signal = "game_is_over";
         return true;
     }
