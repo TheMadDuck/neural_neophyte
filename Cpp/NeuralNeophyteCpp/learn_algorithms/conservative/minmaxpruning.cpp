@@ -88,7 +88,6 @@ Position MinMaxPruning::exploited_mcts(Field *field, Tree *tree, Classifier *cla
         }
 
         if(tempGameFlow.getWinner() != -1){
-            player->endGame();
             tree->addPathRec(path, player->getWinnerNumber(), player->getWinnerScore()); // get winner and score from player or from tempGameFlor?
         }
         delete fieldCopy;

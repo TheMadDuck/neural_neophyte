@@ -66,24 +66,6 @@ void GameFlow::move()
         AI_Move();
     }
 
-    while((_gameLogic->getSignal() == "unvalid_player")
-          || (_gameLogic->getSignal() == "unvalid_position")
-          || (_gameLogic->getSignal() == "column_is_full")){
-
-        _gameLogic->gameStopped(_field, _roundNumber, _legalMoves);
-        if(_gameLogic->getSignal() == "game_is_over"){
-            break;
-        }
-
-        if(_players->getActiveModel() == 0){
-            std::cout << "this move is not legal, please try again!!" << std::endl;
-            Human_Move();
-        }
-        else{
-            AI_Move();
-        }
-
-    }
     //return _nextPosition;          // Todo: check speed limitation?
 }
 
@@ -144,7 +126,6 @@ void GameFlow::AI_Move()
 
 void GameFlow::Human_Move()
 {
-    //int move;
     std::cout << "Which move do you want to make? [";
     for (Position number : _legalMoves) {
         number.printPosition();
@@ -157,7 +138,6 @@ void GameFlow::Human_Move()
         for(auto var: _legalMoves) {
             if (var == _nextPosition) {
                 return;
-                //return _nextPosition;
             }
         }
 
@@ -212,27 +192,25 @@ std::vector<Position> GameFlow::runGameFlow(Player *players, std::vector<Positio
             std::cout << "\n";
             _field->showField();
         }
-        _players->setScore(_gameLogic->getPlayerScore(_field, _players->getActivePlayerNumber(), _nextPosition));
-        if (_gameLogic->getSignal() == "game_is_over") {
-            _players->endGame();
-            if (_players->getWinnerNumber() == -1) {
-                std::cout << "ERROR: we could not determine who won!" << std::endl;
-            }
-            if(!_players->onlyComputerPlayer()){
-                std::cout << "\n" << "The winner is: Player " << _players->getWinnerNumber() +1 << std::endl;
+        _gameLogic->gameStopped(_field, _roundNumber, _legalMoves, _nextPosition);
+        if(_gameLogic->getSignal() == "game_is_over"){
+            _players->endGame(_gameLogic->getPlayerScore(_field, _players->getActivePlayerNumber(), _nextPosition));
+            if (_gameLogic->getSignal() == "score_is_set") {
+                if (_players->getWinnerNumber() == -1) {
+                    std::cout << "ERROR: we could not determine who won!" << std::endl;
+                }
+                if(!_players->onlyComputerPlayer()){
+                    std::cout << "\n" << "The winner is: Player " << _players->getWinnerNumber() +1 << std::endl;
+                }
+                return _gamePath;
             }
             return _gamePath;
         }
         _players->nextPlayer();
         _roundNumber += 1;
-        _gameLogic->gameStopped(_field, _roundNumber, _legalMoves);
-        if(_gameLogic->getSignal() == "game_is_over"){
-            _players->endGame();
-            return _gamePath;
-        }
     }
-    _players->endGame();
-    return _gamePath;
+
+
 }
 
 int GameFlow::getWinner()
@@ -266,26 +244,22 @@ int GameFlow::addPrefixPath(std::vector<Position> prefixPath)
         if(_gameLogic->getSignal() != "stone_is_set"){
             std::cout << "ERROR: Stone is not saved" << std::endl;
         }
-        _players->setScore(_gameLogic->getPlayerScore(_field, _players->getActivePlayerNumber(), _nextPosition));
-        if(_gameLogic->getSignal() == "game_is_over"){
-            _players->endGame();
-            if(_players->getWinnerNumber() == -1){
-                std::cout << "ERROR: We could not determine who won!" << std::endl;
-            }
-            return getWinner();
-        }
-        _gameLogic->gameStopped(_field, _roundNumber, _legalMoves);
+
+        _gameLogic->gameStopped(_field, _roundNumber, _legalMoves, _nextPosition);
         if (_gameLogic->getSignal() == "game_is_over"){
-            _players->endGame();
+            _players->endGame(_gameLogic->getPlayerScore(_field, _players->getActivePlayerNumber(), _nextPosition));
+            if(_gameLogic->getSignal() == "score_is_set"){
+                if(_players->getWinnerNumber() == -1){
+                    std::cout << "ERROR: We could not determine who won!" << std::endl;
+                }
+                return getWinner();
+            }
             return getWinner();
         }
         _players->nextPlayer();
         _roundNumber += 1;
         pathPosition += 1;
     }
-    _players->endGame();
-    return getWinner();
-
 }
 
 

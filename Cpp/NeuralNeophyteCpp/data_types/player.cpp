@@ -70,7 +70,7 @@ Player::Player(std::vector<int> models, int roundNumber)
 }
 
 void Player::setScore(std::vector<double> score)
-{
+{	/*
     //std::cout << "score.size(): " << score.size() << " _player.size(): " << _players.size() << std::endl;
     if(score.size() != _players.size()){
         std::cout << "ERROR ERROR ERROR !!!" << std::endl;
@@ -81,6 +81,7 @@ void Player::setScore(std::vector<double> score)
         _players[index]._playerScore = playerScore;
         index += 1;
     }
+    */
 }
 
 void Player::addPlayer(int model)
@@ -172,9 +173,23 @@ double Player::getWinnerScore()
     }
 }
 
-void Player::endGame()
+void Player::endGame(std::vector<double> score)
 {
     _gameOver = true;
+    if (score.empty()){
+        return;
+    }
+    //std::cout << "score.size(): " << score.size() << " _player.size(): " << _players.size() << std::endl;
+    if(score.size() != _players.size()){
+        std::cout << "score.size" << score.size() << "_players.size()" << _players.size() << std::endl;
+        std::cout << "ERROR ERROR ERROR !!!" << std::endl;
+    }
+    // make a playerScore list in Player(not PlayerInformation). so this function has only to replace that score-vector!!!
+    int index = 0;
+    for(double playerScore : score){
+        _players[index]._playerScore = playerScore;
+        index += 1;
+    }
     double highScore = 0;
 //    if(_gameOver){
         for(PlayerInformation& player: _players){
@@ -193,7 +208,8 @@ void Player::endGame()
 
 bool Player::isOver()
 {
-    std::cout << "not yet implemented" << std::endl;
+    return _gameOver;
+    //std::cout << "not yet implemented" << std::endl;
 }
 
 int Player::amountPlayer()

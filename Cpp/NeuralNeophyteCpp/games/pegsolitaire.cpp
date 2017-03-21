@@ -108,7 +108,7 @@ void PegSolitaire::setStone(Field *field, int color, Position position)
     Signal = "stone_is_set";
 }
 
-bool PegSolitaire::gameStopped(Field *field, int roundNumber, std::vector<Position> legal_inputs)
+bool PegSolitaire::gameStopped(Field *field, int roundNumber, std::vector<Position> legal_inputs, Position lastMove)
 {
     //getLegalInputs(field);
     if(legal_inputs.empty()){
@@ -133,7 +133,7 @@ int PegSolitaire::numberPlayers()
     return 1;
 }
 
-std::vector<double> PegSolitaire::getPlayerScore(Field *field, int color, Position position)
+std::vector<double> PegSolitaire::getPlayerScore(Field *field, int color, Position lastMove)
 {
     std::vector<double> fitnessVector;
     double fitness = 0;
@@ -147,11 +147,11 @@ std::vector<double> PegSolitaire::getPlayerScore(Field *field, int color, Positi
 //    std::cout << " should try to norm the fitness" << std::endl;
     fitness /= 45; //realy norm fitness between 0-1 ?
     fitnessVector.push_back(fitness);
-    //Signal = "game_is_over";
+    Signal = "score_is_set";
     return fitnessVector;
 }
 
-PegSolitaire::addDirection(int i, int j)
+void PegSolitaire::addDirection(int i, int j)
 {
     if(isInField(i+1, j)){ // ugly code
         if(_field->get(i+1, j) == 1){

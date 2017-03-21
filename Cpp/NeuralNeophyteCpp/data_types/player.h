@@ -49,7 +49,7 @@ public:
     void changePlayer(int number, int model);
     int getWinnerNumber();
     double getWinnerScore();
-    void endGame();
+    void endGame(std::vector<double> score = {});
     bool isOver();
     int amountPlayer();
     //int getPlayerModel(int playerNumber);

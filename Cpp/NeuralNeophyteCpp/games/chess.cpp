@@ -130,7 +130,7 @@ void Chess::setStone(Field *field, int color, Position position)
     std::cout << "not yet implemented" << std::endl;
 }
 
-bool Chess::gameStopped(Field *field, int roundNumber, std::vector<Position> legal_inputs)
+bool Chess::gameStopped(Field *field, int roundNumber, std::vector<Position> legal_inputs, Position lastMove)
 {
     //check for draw
 }
@@ -146,9 +146,10 @@ int Chess::numberPlayers()
     return 2;
 }
 
-std::vector<double> Chess::getPlayerScore(Field *field, int color, Position position)
+std::vector<double> Chess::getPlayerScore(Field *field, int color, Position lastMove)
 {
     // oh shit
+    Signal = "score_is_set";
     std::vector<std::vector<int>> enemyKingRange;
 }
 

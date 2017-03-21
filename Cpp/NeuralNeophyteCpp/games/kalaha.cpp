@@ -126,7 +126,7 @@ void Kalaha::setStone(Field *field, int color, Position position)
     Signal = "stone_is_set";
 }
 
-bool Kalaha::gameStopped(Field *field, int roundNumber, std::vector<Position> legal_inputs)
+bool Kalaha::gameStopped(Field *field, int roundNumber, std::vector<Position> legal_inputs, Position lastMove)
 {
     // function the same for all games? into games.cpp? probably not...?
     //getLegalInputs(field);
@@ -142,7 +142,7 @@ int Kalaha::numberPlayers()
     return 2;
 }
 
-std::vector<double> Kalaha::getPlayerScore(Field *field, int color, Position position) // parameter (bool) gameStopped for all getPlayerScores
+std::vector<double> Kalaha::getPlayerScore(Field *field, int color, Position lastMove) // parameter (bool) gameStopped for all getPlayerScores
 {
     std::vector<double> playerScore;
     playerScore.push_back(field->get(0, 6) / field->get(1, 6));
@@ -155,6 +155,7 @@ std::vector<double> Kalaha::getPlayerScore(Field *field, int color, Position pos
         Signal = "game_not_over";
     }
     */
+    Signal = "score_is_set";
     return playerScore;
 }
 

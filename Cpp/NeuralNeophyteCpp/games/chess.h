@@ -53,10 +53,10 @@ public:
     Field* initField(int height = 8, int width = 8) override;
     //bool isLegalMove(Field *field, int playerNumber, Position position) override;
     void setStone(Field *field, int color, Position position) override;
-    bool gameStopped(Field *field, int roundNumberd, std::vector<Position> legal_inputs) override;
+    bool gameStopped(Field *field, int roundNumberd, std::vector<Position> legal_inputs, Position lastMove) override;
     //int hasAWinner(Field *field, int color, Position position) override;
     int numberPlayers() override;
-    std::vector<double> getPlayerScore(Field *field, int color, Position position) override;
+    std::vector<double> getPlayerScore(Field *field, int color, Position lastMove) override;
 
     int getHashDivisor();
     void observeSides(int i, int j, int figure, int topDown, int leftRight); // topDown and leftRight are int in range -1, 0, 1

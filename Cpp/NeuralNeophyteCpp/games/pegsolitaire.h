@@ -50,16 +50,16 @@ public:
     Field* initField(int height = 6, int width = 7) override;
     //bool isLegalMove(Field *field, int playerNumber, Position position) override;
     void setStone(Field *field, int color, Position position) override;
-    bool gameStopped(Field *field, int roundNumber, std::vector<Position> legal_inputs) override;
+    bool gameStopped(Field *field, int roundNumber, std::vector<Position> legal_inputs, Position lastMove) override;
     //int hasAWinner(Field *field, int color, Position position) override;
     int numberPlayers() override;
-    std::vector<double> getPlayerScore(Field *field, int color, Position position) override;
+    std::vector<double> getPlayerScore(Field *field, int color, Position lastMove) override;
 
 private:
     std::vector<Position> _legal_inputs;
     Field* _field;
 
-    addDirection(int i, int j);
+    void addDirection(int i, int j);
     bool isInField(int i, int j);
 
     enum directions {up = 1, down = 2, left = 3, right = 4};
